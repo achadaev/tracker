@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

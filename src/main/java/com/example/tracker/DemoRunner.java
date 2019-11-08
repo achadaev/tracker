@@ -16,9 +16,5 @@ public class DemoRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
          Connection conn = iExpenseDao.connect();
-
-        //   System.out.println("Hello.");
-
-        //   iObjectsDao.getObject(conn, 1);
     }
 }

@@ -16,4 +16,13 @@ public class User {
     public String getRegDate() { return regDate; }
 
     public void setRegDate(String regDate) { this.regDate = regDate; }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", regDate='" + regDate + '\'' +
+                '}';
+    }
 }

@@ -2,7 +2,11 @@ package com.example.tracker.rest;
 
 import com.example.tracker.dao.Expense;
 import com.example.tracker.dao.IExpenseDao;
+import com.example.tracker.dao.IUserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +19,14 @@ public class ExpensesController {
 
     @Autowired
     IExpenseDao iExpenseDao;
+
+    @Autowired
+    IUserDao userService;
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
 
     @GetMapping("/expenses")
     List<Expense> getExpenses() {
