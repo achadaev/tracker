@@ -52,19 +52,19 @@ public class ExpensesController {
         return iExpenseDao.getExpensesByDate(conn, login, date);
    }
 
-    @GetMapping("{login}/expenses/lI={start}")
+    @GetMapping("{login}/expenses/ld={start}")
     List<Expense> getExpensesByLowerInterval(@PathVariable String login, @PathVariable String start) {
         Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByLowerInterval(conn, login, start);
     }
 
-    @GetMapping("{login}/expenses/uI={end}")
+    @GetMapping("{login}/expenses/ud={end}")
     List<Expense> getExpensesByUpperInterval(@PathVariable String login, @PathVariable String end) {
         Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByUpperInterval(conn, login, end);
     }
 
-   @GetMapping("{login}/expenses/lI={start}/uI={end}")
+   @GetMapping("{login}/expenses/ld={start}/ud={end}")
     List<Expense> getExpensesByDateInterval(@PathVariable String login,
                                             @PathVariable String start,
                                             @PathVariable String end) {

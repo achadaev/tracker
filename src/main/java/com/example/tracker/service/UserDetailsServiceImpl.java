@@ -25,11 +25,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Connection conn = userService.connect();
-        User user = userService.getUserByName(conn, username);
+        User user = userService.getUserByName(username);
         if (user != null) {
             String password = user.getPassword();
+            logger.info("Username: " + user.getLogin());
             logger.info("Password: " + password);
+            logger.info("Registration date: " + user.getRegDate());
 
             Collection<GrantedAuthority> authorities= new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));

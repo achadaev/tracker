@@ -12,9 +12,8 @@ import java.util.List;
 public class IUserDaoImpl implements IUserDao {
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
 
-
     @Override
-    public Connection connect() {
+    public User getUserByName(String name) {
         String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
         String url = "jdbc:sqlite:" + dbFile;
         Connection conn = null;
@@ -24,34 +23,7 @@ public class IUserDaoImpl implements IUserDao {
         } catch (SQLException e) {
             logger.info(e.getMessage());
         }
-        return conn;
-    }
 
-/*
-    @Override
-    public List<User> getAllUsers(Connection conn) {
-        List<User> result = new ArrayList<>();
-        try {
-            Statement st = conn.createStatement();
-            st.execute("SELECT user.login, user.pass, user.reg_date " +
-                    "FROM user");
-            ResultSet rs = st.getResultSet();
-            while (rs.next()) {
-                User user = new User();
-                user.setLogin(rs.getString("login"));
-                user.setPassword(rs.getString("pass"));
-                user.setRegDate(rs.getString("reg_date"));
-                result.add(user);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-*/
-
-    @Override
-    public User getUserByName(Connection conn, String name) {
         try {
             String query = "SELECT user.login, user.pass, user.reg_date " +
                     "FROM user WHERE user.login = ?";
