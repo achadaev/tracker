@@ -1,6 +1,6 @@
-package com.example.tracker;
+package com.example.tracker.server;
 
-import com.example.tracker.dao.IExpenseDao;
+import com.example.tracker.server.dao.IExpenseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 
 @Component
-public class DemoRunner implements CommandLineRunner {
+public class TrackerRunner implements CommandLineRunner {
 
     @Autowired
     IExpenseDao iExpenseDao;

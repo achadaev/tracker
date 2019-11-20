@@ -1,4 +1,4 @@
-package com.example.tracker.dao;
+package com.example.tracker.server.dao;
 
 public class Expense {
     private int id;

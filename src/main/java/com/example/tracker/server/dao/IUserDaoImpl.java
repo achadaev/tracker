@@ -1,12 +1,10 @@
-package com.example.tracker.dao;
+package com.example.tracker.server.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class IUserDaoImpl implements IUserDao {

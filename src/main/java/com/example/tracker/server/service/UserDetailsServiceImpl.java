@@ -1,7 +1,7 @@
-package com.example.tracker.service;
+package com.example.tracker.server.service;
 
-import com.example.tracker.dao.IUserDao;
-import com.example.tracker.dao.User;
+import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.server.dao.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 
