@@ -1,7 +1,6 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     <g:HTMLPanel>
-        <g:VerticalPanel width="100%">
-        </g:VerticalPanel>
+        <g:Label width="500px" text="Hello"></g:Label>
     </g:HTMLPanel>
 </ui:UiBinder>

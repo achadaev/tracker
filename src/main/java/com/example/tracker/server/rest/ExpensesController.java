@@ -20,6 +20,8 @@ public class ExpensesController {
     @Autowired
     IUserDao userService;
 
+    Connection conn = iExpenseDao.connect();
+
     @GetMapping("/")
     public String index() {
         return "index";
@@ -27,37 +29,31 @@ public class ExpensesController {
 
     @GetMapping("/expenses")
     List<Expense> getExpenses() {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getAllExpenses(conn);
    }
 
    @GetMapping("{login}/expenses")
    List<Expense> getExpensesByUser(@PathVariable String login) {
-       Connection conn = iExpenseDao.connect();
        return iExpenseDao.getExpensesByUser(conn, login);
    }
 
    @GetMapping("{login}/expenses/typeID={typeID}")
     List<Expense> getExpensesByType(@PathVariable String login, @PathVariable int typeID) {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByType(conn, login, typeID);
    }
 
    @GetMapping("{login}/expenses/date={date}")
     List<Expense> getExpensesByDate(@PathVariable String login, @PathVariable String date) {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByDate(conn, login, date);
    }
 
     @GetMapping("{login}/expenses/ld={start}")
     List<Expense> getExpensesByLowerInterval(@PathVariable String login, @PathVariable String start) {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByLowerInterval(conn, login, start);
     }
 
     @GetMapping("{login}/expenses/ud={end}")
     List<Expense> getExpensesByUpperInterval(@PathVariable String login, @PathVariable String end) {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByUpperInterval(conn, login, end);
     }
 
@@ -65,7 +61,6 @@ public class ExpensesController {
     List<Expense> getExpensesByDateInterval(@PathVariable String login,
                                             @PathVariable String start,
                                             @PathVariable String end) {
-        Connection conn = iExpenseDao.connect();
         return iExpenseDao.getExpensesByDateInterval(conn, login, start, end);
    }
 }
