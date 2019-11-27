@@ -1,5 +1,7 @@
 package com.example.tracker.server.dao;
 
+import com.example.tracker.shared.model.Expense;
+
 import java.sql.Connection;
 import java.util.List;
 

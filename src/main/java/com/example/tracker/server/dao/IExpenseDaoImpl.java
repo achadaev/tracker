@@ -1,5 +1,6 @@
 package com.example.tracker.server.dao;
 
+import com.example.tracker.shared.model.Expense;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

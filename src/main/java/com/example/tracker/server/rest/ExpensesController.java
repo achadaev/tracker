@@ -1,8 +1,8 @@
 package com.example.tracker.server.rest;
 
-import com.example.tracker.server.dao.Expense;
 import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.shared.model.Expense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

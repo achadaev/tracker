@@ -7,6 +7,17 @@ public class Expense {
     private String date;
     private int price;
 
+    public Expense(int id, int type_id, String name, String date, int price) {
+        this.id = id;
+        this.type_id = type_id;
+        this.name = name;
+        this.date = date;
+        this.price = price;
+    }
+
+    public Expense() {
+    }
+
     public int getId() {
         return id;
     }

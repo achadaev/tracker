@@ -4,8 +4,10 @@
 
 <module rename-to='expenses'>
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name="com.google.gwt.uibinder.UiBinder"/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
     <inherits name="com.google.gwt.logging.Logging"/>
+    <inherits name="org.fusesource.restygwt.RestyGWT"/>
 
     <entry-point class='com.example.tracker.client.ExpensesGWTApplication'/>
 

@@ -18,19 +18,20 @@
 	<properties>
 		<gwt.version>2.8.2</gwt.version>
 		<java.version>1.8</java.version>
+		<jersey.version>2.7</jersey.version>
 	</properties>
-	
+
 	<dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt</artifactId>
-                <version>${gwt.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt</artifactId>
+				<version>${gwt.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -93,6 +94,31 @@
             <version>2.2.0</version>
         </dependency>
 
+		<!-- Jersey -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<!-- if your container implements Servlet API older than 3.0, use "jersey-container-servlet-core"  -->
+			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.9.9</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -133,9 +159,7 @@
 							<directory>src/main/resources/images</directory>
 						</resource>
 					</webResources>
-<!--
-					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
--->
+					<webXml>src\main\webapp\WEB-INF\web.xml</webXml>
 				</configuration>
 			</plugin>
 		</plugins>
