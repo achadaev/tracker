@@ -74,7 +74,7 @@ public class ExpenseWebServiceImpl {
     @GET
     @Path("/{login}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Expense> getExpenseByUser(@PathParam("login") String login) {
+    public List<Expense> getExpensesByUser(@PathParam("login") String login) {
         String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
         String url = "jdbc:sqlite:" + dbFile;
         Connection conn = null;

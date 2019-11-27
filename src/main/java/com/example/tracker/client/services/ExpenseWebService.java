@@ -1,6 +1,7 @@
 package com.example.tracker.client.services;
 
 import com.example.tracker.shared.model.Expense;
+import com.google.gwt.editor.client.Editor;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
 
@@ -21,5 +22,5 @@ public interface ExpenseWebService extends RestService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{login}")
-    void getExpenseByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
+    void getExpensesByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
 }
