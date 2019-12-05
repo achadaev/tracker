@@ -6,7 +6,6 @@ import com.example.tracker.shared.model.Expense;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.*;
-import org.fusesource.restygwt.client.Defaults;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -15,6 +14,7 @@ import java.util.List;
 public class ExpensesGWTApplication implements EntryPoint {
     @Override
     public void onModuleLoad() {
+
 
         ExpenseWebService expenseWebService = GWT.create(ExpenseWebService.class);
 

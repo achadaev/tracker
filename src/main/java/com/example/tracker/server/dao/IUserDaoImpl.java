@@ -15,15 +15,10 @@ public class IUserDaoImpl implements IUserDao {
     public User getUserByName(String name) {
         String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
         String url = "jdbc:sqlite:" + dbFile;
-        Connection conn = null;
+        Connection conn;
         try {
             conn = DriverManager.getConnection(url);
             logger.info("Connected to database");
-        } catch (SQLException e) {
-            logger.info(e.getMessage());
-        }
-
-        try {
             String query = "SELECT user.login, user.pass, user.reg_date " +
                     "FROM user WHERE user.login = ?";
             PreparedStatement prepSt = conn.prepareStatement(query);
@@ -35,7 +30,7 @@ public class IUserDaoImpl implements IUserDao {
             user.setRegDate(rs.getString("reg_date"));
             return user;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage());
         }
         return null;
     }

@@ -15,6 +15,5 @@ public class TrackerRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-         Connection conn = iExpenseDao.connect();
     }
 }

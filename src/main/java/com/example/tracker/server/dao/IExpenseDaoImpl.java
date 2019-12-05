@@ -14,20 +14,17 @@ import java.util.List;
 public class IExpenseDaoImpl implements IExpenseDao {
 
     public SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
 
-    @Override
-    public Connection connect() {
-        String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
-        String url = "jdbc:sqlite:" + dbFile;
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-            logger.info("Connected to database");
-        } catch (SQLException e) {
-            logger.info(e.getMessage());
-        }
-        return conn;
+    private String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
+
+    private String url = "jdbc:sqlite:" + dbFile;
+
+    public Connection conn;
+
+    public IExpenseDaoImpl() throws ClassNotFoundException {
+        Class.forName("org.sqlite.JDBC");
     }
 
     private List<Expense> getResult(ResultSet rs) {
@@ -49,23 +46,27 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public List<Expense> getAllExpenses(Connection conn) {
+    public List<Expense> getAllExpenses() {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
             st.execute("SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses");
             ResultSet rs = st.getResultSet();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByUser(Connection conn, String login) {
+    public List<Expense> getExpensesByUser(String login) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ?";
@@ -74,15 +75,17 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByType(Connection conn, String login, int typeID) {
+    public List<Expense> getExpensesByType(String login, int typeID) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ? AND expenses.type_id = ?";
@@ -93,15 +96,17 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByDate(Connection conn, String login, String date) {
+    public List<Expense> getExpensesByDate(String login, String date) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ? AND expenses.date = ?";
@@ -112,15 +117,17 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByLowerInterval(Connection conn, String login, String startDate) {
+    public List<Expense> getExpensesByLowerInterval(String login, String startDate) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ? AND expenses.date >= ?";
@@ -131,15 +138,17 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByUpperInterval(Connection conn, String login, String endDate) {
+    public List<Expense> getExpensesByUpperInterval(String login, String endDate) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ? AND expenses.date <= ?";
@@ -150,15 +159,17 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Override
-    public List<Expense> getExpensesByDateInterval(Connection conn, String login, String startDate, String endDate) {
+    public List<Expense> getExpensesByDateInterval(String login, String startDate, String endDate) {
         try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
             String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
                     "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
                     "WHERE user_expenses.user_login = ? AND (expenses.date BETWEEN ? AND ?)";
@@ -170,7 +181,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
             return result;
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
