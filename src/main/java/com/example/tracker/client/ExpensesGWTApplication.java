@@ -20,7 +20,6 @@ public class ExpensesGWTApplication implements EntryPoint {
     @Override
     public void onModuleLoad() {
 
-
         ExpenseWebService expenseWebService = GWT.create(ExpenseWebService.class);
         Button button = new Button("Get All Expenses");
         button.addClickHandler(new ClickHandler() {
@@ -77,6 +76,8 @@ public class ExpensesGWTApplication implements EntryPoint {
                         for (Expense expense : response) {
                             list.add(expense);
                         }
+                        RootPanel.get().clear();
+                        RootPanel.get().add(button);
                         RootPanel.get().add(table);
                     }
                 });
