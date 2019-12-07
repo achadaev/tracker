@@ -1,6 +1,8 @@
 package com.example.tracker.client;
 
 import com.example.tracker.client.services.ExpenseWebService;
+import com.example.tracker.client.view.EditExpenseView;
+import com.example.tracker.client.view.ExpenseView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
