@@ -7,6 +7,6 @@
         <g:TextBox ui:field="date"/>
         <g:TextBox ui:field="price"/>
         <g:FlexTable ui:field="table"/>
-        <g:Button ui:field="saveButton"/>
+        <g:Button ui:field="saveButton" text="Save"/>
     </g:HTMLPanel>
 </ui:UiBinder>

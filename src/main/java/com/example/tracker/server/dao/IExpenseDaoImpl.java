@@ -57,6 +57,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
             List<Expense> result = getResult(rs);
             return result;
         } catch (SQLException | ClassNotFoundException e) {
+            logger.info(e.getMessage());
             e.printStackTrace();
         }
         return null;

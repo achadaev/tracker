@@ -28,7 +28,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void bind() {
-/*
+        History.addValueChangeHandler(this);
+
         eventBus.addHandler(AddExpenseEvent.TYPE, new AddExpenseEventHandler() {
             @Override
             public void onAddExpense(AddExpenseEvent event) {
@@ -42,7 +43,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 doExpenseUpdated();
             }
         });
-*/
     }
 
     private void doAddNewExpense() {
