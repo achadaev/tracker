@@ -1,9 +1,6 @@
 package com.example.tracker.client;
 
-import com.example.tracker.client.event.AddExpenseEvent;
-import com.example.tracker.client.event.AddExpenseEventHandler;
-import com.example.tracker.client.event.ExpenseUpdatedEvent;
-import com.example.tracker.client.event.ExpenseUpdatedEventHandler;
+import com.example.tracker.client.event.*;
 import com.example.tracker.client.presenter.EditExpensePresenter;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.client.presenter.Presenter;
@@ -37,6 +34,13 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
         });
 
+        eventBus.addHandler(EditExpenseEvent.TYPE, new EditExpenseEventHandler() {
+            @Override
+            public void onEditExpense(EditExpenseEvent event) {
+                doEditExpense(event.getId());
+            }
+        });
+
         eventBus.addHandler(ExpenseUpdatedEvent.TYPE, new ExpenseUpdatedEventHandler() {
             @Override
             public void onExpenseUpdated(ExpenseUpdatedEvent event) {
@@ -47,6 +51,12 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doAddNewExpense() {
         History.newItem("add");
+    }
+
+    private void doEditExpense(int id) {
+        History.newItem("edit", false);
+        Presenter presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView(), id);
+        presenter.go(container);
     }
 
     private void doExpenseUpdated() {
@@ -78,6 +88,9 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter = new ExpensePresenter(expenseWebService, eventBus, new ExpenseView());
             }
             else if (token.equals("add")) {
+                presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
+            }
+            else if (token.equals("edit")) {
                 presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
             }
 

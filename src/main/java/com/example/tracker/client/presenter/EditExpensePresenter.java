@@ -90,6 +90,7 @@ public class EditExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, Expense response) {
                 eventBus.fireEvent(new ExpenseUpdatedEvent(response));
+                Window.alert("Success");
             }
         });
     }

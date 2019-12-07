@@ -60,7 +60,7 @@ public class ExpensePresenter implements Presenter {
                 expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
                     @Override
                     public void onFailure(Method method, Throwable exception) {
-                        Window.alert(exception.getLocalizedMessage());
+                        Window.alert(exception.getMessage());
                     }
 
                     @Override

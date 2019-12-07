@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 public interface ExpenseWebService extends RestService {
-
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -26,8 +25,10 @@ public interface ExpenseWebService extends RestService {
     void getExpensesByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
     
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     void addExpense(Expense expense, MethodCallback<Expense> callback);
 
     @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
     void updateExpense(Expense expense, MethodCallback<Expense> callback);
 }

@@ -209,7 +209,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public boolean addExpense(Expense expense) {
+    public Expense addExpense(Expense expense) {
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(url);
@@ -223,16 +223,16 @@ public class IExpenseDaoImpl implements IExpenseDao {
             prepSt.setString(4, expense.getDate());
             prepSt.setInt(5, expense.getPrice());
             prepSt.executeQuery();
-            return true;
+            return expense;
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
         //TODO get user.login and INSERT INTO user_expenses
     }
 
     @Override
-    public boolean updateExpense(Expense expense) {
+    public Expense updateExpense(Expense expense) {
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(url);
@@ -250,10 +250,10 @@ public class IExpenseDaoImpl implements IExpenseDao {
             prepSt.setInt(4, expense.getPrice());
             prepSt.setInt(5, expense.getId());
             prepSt.executeQuery();
-            return true;
+            return expense;
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 }
