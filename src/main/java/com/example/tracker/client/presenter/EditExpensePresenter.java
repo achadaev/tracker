@@ -60,8 +60,6 @@ public class EditExpensePresenter implements Presenter {
         });
     }
 
-
-
     public void bind() {
         this.display.getSaveButton().addClickHandler(new ClickHandler() {
             @Override

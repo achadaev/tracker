@@ -29,17 +29,20 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
 
     public EditExpenseView() {
         initWidget(ourUiBinder.createAndBindUi(this));
+        initTable();
     }
 
     private void initTable() {
-        table.setWidget(0, 0, new Label("Type ID"));
-        table.setWidget(0, 1, typeId);
-        table.setWidget(1, 0, new Label("Name"));
-        table.setWidget(1, 1, name);
-        table.setWidget(2, 0, new Label("Date"));
-        table.setWidget(2, 1, date);
-        table.setWidget(3, 0, new Label("Price"));
-        table.setWidget(3, 1, price);
+        table.setWidget(0, 0, new Label("ID"));
+        table.setWidget(0, 1, id);
+        table.setWidget(1, 0, new Label("Type ID"));
+        table.setWidget(1, 1, typeId);
+        table.setWidget(2, 0, new Label("Name"));
+        table.setWidget(2, 1, name);
+        table.setWidget(3, 0, new Label("Date"));
+        table.setWidget(3, 1, date);
+        table.setWidget(4, 0, new Label("Price"));
+        table.setWidget(4, 1, price);
         typeId.setFocus(true);
     }
 
