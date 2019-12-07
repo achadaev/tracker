@@ -2,14 +2,14 @@ package com.example.tracker.shared.model;
 
 public class Expense {
     private int id;
-    private int type_id;
+    private int typeId;
     private String name;
     private String date;
     private int price;
 
-    public Expense(int id, int type_id, String name, String date, int price) {
+    public Expense(int id, int typeId, String name, String date, int price) {
         this.id = id;
-        this.type_id = type_id;
+        this.typeId = typeId;
         this.name = name;
         this.date = date;
         this.price = price;
@@ -26,12 +26,12 @@ public class Expense {
         this.id = id;
     }
 
-    public int getType_id() {
-        return type_id;
+    public int getTypeId() {
+        return typeId;
     }
 
-    public void setType_id(int type_id) {
-        this.type_id = type_id;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public String getName() {

@@ -2,6 +2,7 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     <g:HTMLPanel>
         <g:Button ui:field="getAllExpensesButton" text="Get All Expenses"/>
+        <g:Button ui:field="addButton" text="Add"/>
         <g:FlexTable ui:field="expenseTable"/>
     </g:HTMLPanel>
 </ui:UiBinder>

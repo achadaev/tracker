@@ -33,7 +33,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
             while (rs.next()) {
                 Expense exp = new Expense();
                 exp.setId(rs.getInt("id"));
-                exp.setType_id(rs.getInt("type_id"));
+                exp.setTypeId(rs.getInt("type_id"));
                 exp.setName(rs.getString("name"));
                 exp.setDate(rs.getString("date"));
                 exp.setPrice(rs.getInt("price"));
@@ -74,6 +74,26 @@ public class IExpenseDaoImpl implements IExpenseDao {
             prepSt.setString(1, login);
             ResultSet rs = prepSt.executeQuery();
             List<Expense> result = getResult(rs);
+            return result;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Expense getExpenseById(int id) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
+            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                    "FROM expenses " +
+                    "WHERE expenses.id = ?";
+
+            PreparedStatement prepSt = conn.prepareStatement(query);
+            prepSt.setInt(1, id);
+            ResultSet rs = prepSt.executeQuery();
+            Expense result = getResult(rs).get(0); // 00000000000
             return result;
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -185,5 +205,54 @@ public class IExpenseDaoImpl implements IExpenseDao {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean addExpense(Expense expense) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
+            String query = "INSERT INTO expenses VALUES " +
+                    "(?, ?, ?, ?, ?)";
+
+            PreparedStatement prepSt = conn.prepareStatement(query);
+            prepSt.setInt(1, expense.getId());
+            prepSt.setInt(2, expense.getTypeId());
+            prepSt.setString(3, expense.getName());
+            prepSt.setString(4, expense.getDate());
+            prepSt.setInt(5, expense.getPrice());
+            prepSt.executeQuery();
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+        //TODO get user.login and INSERT INTO user_expenses
+    }
+
+    @Override
+    public boolean updateExpense(Expense expense) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection(url);
+            String query = "UPDATE expenses " +
+                    "SET type_id = ?, " +
+                        "name = ?, " +
+                        "date = ?, " +
+                        "price = ? " +
+                    "WHERE id = ?";
+
+            PreparedStatement prepSt = conn.prepareStatement(query);
+            prepSt.setInt(1, expense.getTypeId());
+            prepSt.setString(2, expense.getName());
+            prepSt.setString(3, expense.getDate());
+            prepSt.setInt(4, expense.getPrice());
+            prepSt.setInt(5, expense.getId());
+            prepSt.executeQuery();
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

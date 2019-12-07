@@ -5,6 +5,7 @@ import com.example.tracker.shared.model.Expense;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
@@ -18,21 +19,24 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
-public class MainPresenter implements Presenter {
+public class ExpensePresenter implements Presenter {
 
     private List<Expense> expenseList;
 
     public interface Display {
         HasClickHandlers getAllExpensesButton();
+        HasClickHandlers getAddButton();
         void setData(List<Expense> data);
         Widget asWidget();
     }
 
     private ExpenseWebService expenseWebService;
+    private HandlerManager eventBus;
     private Display display;
 
-    public MainPresenter(ExpenseWebService expenseWebService, Display view) {
+    public ExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display view) {
         this.expenseWebService = expenseWebService;
+        this.eventBus = eventBus;
         this.display = view;
     }
 
@@ -108,6 +112,13 @@ public class MainPresenter implements Presenter {
                         RootPanel.get().add(button);
                         RootPanel.get().add(table);
                     }*/
+            }
+        });
+
+        display.getAddButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Window.alert("Adding soon");
             }
         });
     }
