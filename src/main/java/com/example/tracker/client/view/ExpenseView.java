@@ -19,6 +19,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Button addButton;
     @UiField
+    Button profileButton;
+    @UiField
     FlexTable expenseTable;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
@@ -53,6 +55,11 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getAddButton() {
         return addButton;
+    }
+
+    @Override
+    public HasClickHandlers getProfileButton() {
+        return profileButton;
     }
 
     @Override

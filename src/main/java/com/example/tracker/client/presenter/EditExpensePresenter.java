@@ -17,11 +17,11 @@ import org.fusesource.restygwt.client.MethodCallback;
 public class EditExpensePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
-        HasValue<Integer> getId();
-        HasValue<Integer> getTypeId();
+        HasValue<String> getId();
+        HasValue<String> getTypeId();
         HasValue<String> getName();
         HasValue<String> getDate();
-        HasValue<Integer> getPrice();
+        HasValue<String> getPrice();
         Widget asWidget();
     }
 
@@ -38,7 +38,7 @@ public class EditExpensePresenter implements Presenter {
         bind();
     }
 
-    public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display, int id) {
+    /*public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display, int id) {
         this.expenseWebService = expenseWebService;
         this.eventBus = eventBus;
         this.display = display;
@@ -53,12 +53,13 @@ public class EditExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, Expense response) {
                 expense = response;
-                EditExpensePresenter.this.display.getTypeId().setValue(expense.getTypeId());
+                EditExpensePresenter.this.display.getTypeId().setValue(Integer.toString(expense.getTypeId()));
                 EditExpensePresenter.this.display.getName().setValue(expense.getName());
                 EditExpensePresenter.this.display.getDate().setValue(expense.getDate());
-                EditExpensePresenter.this.display.getPrice().setValue(expense.getPrice());            }
+                EditExpensePresenter.this.display.getPrice().setValue(Integer.toString(expense.getPrice()));
+            }
         });
-    }
+    }*/
 
     public void bind() {
         this.display.getSaveButton().addClickHandler(new ClickHandler() {
@@ -74,17 +75,26 @@ public class EditExpensePresenter implements Presenter {
         container.add(display.asWidget());
     }
 
+    private String stackTraceToString(Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     private void doSave() {
-        expense.setId(display.getId().getValue());
-        expense.setTypeId(display.getTypeId().getValue());
+        expense.setId(Integer.parseInt(display.getId().getValue()));
+        expense.setTypeId(Integer.parseInt(display.getTypeId().getValue()));
         expense.setName(display.getName().getValue());
         expense.setDate(display.getDate().getValue());
-        expense.setPrice(display.getPrice().getValue());
+        expense.setPrice(Integer.parseInt(display.getPrice().getValue()));
 
-        expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
+        expenseWebService.addExpense(expense, new MethodCallback<Expense>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error updating expense");
+                Window.alert(stackTraceToString(exception));
             }
 
             @Override

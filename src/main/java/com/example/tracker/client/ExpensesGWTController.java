@@ -4,23 +4,48 @@ import com.example.tracker.client.event.*;
 import com.example.tracker.client.presenter.EditExpensePresenter;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.client.presenter.Presenter;
+import com.example.tracker.client.presenter.ProfilePresenter;
 import com.example.tracker.client.services.ExpenseWebService;
+import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.EditExpenseView;
 import com.example.tracker.client.view.ExpenseView;
+import com.example.tracker.client.view.ProfileView;
+import com.example.tracker.shared.model.User;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.HasWidgets;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.MethodCallback;
 
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
+
+    private static User user;
+
     private HandlerManager eventBus;
     private ExpenseWebService expenseWebService;
+    private UserWebService userWebService;
     private HasWidgets container;
 
-    public ExpensesGWTController(ExpenseWebService expenseWebService, HandlerManager eventBus) {
+    public ExpensesGWTController(ExpenseWebService expenseWebService, UserWebService userWebService, HandlerManager eventBus) {
         this.eventBus = eventBus;
+        this.userWebService = userWebService;
         this.expenseWebService = expenseWebService;
+
+        userWebService.getCurrentUser(new MethodCallback<User>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                GWT.log(exception.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Method method, User response) {
+                user = response;
+            }
+        });
+
         bind();
     }
 
@@ -34,17 +59,26 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
         });
 
+/*
         eventBus.addHandler(EditExpenseEvent.TYPE, new EditExpenseEventHandler() {
             @Override
             public void onEditExpense(EditExpenseEvent event) {
                 doEditExpense(event.getId());
             }
         });
+*/
 
         eventBus.addHandler(ExpenseUpdatedEvent.TYPE, new ExpenseUpdatedEventHandler() {
             @Override
             public void onExpenseUpdated(ExpenseUpdatedEvent event) {
                 doExpenseUpdated();
+            }
+        });
+
+        eventBus.addHandler(ShowProfileEvent.TYPE, new ShowProfileEventHandler() {
+            @Override
+            public void onShowProfileEvent(ShowProfileEvent event) {
+                doShowProfile();
             }
         });
     }
@@ -53,14 +87,18 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem("add");
     }
 
-    private void doEditExpense(int id) {
+    /*private void doEditExpense(int id) {
         History.newItem("edit", false);
         Presenter presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView(), id);
         presenter.go(container);
-    }
+    }*/
 
     private void doExpenseUpdated() {
         History.newItem("list");
+    }
+
+    private void doShowProfile() {
+        History.newItem("profile");
     }
 
     public void go(HasWidgets container) {
@@ -71,11 +109,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         } else {
             History.fireCurrentHistoryState();
         }
-        /*Presenter presenter = new MainPresenter(expenseWebService, new MainView());
-
-        if (presenter != null) {
-            presenter.go(container);
-        }*/
     }
 
     public void onValueChange(ValueChangeEvent<String> event) {
@@ -90,13 +123,20 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             else if (token.equals("add")) {
                 presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
             }
-            else if (token.equals("edit")) {
-                presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
+            else if (token.equals("profile")) {
+                presenter = new ProfilePresenter(userWebService, new ProfileView());
             }
+            /*else if (token.equals("edit")) {
+                presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
+            }*/
 
             if (presenter != null) {
                 presenter.go(container);
             }
         }
+    }
+
+    public static User getUser() {
+        return user;
     }
 }

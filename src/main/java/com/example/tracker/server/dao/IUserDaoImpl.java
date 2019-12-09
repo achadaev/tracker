@@ -1,8 +1,11 @@
 package com.example.tracker.server.dao;
 
+import com.example.tracker.server.service.UserDetailsServiceImpl;
 import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -10,6 +13,12 @@ import java.sql.*;
 @Component
 public class IUserDaoImpl implements IUserDao {
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
+
+    @Override
+    public String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
+    }
 
     @Override
     public User getUserByName(String name) {

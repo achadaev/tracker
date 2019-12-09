@@ -49,12 +49,12 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     //TODO HasValue<integer>
 
     @Override
-    public HasValue getId() {
+    public HasValue<String> getId() {
         return id;
     }
 
     @Override
-    public HasValue getTypeId() {
+    public HasValue<String> getTypeId() {
         return typeId;
     }
 
@@ -69,7 +69,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     @Override
-    public HasValue getPrice() {
+    public HasValue<String> getPrice() {
         return price;
     }
 

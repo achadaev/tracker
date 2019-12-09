@@ -23,9 +23,11 @@ public class ExpensesController {
     }
 
     @GetMapping("/expenses")
-    List<Expense> getExpenses() {
-         return iExpenseDao.getAllExpenses();
+    List<Expense> getAllExpenses() {
+        return iExpenseDao.getAllExpenses();
     }
+
+    //TODO get current user and print result for him
 
     @GetMapping("{login}/expenses")
     List<Expense> getExpensesByUser(@PathVariable String login) {
@@ -63,7 +65,6 @@ public class ExpensesController {
     Expense addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense);
     }
-
 
     @PutMapping("upd")
      Expense updateExpense(Expense expense) {

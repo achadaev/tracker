@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.AddExpenseEvent;
+import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.client.view.ExpenseView;
 import com.example.tracker.shared.model.Expense;
@@ -30,6 +31,7 @@ public class ExpensePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getAllExpensesButton();
         HasClickHandlers getAddButton();
+        HasClickHandlers getProfileButton();
         void setData(List<Expense> data);
         Widget asWidget();
     }
@@ -42,15 +44,6 @@ public class ExpensePresenter implements Presenter {
         this.expenseWebService = expenseWebService;
         this.eventBus = eventBus;
         this.display = view;
-    }
-
-    private String stackTraceToString(Throwable e) {
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element : e.getStackTrace()) {
-            sb.append(element.toString());
-            sb.append("\n");
-        }
-        return sb.toString();
     }
 
     public void bind() {
@@ -76,6 +69,13 @@ public class ExpensePresenter implements Presenter {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 eventBus.fireEvent(new AddExpenseEvent());
+            }
+        });
+
+        display.getProfileButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                eventBus.fireEvent(new ShowProfileEvent());
             }
         });
     }
