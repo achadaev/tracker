@@ -39,6 +39,6 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
     public ProfileView() {
         initWidget(ourUiBinder.createAndBindUi(this));
         table.setWidget(0, 0, new Label("Username: "));
-        table.setWidget(0, 1, new Label(ExpensesGWTController.getUser().getLogin()));
+        //table.setWidget(0, 1, new Label(ProfilePresenter.getUsername()));
     }
 }

@@ -13,5 +13,5 @@ public interface UserWebService extends RestService {
     @GET
     @Path("/user")
     @Produces(MediaType.APPLICATION_JSON)
-    void getCurrentUser(MethodCallback<User> callback);
+    void getUser(MethodCallback<User> callback);
 }

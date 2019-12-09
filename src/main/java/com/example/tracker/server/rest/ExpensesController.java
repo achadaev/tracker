@@ -3,6 +3,7 @@ package com.example.tracker.server.rest;
 import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,6 @@ public class ExpensesController {
     List<Expense> getAllExpenses() {
         return iExpenseDao.getAllExpenses();
     }
-
-    //TODO get current user and print result for him
 
     @GetMapping("{login}/expenses")
     List<Expense> getExpensesByUser(@PathVariable String login) {
@@ -61,13 +60,18 @@ public class ExpensesController {
          return iExpenseDao.getExpensesByDateInterval(login, start, end);
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     Expense addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense);
     }
 
-    @PutMapping("upd")
+    @PutMapping("/upd")
      Expense updateExpense(Expense expense) {
          return iExpenseDao.updateExpense(expense);
+    }
+
+    @GetMapping("/user")
+    User getUser() {
+        return userService.getUserByName(userService.getCurrentUsername());
     }
 }

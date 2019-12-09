@@ -16,13 +16,12 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
-
-    private static User user;
 
     private HandlerManager eventBus;
     private ExpenseWebService expenseWebService;
@@ -33,18 +32,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         this.eventBus = eventBus;
         this.userWebService = userWebService;
         this.expenseWebService = expenseWebService;
-
-        userWebService.getCurrentUser(new MethodCallback<User>() {
-            @Override
-            public void onFailure(Method method, Throwable exception) {
-                GWT.log(exception.getMessage());
-            }
-
-            @Override
-            public void onSuccess(Method method, User response) {
-                user = response;
-            }
-        });
 
         bind();
     }
@@ -134,9 +121,5 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter.go(container);
             }
         }
-    }
-
-    public static User getUser() {
-        return user;
     }
 }
