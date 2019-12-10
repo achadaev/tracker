@@ -12,7 +12,7 @@ import java.sql.*;
 
 @Component
 public class IUserDaoImpl implements IUserDao {
-    final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
+    final static Logger logger = LoggerFactory.getLogger(IUserDaoImpl.class);
 
     @Override
     public String getCurrentUsername() {

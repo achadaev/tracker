@@ -2,12 +2,8 @@ body {
     padding: 10px;
 }
 
-.FlexTable-OddRow {
-    background-color: #FFFFF0;
-}
-
-.FlexTable-EvenRow {
-    /*background-color:  #cccccc;*/
+.evenRow {
+    background-color: rgba(7, 110, 184, 0.11);
 }
 
 .expenseTableHeader {
@@ -19,7 +15,7 @@ body {
 .expenseTable {
     border: 1px solid silver;
     padding: 2px;
-    margin-bottom:6px;
+    margin-top:10px;
 }
 
 .expenseTablePriceColumn {

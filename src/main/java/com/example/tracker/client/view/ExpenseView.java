@@ -27,10 +27,12 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
     public ExpenseView() {
         initWidget(ourUiBinder.createAndBindUi(this));
+        expenseTable.setVisible(false);
     }
 
     @Override
     public void setData(List<Expense> data) {
+        expenseTable.setVisible(true);
         expenseTable.removeAllRows();
         expenseTable.setText(0, 0, "ID");
         expenseTable.setText(0, 1, "Type ID");
@@ -49,6 +51,9 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.setText(i + 1, 3, data.get(i).getDate());
             expenseTable.setText(i + 1, 4, Integer.toString(data.get(i).getPrice()));
 
+            if (i % 2 == 0) {
+                expenseTable.getRowFormatter().addStyleName(i, "evenRow");
+            }
             expenseTable.getCellFormatter().addStyleName(i + 1, 4, "expenseTablePriceColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 3, "expenseTableDateColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 2, "expenseTableNameColumn");
