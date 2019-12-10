@@ -4,6 +4,6 @@
         <g:Button ui:field="getAllExpensesButton" text="Get All Expenses"/>
         <g:Button ui:field="addButton" text="Add"/>
         <g:Button ui:field="profileButton" text="Profile"/>
-        <g:FlexTable ui:field="expenseTable"/>
+        <g:FlexTable ui:field="expenseTable" addStyleNames="expenseTable"/>
     </g:HTMLPanel>
 </ui:UiBinder>

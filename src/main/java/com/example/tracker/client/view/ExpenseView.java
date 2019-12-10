@@ -37,6 +37,10 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         expenseTable.setText(0, 2, "Name");
         expenseTable.setText(0, 3, "Date");
         expenseTable.setText(0, 4, "Price");
+        expenseTable.getRowFormatter().addStyleName(0, "expenseTableHeader");
+        expenseTable.getCellFormatter().addStyleName(0, 4, "expenseTablePriceColumn");
+        expenseTable.getCellFormatter().addStyleName(0, 3, "expenseTableDateColumn");
+        expenseTable.getCellFormatter().addStyleName(0, 2, "expenseTableNameColumn");
 
         for (int i = 0; i < data.size(); i++) {
             expenseTable.setText(i + 1, 0, Integer.toString(data.get(i).getId()));
@@ -44,6 +48,18 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.setText(i + 1, 2, data.get(i).getName());
             expenseTable.setText(i + 1, 3, data.get(i).getDate());
             expenseTable.setText(i + 1, 4, Integer.toString(data.get(i).getPrice()));
+
+            expenseTable.getCellFormatter().addStyleName(i + 1, 4, "expenseTablePriceColumn");
+            expenseTable.getCellFormatter().addStyleName(i + 1, 3, "expenseTableDateColumn");
+            expenseTable.getCellFormatter().addStyleName(i + 1, 2, "expenseTableNameColumn");
+
+/*
+            if (i % 2 == 0) {
+                expenseTable.getRowFormatter().setStyleName(i, "FlexTable-EvenRow");
+            } else {
+                expenseTable.getRowFormatter().setStyleName(i, "FlexTable-OddRow");
+            }
+*/
         }
     }
 

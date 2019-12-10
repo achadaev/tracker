@@ -1,0 +1,36 @@
+body {
+    padding: 10px;
+}
+
+.FlexTable-OddRow {
+    background-color: #FFFFF0;
+}
+
+.FlexTable-EvenRow {
+    /*background-color:  #cccccc;*/
+}
+
+.expenseTableHeader {
+    background-color: #076eb8;
+    color: white;
+    font-weight: bold;
+}
+
+.expenseTable {
+    border: 1px solid silver;
+    padding: 2px;
+    margin-bottom:6px;
+}
+
+.expenseTablePriceColumn {
+    text-align: right;
+    width: 4em;
+}
+
+.expenseTableDateColumn {
+    width: 9em;
+}
+
+.expenseTableNameColumn {
+    width: 7em;
+}
