@@ -18,47 +18,54 @@ public class ProfilePresenter implements Presenter {
     public interface Display {
         PasswordTextBox getPasswordBox();
         HasClickHandlers getChangePassButton();
+        void updateData(User user);
+        HasClickHandlers getRefreshButton();
         Widget asWidget();
     }
 
-    private static User user;
+    private User user;
     private Display display;
     private UserWebService userWebService;
 
     public ProfilePresenter(UserWebService userWebService, Display display) {
         this.display = display;
         this.userWebService = userWebService;
-
-        userWebService.getUser(new MethodCallback<User>() {
-            @Override
-            public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error getting user");
-            }
-
-            @Override
-            public void onSuccess(Method method, User response) {
-                user = response;
-            }
-        });
+        this.user = ExpensesGWTController.getUser();
+        bind();
     }
 
     public void bind() {
+        display.updateData(user);
+
         display.getChangePassButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 //TODO realization
             }
         });
+
+        display.getRefreshButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                userWebService.getUser(new MethodCallback<User>() {
+                    @Override
+                    public void onFailure(Method method, Throwable exception) {
+                        Window.alert("Error updating user information");
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, User response) {
+                        user = response;
+                        display.updateData(user);
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void go(HasWidgets container) {
-        bind();
         container.clear();
         container.add(display.asWidget());
-    }
-
-    public static String getUsername() {
-        return user.getLogin();
     }
 }

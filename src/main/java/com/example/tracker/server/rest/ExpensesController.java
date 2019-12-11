@@ -60,18 +60,23 @@ public class ExpensesController {
          return iExpenseDao.getExpensesByDateInterval(login, start, end);
     }
 
-    @PostMapping("/add")
-    Expense addExpense(Expense expense) {
+    @PutMapping("/expenses/add")
+    Boolean addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense);
     }
 
     @PutMapping("/upd")
-     Expense updateExpense(Expense expense) {
+    Boolean updateExpense(Expense expense) {
          return iExpenseDao.updateExpense(expense);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/expenses/user")
     User getUser() {
         return userService.getUserByName(userService.getCurrentUsername());
+    }
+
+    @DeleteMapping("expenses/delete")
+    List<Expense> deleteExpenses(List<Integer> ids) {
+        return iExpenseDao.deleteExpenses(ids);
     }
 }

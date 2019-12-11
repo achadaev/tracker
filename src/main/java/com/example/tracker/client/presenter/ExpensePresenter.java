@@ -32,6 +32,8 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getAllExpensesButton();
         HasClickHandlers getAddButton();
         HasClickHandlers getProfileButton();
+        HasClickHandlers getDeleteButton();
+        List<Integer> getSelectedRows();
         void setData(List<Expense> data);
         Widget asWidget();
     }
@@ -76,6 +78,35 @@ public class ExpensePresenter implements Presenter {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 eventBus.fireEvent(new ShowProfileEvent());
+            }
+        });
+
+        display.getDeleteButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                deleteSelectedRows();
+            }
+        });
+    }
+
+    private void deleteSelectedRows() {
+        List<Integer> selectedRows = display.getSelectedRows();
+        List<Integer> ids = new ArrayList<>();
+
+        for (int i = 0; i < selectedRows.size(); i++) {
+            ids.add(expenseList.get(selectedRows.get(i)).getId());
+        }
+
+        expenseWebService.deleteExpenses(ids, new MethodCallback<List<Expense>>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                Window.alert("Error deleting expenses");
+            }
+
+            @Override
+            public void onSuccess(Method method, List<Expense> response) {
+                expenseList = response;
+                display.setData(expenseList);
             }
         });
     }

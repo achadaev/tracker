@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseView extends Composite implements ExpensePresenter.Display {
@@ -20,6 +21,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Button addButton;
     @UiField
     Button profileButton;
+    @UiField
+    Button deleteButton;
     @UiField
     FlexTable expenseTable;
 
@@ -39,6 +42,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         expenseTable.setText(0, 2, "Name");
         expenseTable.setText(0, 3, "Date");
         expenseTable.setText(0, 4, "Price");
+        expenseTable.setText(0, 5, "");
         expenseTable.getRowFormatter().addStyleName(0, "expenseTableHeader");
         expenseTable.getCellFormatter().addStyleName(0, 4, "expenseTablePriceColumn");
         expenseTable.getCellFormatter().addStyleName(0, 3, "expenseTableDateColumn");
@@ -50,6 +54,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.setText(i + 1, 2, data.get(i).getName());
             expenseTable.setText(i + 1, 3, data.get(i).getDate());
             expenseTable.setText(i + 1, 4, Integer.toString(data.get(i).getPrice()));
+            expenseTable.setWidget(i + 1, 5, new CheckBox());
+
 
             if (i % 2 == 0) {
                 expenseTable.getRowFormatter().addStyleName(i, "evenRow");
@@ -57,14 +63,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.getCellFormatter().addStyleName(i + 1, 4, "expenseTablePriceColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 3, "expenseTableDateColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 2, "expenseTableNameColumn");
-
-/*
-            if (i % 2 == 0) {
-                expenseTable.getRowFormatter().setStyleName(i, "FlexTable-EvenRow");
-            } else {
-                expenseTable.getRowFormatter().setStyleName(i, "FlexTable-OddRow");
-            }
-*/
         }
     }
 
@@ -81,6 +79,25 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getProfileButton() {
         return profileButton;
+    }
+
+    @Override
+    public HasClickHandlers getDeleteButton() {
+        return deleteButton;
+    }
+
+    @Override
+    public List<Integer> getSelectedRows() {
+        List<Integer> selectedRows = new ArrayList<>();
+
+        for (int i = 1; i < expenseTable.getRowCount(); i++) {
+            CheckBox checkBox = (CheckBox) expenseTable.getWidget(i, 5);
+            if (checkBox.getValue()) {
+                selectedRows.add(i);
+            }
+        }
+
+        return selectedRows;
     }
 
     @Override

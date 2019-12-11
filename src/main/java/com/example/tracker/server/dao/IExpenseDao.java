@@ -22,7 +22,9 @@ public interface IExpenseDao {
 
     List<Expense> getExpensesByDateInterval(String login, String startDate, String endDate);
 
-    Expense addExpense(Expense expense);
+    Boolean addExpense(Expense expense);
 
-    Expense updateExpense(Expense expense);
+    Boolean updateExpense(Expense expense);
+
+    List<Expense> deleteExpenses(List<Integer> ids);
 }

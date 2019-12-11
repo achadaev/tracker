@@ -23,6 +23,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
 
+    private static User user;
+
     private HandlerManager eventBus;
     private ExpenseWebService expenseWebService;
     private UserWebService userWebService;
@@ -32,6 +34,18 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         this.eventBus = eventBus;
         this.userWebService = userWebService;
         this.expenseWebService = expenseWebService;
+
+        userWebService.getUser(new MethodCallback<User>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                Window.alert("Error getting user");
+            }
+
+            @Override
+            public void onSuccess(Method method, User response) {
+                user = response;
+            }
+        });
 
         bind();
     }
@@ -121,5 +135,9 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter.go(container);
             }
         }
+    }
+
+    public static User getUser() {
+        return user;
     }
 }

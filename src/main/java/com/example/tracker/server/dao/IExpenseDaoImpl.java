@@ -1,259 +1,198 @@
 package com.example.tracker.server.dao;
 
+import com.example.tracker.server.dao.mapper.ExpenseMapper;
 import com.example.tracker.shared.model.Expense;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class IExpenseDaoImpl implements IExpenseDao {
 
-    public SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
 
+/*
     private String dbFile = "C:\\Projects\\tracker\\src\\main\\resources\\tracker.db";
 
     private String url = "jdbc:sqlite:" + dbFile;
-
-    public Connection conn;
+*/
 
     public IExpenseDaoImpl() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
     }
 
-    private List<Expense> getResult(ResultSet rs) {
-        List<Expense> result = new ArrayList<>();
-        try {
-            while (rs.next()) {
-                Expense exp = new Expense();
-                exp.setId(rs.getInt("id"));
-                exp.setTypeId(rs.getInt("type_id"));
-                exp.setName(rs.getString("name"));
-                exp.setDate(rs.getString("date"));
-                exp.setPrice(rs.getInt("price"));
-                result.add(exp);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     @Override
     public List<Expense> getAllExpenses() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            Statement st = conn.createStatement();
-            st.execute("SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses");
-            ResultSet rs = st.getResultSet();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            logger.info(e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
+        return jdbcTemplate.query("SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses", new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getExpensesByUser(String login) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ?";
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
     public Expense getExpenseById(int id) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses " +
-                    "WHERE expenses.id = ?";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setInt(1, id);
-            ResultSet rs = prepSt.executeQuery();
-            Expense result = getResult(rs).get(0); // 00000000000
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses " +
+                "WHERE expenses.id = ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setInt(1, id);
+            }
+        }, new ExpenseMapper()).get(0);
     }
 
     @Override
     public List<Expense> getExpensesByType(String login, int typeID) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ? AND expenses.type_id = ?";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            prepSt.setInt(2, typeID);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ? AND expenses.type_id = ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+                preparedStatement.setInt(2, typeID);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getExpensesByDate(String login, String date) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ? AND expenses.date = ?";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            prepSt.setString(2, date);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ? AND expenses.date = ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+                preparedStatement.setString(2, date);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getExpensesByLowerInterval(String login, String startDate) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ? AND expenses.date >= ?";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            prepSt.setString(2, startDate);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ? AND expenses.date >= ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+                preparedStatement.setString(2, startDate);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getExpensesByUpperInterval(String login, String endDate) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ? AND expenses.date <= ?";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            prepSt.setString(2, endDate);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ? AND expenses.date <= ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+                preparedStatement.setString(2, endDate);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getExpensesByDateInterval(String login, String startDate, String endDate) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
-                    "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
-                    "WHERE user_expenses.user_login = ? AND (expenses.date BETWEEN ? AND ?)";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setString(1, login);
-            prepSt.setString(2, startDate);
-            prepSt.setString(3, endDate);
-            ResultSet rs = prepSt.executeQuery();
-            List<Expense> result = getResult(rs);
-            return result;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        String query = "SELECT expenses.id, expenses.type_id, expenses.name, expenses.date, expenses.price " +
+                "FROM expenses JOIN user_expenses ON expenses.id = user_expenses.expense_id " +
+                "WHERE user_expenses.user_login = ? AND (expenses.date BETWEEN ? AND ?)";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setString(1, login);
+                preparedStatement.setString(2, startDate);
+                preparedStatement.setString(3, endDate);
+            }
+        }, new ExpenseMapper());
     }
 
     @Override
-    public Expense addExpense(Expense expense) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "INSERT INTO expenses VALUES " +
-                    "(?, ?, ?, ?, ?)";
-
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setInt(1, expense.getId());
-            prepSt.setInt(2, expense.getTypeId());
-            prepSt.setString(3, expense.getName());
-            prepSt.setString(4, expense.getDate());
-            prepSt.setInt(5, expense.getPrice());
-            prepSt.executeQuery();
-            return expense;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Boolean addExpense(Expense expense) {
+        String query = "INSERT INTO expenses VALUES " +
+                "(?, ?, ?, ?, ?)";
+        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                preparedStatement.setInt(1, expense.getId());
+                preparedStatement.setInt(2, expense.getTypeId());
+                preparedStatement.setString(3, expense.getName());
+                preparedStatement.setString(4, expense.getDate());
+                preparedStatement.setInt(5, expense.getPrice());
+                return preparedStatement.execute();
+            }
+        });
         //TODO get user.login and INSERT INTO user_expenses
     }
 
     @Override
-    public Expense updateExpense(Expense expense) {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection(url);
-            String query = "UPDATE expenses " +
-                    "SET type_id = ?, " +
-                        "name = ?, " +
-                        "date = ?, " +
-                        "price = ? " +
-                    "WHERE id = ?";
+    public Boolean updateExpense(Expense expense) {
+        String query = "UPDATE expenses " +
+                "SET type_id = ?, " +
+                "name = ?, " +
+                "date = ?, " +
+                "price = ? " +
+                "WHERE id = ?";
+        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                preparedStatement.setInt(1, expense.getTypeId());
+                preparedStatement.setString(2, expense.getName());
+                preparedStatement.setString(3, expense.getDate());
+                preparedStatement.setInt(4, expense.getPrice());
+                preparedStatement.setInt(5, expense.getId());
+                return preparedStatement.execute();
+            }
+        });
+    }
 
-            PreparedStatement prepSt = conn.prepareStatement(query);
-            prepSt.setInt(1, expense.getTypeId());
-            prepSt.setString(2, expense.getName());
-            prepSt.setString(3, expense.getDate());
-            prepSt.setInt(4, expense.getPrice());
-            prepSt.setInt(5, expense.getId());
-            prepSt.executeQuery();
-            return expense;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+    private Boolean deleteExpense(int id) {
+        String query = "DELETE FROM expenses " +
+                "WHERE id = ?";
+        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                preparedStatement.setInt(1, id);
+                return preparedStatement.execute();
+            }
+        });
+        //TODO delete data from user_expenses
+    }
+
+    @Override
+    public List<Expense> deleteExpenses(List<Integer> ids) {
+        for (int i = 0; i < ids.size(); i++) {
+            deleteExpense(ids.get(i));
         }
-        return null;
+
+        return getAllExpenses();
     }
 }

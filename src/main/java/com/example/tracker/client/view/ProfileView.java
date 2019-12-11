@@ -2,6 +2,7 @@ package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.ProfilePresenter;
+import com.example.tracker.shared.model.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,6 +15,10 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
 
     @UiField
     FlexTable table;
+    @UiField
+    Button refreshButton;
+    @UiField
+    FlowPanel changePassPanel;
     @UiField
     PasswordTextBox passwordTextBox;
     @UiField
@@ -34,11 +39,29 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
         return this;
     }
 
+    @Override
+    public void updateData(User user) {
+        setUsername(user.getLogin());
+    }
+
+    @Override
+    public HasClickHandlers getRefreshButton() {
+        return refreshButton;
+    }
+
+    private void setUsername(String username) {
+        table.setText(0, 0, "Username: ");
+        if (!"".equals(username) && username != null) {
+            table.setText(0, 1, username);
+        } else {
+            table.setText(0, 1, "undefined");
+        }
+    }
+
     private static ProfileViewUiBinder ourUiBinder = GWT.create(ProfileViewUiBinder.class);
 
     public ProfileView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        table.setWidget(0, 0, new Label("Username: "));
-        //table.setWidget(0, 1, new Label(ProfilePresenter.getUsername()));
+        changePassPanel.addStyleName("changePassPanel");
     }
 }

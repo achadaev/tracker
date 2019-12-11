@@ -24,12 +24,18 @@ public interface ExpenseWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void getExpensesByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
     
-    @POST
+    @PUT
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     void addExpense(Expense expense, MethodCallback<Expense> callback);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     void updateExpense(Expense expense, MethodCallback<Expense> callback);
+
+    @DELETE
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void deleteExpenses(List<Integer> ids, MethodCallback<List<Expense>> callback);
 }
