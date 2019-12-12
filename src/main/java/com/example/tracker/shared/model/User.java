@@ -1,9 +1,18 @@
 package com.example.tracker.shared.model;
 
 public class User {
+    private int id;
     private String login;
     private String password;
     private String regDate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getLogin() { return login; }
 
@@ -20,7 +29,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "login='" + login + '\'' +
+                "id=" + id +
+                ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", regDate='" + regDate + '\'' +
                 '}';

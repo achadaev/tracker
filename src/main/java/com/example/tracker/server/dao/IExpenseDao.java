@@ -8,19 +8,17 @@ public interface IExpenseDao {
 
     List<Expense> getAllExpenses();
 
-    List<Expense> getExpensesByUser(String login);
+    List<Expense> getExpensesByUser(int id);
 
     Expense getExpenseById(int id);
 
-    List<Expense> getExpensesByType(String login, int typeID);
+    List<Expense> getExpensesByDate(int userId, String date);
 
-    List<Expense> getExpensesByDate(String login, String date);
+    List<Expense> getExpensesByLowerInterval(int userId, String startDate);
 
-    List<Expense> getExpensesByLowerInterval(String login, String startDate);
+    List<Expense> getExpensesByUpperInterval(int userId, String endDate);
 
-    List<Expense> getExpensesByUpperInterval(String login, String endDate);
-
-    List<Expense> getExpensesByDateInterval(String login, String startDate, String endDate);
+    List<Expense> getExpensesByDateInterval(int userId, String startDate, String endDate);
 
     Boolean addExpense(Expense expense);
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/")
 public class ExpensesController {
 
     @Autowired
@@ -18,46 +19,36 @@ public class ExpensesController {
     @Autowired
     IUserDao userService;
 
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-
     @GetMapping("/expenses")
     List<Expense> getAllExpenses() {
         return iExpenseDao.getAllExpenses();
     }
 
     @GetMapping("{login}/expenses")
-    List<Expense> getExpensesByUser(@PathVariable String login) {
-        return iExpenseDao.getExpensesByUser(login);
-    }
-
-    @GetMapping("{login}/expenses/typeID={typeID}")
-     List<Expense> getExpensesByType(@PathVariable String login, @PathVariable int typeID) {
-         return iExpenseDao.getExpensesByType(login, typeID);
+    List<Expense> getExpensesByUser(@PathVariable int userId) {
+        return iExpenseDao.getExpensesByUser(userId);
     }
 
     @GetMapping("{login}/expenses/date={date}")
-     List<Expense> getExpensesByDate(@PathVariable String login, @PathVariable String date) {
-         return iExpenseDao.getExpensesByDate(login, date);
+     List<Expense> getExpensesByDate(@PathVariable int userId, @PathVariable String date) {
+         return iExpenseDao.getExpensesByDate(userId, date);
     }
 
     @GetMapping("{login}/expenses/ld={start}")
-    List<Expense> getExpensesByLowerInterval(@PathVariable String login, @PathVariable String start) {
-        return iExpenseDao.getExpensesByLowerInterval(login, start);
+    List<Expense> getExpensesByLowerInterval(@PathVariable int userId, @PathVariable String start) {
+        return iExpenseDao.getExpensesByLowerInterval(userId, start);
     }
 
     @GetMapping("{login}/expenses/ud={end}")
-    List<Expense> getExpensesByUpperInterval(@PathVariable String login, @PathVariable String end) {
-        return iExpenseDao.getExpensesByUpperInterval(login, end);
+    List<Expense> getExpensesByUpperInterval(@PathVariable int userId, @PathVariable String end) {
+        return iExpenseDao.getExpensesByUpperInterval(userId, end);
     }
 
     @GetMapping("{login}/expenses/ld={start}/ud={end}")
-    List<Expense> getExpensesByDateInterval(@PathVariable String login,
+    List<Expense> getExpensesByDateInterval(@PathVariable int userId,
                                              @PathVariable String start,
                                              @PathVariable String end) {
-         return iExpenseDao.getExpensesByDateInterval(login, start, end);
+         return iExpenseDao.getExpensesByDateInterval(userId, start, end);
     }
 
     @PutMapping("/expenses/add")
@@ -65,8 +56,8 @@ public class ExpensesController {
         return iExpenseDao.addExpense(expense);
     }
 
-    @PutMapping("/upd")
-    Boolean updateExpense(Expense expense) {
+    @PostMapping(path = "/upd", consumes = "application/json", produces = "application/json")
+    Boolean updateExpense(@RequestBody Expense expense) {
          return iExpenseDao.updateExpense(expense);
     }
 

@@ -24,7 +24,7 @@ public interface ExpenseWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void getExpensesByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
     
-    @PUT
+    @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
