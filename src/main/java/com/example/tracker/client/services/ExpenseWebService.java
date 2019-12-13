@@ -20,9 +20,9 @@ public interface ExpenseWebService extends RestService {
     void getExpenseById(@PathParam("id") int id, MethodCallback<Expense> callback);
 
     @GET
-    @Path("/{login}")
+    @Path("/user")
     @Produces(MediaType.APPLICATION_JSON)
-    void getExpensesByUser(@PathParam("login") String login, MethodCallback<List<Expense>> callback);
+    void getUsersExpenses(MethodCallback<List<Expense>> callback);
     
     @POST
     @Path("/add")

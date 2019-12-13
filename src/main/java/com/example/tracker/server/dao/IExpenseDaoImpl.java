@@ -1,7 +1,9 @@
 package com.example.tracker.server.dao;
 
 import com.example.tracker.server.dao.mapper.ExpenseMapper;
+import com.example.tracker.server.service.ExpensesService;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class IExpenseDaoImpl implements IExpenseDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    ExpensesService expensesService;
+
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
 
     public IExpenseDaoImpl() throws ClassNotFoundException {
@@ -33,14 +38,15 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public List<Expense> getExpensesByUser(int id) {
+    public List<Expense> getUsersExpenses() {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ?";
+        User user = expensesService.getCurrentUser();
         return jdbcTemplate.query(query, new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, id);
+                preparedStatement.setInt(1, user.getId());
             }
         }, new ExpenseMapper());
     }
@@ -119,7 +125,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
     public Boolean addExpense(Expense expense) {
         String query = "INSERT INTO expense (type_id, name, date, price) VALUES " +
                 "(?, ?, ?, ?)";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
             @Override
             public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
                 preparedStatement.setInt(1, expense.getTypeId());
@@ -129,7 +135,21 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 return preparedStatement.execute();
             }
         });
+        return addUserExpense(expense.getId(), expensesService.getCurrentUser().getId());
         //TODO get user.login and INSERT INTO user_expenses
+    }
+
+    private Boolean addUserExpense(int expenseId, int userId) {
+        String query = "INSERT INTO user_expense (expense_id, user_id) VALUES " +
+                "(?, ?)";
+        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                preparedStatement.setInt(1, expenseId);
+                preparedStatement.setInt(2, userId);
+                return preparedStatement.execute();
+            }
+        });
     }
 
     @Override

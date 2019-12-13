@@ -28,14 +28,14 @@ public class ExpensesController {
         return iExpenseDao.getAllExpenses();
     }
 
-    @GetMapping("{login}/expenses")
-    List<Expense> getExpensesByUser(@PathVariable int userId) {
-        return iExpenseDao.getExpensesByUser(userId);
+    @GetMapping("/expenses/user")
+    List<Expense> getUsersExpenses() {
+        return iExpenseDao.getUsersExpenses();
     }
 
     @GetMapping("{login}/expenses/date={date}")
      List<Expense> getExpensesByDate(@PathVariable int userId, @PathVariable String date) {
-         return iExpenseDao.getExpensesByDate(userId, date);
+        return iExpenseDao.getExpensesByDate(userId, date);
     }
 
     @GetMapping("{login}/expenses/ld={start}")
@@ -55,18 +55,18 @@ public class ExpensesController {
          return iExpenseDao.getExpensesByDateInterval(userId, start, end);
     }
 
-    @PostMapping("/expenses/add")
-    Boolean addExpense(Expense expense) {
-        return iExpenseDao.addExpense(expense);
-    }
-
-    @GetMapping("/expenses/user")
+    @GetMapping("/expenses/profile")
     User getUser() {
         return expensesService.getCurrentUser();
     }
 
-    @DeleteMapping("expenses/delete")
-    List<Expense> deleteExpenses(List<Integer> ids) {
+    @PostMapping("/expenses/add")
+    Boolean addExpense(@RequestBody Expense expense) {
+        return iExpenseDao.addExpense(expense);
+    }
+
+    @DeleteMapping("/expenses/delete")
+    List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
         return iExpenseDao.deleteExpenses(ids);
     }
 }

@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 public interface UserWebService extends RestService {
     @GET
-    @Path("/user")
+    @Path("/profile")
     @Produces(MediaType.APPLICATION_JSON)
     void getUser(MethodCallback<User> callback);
 }

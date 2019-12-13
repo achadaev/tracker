@@ -8,7 +8,7 @@ public interface IExpenseDao {
 
     List<Expense> getAllExpenses();
 
-    List<Expense> getExpensesByUser(int id);
+    List<Expense> getUsersExpenses();
 
     Expense getExpenseById(int id);
 
