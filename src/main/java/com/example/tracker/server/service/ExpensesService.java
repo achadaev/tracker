@@ -3,7 +3,9 @@ package com.example.tracker.server.service;
 import com.example.tracker.server.dao.IUserDao;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExpensesService {
     @Autowired
     private IUserDao iUserDao;

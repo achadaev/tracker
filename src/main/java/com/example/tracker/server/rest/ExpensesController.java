@@ -20,6 +20,9 @@ public class ExpensesController {
     @Autowired
     IUserDao userService;
 
+    @Autowired
+    ExpensesService expensesService;
+
     @GetMapping("/expenses")
     List<Expense> getAllExpenses() {
         return iExpenseDao.getAllExpenses();
@@ -59,7 +62,6 @@ public class ExpensesController {
 
     @GetMapping("/expenses/user")
     User getUser() {
-        ExpensesService expensesService = new ExpensesService();
         return expensesService.getCurrentUser();
     }
 
