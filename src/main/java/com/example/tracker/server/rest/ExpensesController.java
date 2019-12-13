@@ -2,6 +2,7 @@ package com.example.tracker.server.rest;
 
 import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.server.service.ExpensesService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,19 +52,15 @@ public class ExpensesController {
          return iExpenseDao.getExpensesByDateInterval(userId, start, end);
     }
 
-    @PutMapping("/expenses/add")
+    @PostMapping("/expenses/add")
     Boolean addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense);
     }
 
-    @PostMapping(path = "/upd", consumes = "application/json", produces = "application/json")
-    Boolean updateExpense(@RequestBody Expense expense) {
-         return iExpenseDao.updateExpense(expense);
-    }
-
     @GetMapping("/expenses/user")
     User getUser() {
-        return userService.getUserByName(userService.getCurrentUsername());
+        ExpensesService expensesService = new ExpensesService();
+        return expensesService.getCurrentUser();
     }
 
     @DeleteMapping("expenses/delete")

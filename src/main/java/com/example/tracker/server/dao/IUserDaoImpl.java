@@ -23,12 +23,6 @@ public class IUserDaoImpl implements IUserDao {
     final static Logger logger = LoggerFactory.getLogger(IUserDaoImpl.class);
 
     @Override
-    public String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
-    }
-
-    @Override
     public User getUserByName(String name) {
         User user = new User();
         String query = "SELECT user.id, user.login, user.pass, user.reg_date " +
