@@ -8,7 +8,7 @@ public interface IExpenseDao {
 
     List<Expense> getAllExpenses();
 
-    List<Expense> getUsersExpenses();
+    List<Expense> getUsersExpenses(int id);
 
     Expense getExpenseById(int id);
 
@@ -20,7 +20,7 @@ public interface IExpenseDao {
 
     List<Expense> getExpensesByDateInterval(int userId, String startDate, String endDate);
 
-    Boolean addExpense(Expense expense);
+    Boolean addExpense(Expense expense, int userId);
 
     Boolean updateExpense(Expense expense);
 

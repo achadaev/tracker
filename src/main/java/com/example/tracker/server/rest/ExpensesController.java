@@ -30,7 +30,7 @@ public class ExpensesController {
 
     @GetMapping("/expenses/user")
     List<Expense> getUsersExpenses() {
-        return iExpenseDao.getUsersExpenses();
+        return expensesService.getUsersExpenses();
     }
 
     @GetMapping("{login}/expenses/date={date}")
@@ -62,7 +62,7 @@ public class ExpensesController {
 
     @PostMapping("/expenses/add")
     Boolean addExpense(@RequestBody Expense expense) {
-        return iExpenseDao.addExpense(expense);
+        return expensesService.addExpense(expense);
     }
 
     @DeleteMapping("/expenses/delete")

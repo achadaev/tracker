@@ -22,9 +22,6 @@ public class IExpenseDaoImpl implements IExpenseDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    ExpensesService expensesService;
-
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
 
     public IExpenseDaoImpl() throws ClassNotFoundException {
@@ -38,15 +35,14 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public List<Expense> getUsersExpenses() {
+    public List<Expense> getUsersExpenses(int id) {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ?";
-        User user = expensesService.getCurrentUser();
         return jdbcTemplate.query(query, new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, user.getId());
+                preparedStatement.setInt(1, id);
             }
         }, new ExpenseMapper());
     }
@@ -122,7 +118,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public Boolean addExpense(Expense expense) {
+    public Boolean addExpense(Expense expense, int userId) {
         String query = "INSERT INTO expense (type_id, name, date, price) VALUES " +
                 "(?, ?, ?, ?)";
         jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
@@ -135,7 +131,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 return preparedStatement.execute();
             }
         });
-        return addUserExpense(expense.getId(), expensesService.getCurrentUser().getId());
+        return addUserExpense(expense.getId(), userId);
         //TODO get user.login and INSERT INTO user_expenses
     }
 
