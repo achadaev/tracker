@@ -8,7 +8,11 @@ import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.core.MediaType;
+import java.awt.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -60,9 +64,9 @@ public class ExpensesController {
         return expensesService.getCurrentUser();
     }
 
-    @PostMapping("/expenses/add")
-    Boolean addExpense(@RequestBody Expense expense) {
-        return expensesService.addExpense(expense);
+    @PostMapping(value="/expenses/add", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> addExpense(@RequestBody Expense expense) {
+        return Collections.singletonMap("response", expensesService.addExpense(expense));
     }
 
     @DeleteMapping("/expenses/delete")
