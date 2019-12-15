@@ -1,9 +1,10 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
     <g:HTMLPanel>
-        <g:TextBox ui:field="id"/>
         <g:TextBox ui:field="typeId"/>
         <g:TextBox ui:field="name"/>
+<!--        <dp:DatePicker ui:field="date"/>-->
         <g:TextBox ui:field="date"/>
         <g:TextBox ui:field="price"/>
         <g:FlexTable ui:field="table"/>

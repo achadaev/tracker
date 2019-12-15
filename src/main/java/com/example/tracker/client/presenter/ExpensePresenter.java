@@ -94,7 +94,7 @@ public class ExpensePresenter implements Presenter {
         List<Integer> ids = new ArrayList<>();
 
         for (int i = 0; i < selectedRows.size(); i++) {
-            ids.add(expenseList.get(selectedRows.get(i)).getId());
+            ids.add(expenseList.get((selectedRows.get(i)) - 1).getId());
         }
 
         expenseWebService.deleteExpenses(ids, new MethodCallback<List<Expense>>() {

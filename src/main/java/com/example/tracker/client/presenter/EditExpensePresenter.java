@@ -11,15 +11,18 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+
+import java.util.Date;
 
 public class EditExpensePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
-        HasValue<String> getId();
         HasValue<String> getTypeId();
         HasValue<String> getName();
+//        DatePicker getDate();
         HasValue<String> getDate();
         HasValue<String> getPrice();
         Widget asWidget();
@@ -85,9 +88,9 @@ public class EditExpensePresenter implements Presenter {
     }
 
     private void doSave() {
-        expense.setId(Integer.parseInt(display.getId().getValue()));
         expense.setTypeId(Integer.parseInt(display.getTypeId().getValue()));
         expense.setName(display.getName().getValue());
+//        expense.setDate(display.getDate().getHighlightedDate().toString());
         expense.setDate(display.getDate().getValue());
         expense.setPrice(Integer.parseInt(display.getPrice().getValue()));
 
@@ -100,7 +103,6 @@ public class EditExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, Expense response) {
                 eventBus.fireEvent(new ExpenseUpdatedEvent(response));
-                Window.alert("Success");
             }
         });
     }

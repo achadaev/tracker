@@ -38,7 +38,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         expenseTable.setVisible(true);
         expenseTable.removeAllRows();
         expenseTable.setText(0, 0, "ID");
-        expenseTable.setText(0, 1, "Type ID");
+        expenseTable.setText(0, 1, "Type");
         expenseTable.setText(0, 2, "Name");
         expenseTable.setText(0, 3, "Date");
         expenseTable.setText(0, 4, "Price");

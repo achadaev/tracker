@@ -71,6 +71,6 @@ public class ExpensesController {
 
     @DeleteMapping("/expenses/delete")
     List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
-        return iExpenseDao.deleteExpenses(ids);
+        return expensesService.deleteExpenses(ids);
     }
 }

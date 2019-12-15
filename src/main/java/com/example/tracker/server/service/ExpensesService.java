@@ -29,4 +29,8 @@ public class ExpensesService {
     public Boolean addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense, getCurrentUser().getId());
     }
+
+    public List<Expense> deleteExpenses(List<Integer> ids) {
+        return iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+    }
 }

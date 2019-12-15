@@ -131,8 +131,14 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 return preparedStatement.execute();
             }
         });
-        return addUserExpense(expense.getId(), userId);
-        //TODO get user.login and INSERT INTO user_expenses
+        return addUserExpense(getLastExpenseId(), userId);
+    }
+
+    private int getLastExpenseId() {
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+                "FROM expense " +
+                "WHERE id = (SELECT MAX(id) FROM expense)";
+        return jdbcTemplate.query(query, new ExpenseMapper()).get(0).getId();
     }
 
     private Boolean addUserExpense(int expenseId, int userId) {
@@ -172,6 +178,19 @@ public class IExpenseDaoImpl implements IExpenseDao {
     private Boolean deleteExpense(int id) {
         String query = "DELETE FROM expense " +
                 "WHERE id = ?";
+        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                preparedStatement.setInt(1, id);
+                return preparedStatement.execute();
+            }
+        });
+        return deleteUserExpense(id);
+    }
+
+    private Boolean deleteUserExpense(int id) {
+        String query = "DELETE FROM user_expense " +
+                "WHERE expense_id = ?";
         return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
             @Override
             public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
@@ -179,15 +198,13 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 return preparedStatement.execute();
             }
         });
-        //TODO delete data from user_expenses
     }
 
     @Override
-    public List<Expense> deleteExpenses(List<Integer> ids) {
+    public List<Expense> deleteExpenses(List<Integer> ids, int userId) {
         for (int i = 0; i < ids.size(); i++) {
             deleteExpense(ids.get(i));
         }
-
-        return getAllExpenses();
+        return getUsersExpenses(userId);
     }
 }

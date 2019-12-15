@@ -6,18 +6,20 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.DatePicker;
+
+import java.util.Date;
 
 public class EditExpenseView extends Composite implements EditExpensePresenter.Display {
     interface EditExpenseViewUiBinder extends UiBinder<HTMLPanel, EditExpenseView> {
     }
-    @UiField
-    TextBox id;
     @UiField
     TextBox typeId;
     @UiField
     TextBox name;
     @UiField
     TextBox date;
+//    DatePicker date;
     @UiField
     TextBox price;
     @UiField
@@ -33,24 +35,15 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     private void initTable() {
-        id.getElement().setPropertyString("placeholder", "ID");
         typeId.getElement().setPropertyString("placeholder", "Type ID");
         name.getElement().setPropertyString("placeholder", "Name");
         date.getElement().setPropertyString("placeholder", "Date");
         price.getElement().setPropertyString("placeholder", "Price");
 
-        table.setWidget(0, 1, id);
-        table.setWidget(1, 1, typeId);
-        table.setWidget(2, 1, name);
-        table.setWidget(3, 1, date);
-        table.setWidget(4, 1, price);
-    }
-
-    //TODO HasValue<integer>
-
-    @Override
-    public HasValue<String> getId() {
-        return id;
+        table.setWidget(0, 1, typeId);
+        table.setWidget(1, 1, name);
+        table.setWidget(2, 1, date);
+        table.setWidget(3, 1, price);
     }
 
     @Override
@@ -64,6 +57,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     @Override
+//    public DatePicker getDate() {
     public HasValue<String> getDate() {
         return date;
     }
