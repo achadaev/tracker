@@ -4,6 +4,7 @@ import com.example.tracker.client.event.AddExpenseEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.client.view.ExpenseView;
+import com.example.tracker.client.view.ProfileBarView;
 import com.example.tracker.shared.model.Expense;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,10 +14,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.ListDataProvider;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
@@ -33,6 +31,7 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getAddButton();
         HasClickHandlers getProfileButton();
         HasClickHandlers getDeleteButton();
+        HTMLPanel getProfileBarPanel();
         List<Integer> getSelectedRows();
         void setData(List<Expense> data);
         Widget asWidget();
@@ -42,10 +41,15 @@ public class ExpensePresenter implements Presenter {
     private HandlerManager eventBus;
     private Display display;
 
+    private ProfileBarPresenter profileBarPresenter;
+
     public ExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display view) {
         this.expenseWebService = expenseWebService;
         this.eventBus = eventBus;
         this.display = view;
+
+        profileBarPresenter = new ProfileBarPresenter(new ProfileBarView());
+        profileBarPresenter.go(display.getProfileBarPanel());
     }
 
     public void bind() {

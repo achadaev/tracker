@@ -25,6 +25,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Button deleteButton;
     @UiField
     FlexTable expenseTable;
+    @UiField
+    HTMLPanel profileBarPanel;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
 
@@ -84,6 +86,11 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getDeleteButton() {
         return deleteButton;
+    }
+
+    @Override
+    public HTMLPanel getProfileBarPanel() {
+        return profileBarPanel;
     }
 
     @Override
