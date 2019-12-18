@@ -16,11 +16,13 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     }
 
     @UiField
-    Button getAllExpensesButton;
+    Button expensesButton;
     @UiField
     Button addButton;
     @UiField
     Button profileButton;
+    @UiField
+    Button editButton;
     @UiField
     Button deleteButton;
     @UiField
@@ -69,8 +71,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     }
 
     @Override
-    public HasClickHandlers getAllExpensesButton() {
-        return getAllExpensesButton;
+    public HasClickHandlers getExpensesButton() {
+        return expensesButton;
     }
 
     @Override
@@ -81,6 +83,11 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getProfileButton() {
         return profileButton;
+    }
+
+    @Override
+    public HasClickHandlers getEditButton() {
+        return editButton;
     }
 
     @Override

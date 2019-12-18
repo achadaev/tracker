@@ -3,9 +3,10 @@
     <g:HTMLPanel>
         <g:HorizontalPanel width="100%">
             <g:HorizontalPanel width="300px" height="80px">
-                <g:Button ui:field="getAllExpensesButton" text="Expenses"/>
+                <g:Button ui:field="expensesButton" text="Expenses"/>
                 <g:Button ui:field="profileButton" text="Profile"/>
                 <g:Button ui:field="addButton" text="Add"/>
+                <g:Button ui:field="editButton" text="Edit"/>
                 <g:Button ui:field="deleteButton" text="Delete"/>
             </g:HorizontalPanel>
             <g:cell horizontalAlignment="ALIGN_RIGHT">

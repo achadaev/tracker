@@ -60,14 +60,12 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
         });
 
-/*
         eventBus.addHandler(EditExpenseEvent.TYPE, new EditExpenseEventHandler() {
             @Override
             public void onEditExpense(EditExpenseEvent event) {
                 doEditExpense(event.getId());
             }
         });
-*/
 
         eventBus.addHandler(ExpenseUpdatedEvent.TYPE, new ExpenseUpdatedEventHandler() {
             @Override
@@ -88,11 +86,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem("add");
     }
 
-    /*private void doEditExpense(int id) {
+    private void doEditExpense(int id) {
         History.newItem("edit", false);
         Presenter presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView(), id);
         presenter.go(container);
-    }*/
+    }
 
     private void doExpenseUpdated() {
         History.newItem("list");
@@ -127,9 +125,9 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             else if (token.equals("profile")) {
                 presenter = new ProfilePresenter(userWebService, new ProfileView());
             }
-            /*else if (token.equals("edit")) {
+            else if (token.equals("edit")) {
                 presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
-            }*/
+            }
 
             if (presenter != null) {
                 presenter.go(container);

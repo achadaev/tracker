@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 public class ExpensesService {
@@ -26,8 +27,28 @@ public class ExpensesService {
         return iExpenseDao.getUsersExpenses(getCurrentUser().getId());
     }
 
+    public Expense getExpenseById(int id) {
+        List<Expense> userExpenses = getUsersExpenses();
+        for (Expense expense : userExpenses) {
+            if (expense.getId() == id) {
+                return expense;
+            }
+        }
+        throw new NoSuchElementException("No such expense");
+    }
+
     public Boolean addExpense(Expense expense) {
         return iExpenseDao.addExpense(expense, getCurrentUser().getId());
+    }
+
+    public Boolean updateExpense(Expense expense) {
+        List<Expense> userExpenses = getUsersExpenses();
+        for (Expense temp : userExpenses) {
+            if (expense.getId() == temp.getId()) {
+                return iExpenseDao.updateExpense(expense);
+            }
+        }
+        return addExpense(expense);
     }
 
     public List<Expense> deleteExpenses(List<Integer> ids) {

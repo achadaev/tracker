@@ -38,31 +38,14 @@ public class ExpensesController {
         return expensesService.getUsersExpenses();
     }
 
+    @GetMapping("/expenses/id={id}")
+    Expense getExpenseById(@PathVariable int id) {
+        return expensesService.getExpenseById(id);
+    }
+
     @GetMapping("/expenses/types")
     List<ExpenseType> getTypes() {
         return iExpenseDao.getTypes();
-    }
-
-    @GetMapping("{login}/expenses/date={date}")
-     List<Expense> getExpensesByDate(@PathVariable int userId, @PathVariable String date) {
-        return iExpenseDao.getExpensesByDate(userId, date);
-    }
-
-    @GetMapping("{login}/expenses/ld={start}")
-    List<Expense> getExpensesByLowerInterval(@PathVariable int userId, @PathVariable String start) {
-        return iExpenseDao.getExpensesByLowerInterval(userId, start);
-    }
-
-    @GetMapping("{login}/expenses/ud={end}")
-    List<Expense> getExpensesByUpperInterval(@PathVariable int userId, @PathVariable String end) {
-        return iExpenseDao.getExpensesByUpperInterval(userId, end);
-    }
-
-    @GetMapping("{login}/expenses/ld={start}/ud={end}")
-    List<Expense> getExpensesByDateInterval(@PathVariable int userId,
-                                             @PathVariable String start,
-                                             @PathVariable String end) {
-         return iExpenseDao.getExpensesByDateInterval(userId, start, end);
     }
 
     @GetMapping("/expenses/profile")
@@ -70,9 +53,14 @@ public class ExpensesController {
         return expensesService.getCurrentUser();
     }
 
-    @PostMapping(value="/expenses/add", produces = MediaType.APPLICATION_JSON)
+    @PostMapping(value = "/expenses/add", produces = MediaType.APPLICATION_JSON)
     Map<String, Boolean> addExpense(@RequestBody Expense expense) {
         return Collections.singletonMap("response", expensesService.addExpense(expense));
+    }
+
+    @PutMapping(value = "/expenses/update", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> updateExpense(@RequestBody Expense expense) {
+        return Collections.singletonMap("response", expensesService.updateExpense(expense));
     }
 
     @DeleteMapping("/expenses/delete")

@@ -1,21 +1,17 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.AddExpenseEvent;
+import com.example.tracker.client.event.EditExpenseEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.services.ExpenseWebService;
-import com.example.tracker.client.view.ExpenseView;
 import com.example.tracker.client.view.ProfileBarView;
 import com.example.tracker.shared.model.Expense;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.view.client.ListDataProvider;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -27,9 +23,10 @@ public class ExpensePresenter implements Presenter {
     private List<Expense> expenseList;
 
     public interface Display {
-        HasClickHandlers getAllExpensesButton();
+        HasClickHandlers getExpensesButton();
         HasClickHandlers getAddButton();
         HasClickHandlers getProfileButton();
+        HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         HTMLPanel getProfileBarPanel();
         List<Integer> getSelectedRows();
@@ -53,7 +50,7 @@ public class ExpensePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getAllExpensesButton().addClickHandler(new ClickHandler() {
+        display.getExpensesButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
@@ -82,6 +79,20 @@ public class ExpensePresenter implements Presenter {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 eventBus.fireEvent(new ShowProfileEvent());
+            }
+        });
+
+        display.getEditButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                List<Integer> selectedRows = display.getSelectedRows();
+
+                if (selectedRows.size() == 1) {
+                    int id = expenseList.get(selectedRows.get(0) - 1).getId();
+                    eventBus.fireEvent(new EditExpenseEvent(id));
+                } else {
+                    Window.alert("Select 1 row");
+                }
             }
         });
 

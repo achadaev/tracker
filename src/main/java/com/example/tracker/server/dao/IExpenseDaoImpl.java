@@ -71,63 +71,6 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
-    public List<Expense> getExpensesByDate(int userId, String date) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
-                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
-                "WHERE user_expense.user_id = ? AND expense.date = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, date);
-            }
-        }, new ExpenseMapper());
-    }
-
-    @Override
-    public List<Expense> getExpensesByLowerInterval(int userId, String startDate) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
-                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
-                "WHERE user_expense.user_id = ? AND expense.date >= ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, startDate);
-            }
-        }, new ExpenseMapper());
-    }
-
-    @Override
-    public List<Expense> getExpensesByUpperInterval(int userId, String endDate) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
-                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
-                "WHERE user_expense.user_id = ? AND expense.date <= ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, endDate);
-            }
-        }, new ExpenseMapper());
-    }
-
-    @Override
-    public List<Expense> getExpensesByDateInterval(int userId, String startDate, String endDate) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
-                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
-                "WHERE user_expense.user_id = ? AND (expense.date BETWEEN ? AND ?)";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, startDate);
-                preparedStatement.setString(3, endDate);
-            }
-        }, new ExpenseMapper());
-    }
-
-    @Override
     public Boolean addExpense(Expense expense, int userId) {
         String query = "INSERT INTO expense (type_id, name, date, price) VALUES " +
                 "(?, ?, ?, ?)";

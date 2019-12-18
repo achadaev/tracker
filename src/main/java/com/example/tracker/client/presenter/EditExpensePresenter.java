@@ -44,7 +44,7 @@ public class EditExpensePresenter implements Presenter {
         bind();
     }
 
-    /*public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display, int id) {
+    public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display, int id) {
         this.expenseWebService = expenseWebService;
         this.eventBus = eventBus;
         this.display = display;
@@ -59,13 +59,13 @@ public class EditExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, Expense response) {
                 expense = response;
-                EditExpensePresenter.this.display.getTypeId().setValue(Integer.toString(expense.getTypeId()));
+                EditExpensePresenter.this.display.getTypeId().setItemSelected(expense.getTypeId() - 1, true);
                 EditExpensePresenter.this.display.getName().setValue(expense.getName());
                 EditExpensePresenter.this.display.getDate().setValue(expense.getDate());
                 EditExpensePresenter.this.display.getPrice().setValue(Integer.toString(expense.getPrice()));
             }
         });
-    }*/
+    }
 
     private void initTypesListBox(ListBox listBox) {
         expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
@@ -105,7 +105,7 @@ public class EditExpensePresenter implements Presenter {
         expense.setDate(display.getDate().getValue());
         expense.setPrice(Integer.parseInt(display.getPrice().getValue()));
 
-        expenseWebService.addExpense(expense, new MethodCallback<Expense>() {
+        expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
                 Window.alert(exception.getMessage());
