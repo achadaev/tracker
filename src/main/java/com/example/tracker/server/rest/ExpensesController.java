@@ -4,6 +4,7 @@ import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
 import com.example.tracker.server.service.ExpensesService;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,11 @@ public class ExpensesController {
     @GetMapping("/expenses/user")
     List<Expense> getUsersExpenses() {
         return expensesService.getUsersExpenses();
+    }
+
+    @GetMapping("/expenses/types")
+    List<ExpenseType> getTypes() {
+        return iExpenseDao.getTypes();
     }
 
     @GetMapping("{login}/expenses/date={date}")

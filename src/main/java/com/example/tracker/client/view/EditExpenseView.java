@@ -14,7 +14,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     interface EditExpenseViewUiBinder extends UiBinder<HTMLPanel, EditExpenseView> {
     }
     @UiField
-    TextBox typeId;
+    ListBox typeId;
     @UiField
     TextBox name;
     @UiField
@@ -35,7 +35,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     private void initTable() {
-        typeId.getElement().setPropertyString("placeholder", "Type ID");
+//        typeId.getElement().setPropertyString("placeholder", "Type ID");
         name.getElement().setPropertyString("placeholder", "Name");
         date.getElement().setPropertyString("placeholder", "Date");
         price.getElement().setPropertyString("placeholder", "Price");
@@ -47,7 +47,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     @Override
-    public HasValue<String> getTypeId() {
+    public ListBox getTypeId() {
         return typeId;
     }
 

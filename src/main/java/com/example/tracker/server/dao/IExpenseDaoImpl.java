@@ -1,8 +1,10 @@
 package com.example.tracker.server.dao;
 
 import com.example.tracker.server.dao.mapper.ExpenseMapper;
+import com.example.tracker.server.dao.mapper.ExpenseTypeMapper;
 import com.example.tracker.server.service.ExpensesService;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class IExpenseDaoImpl implements IExpenseDao {
@@ -45,6 +48,13 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 preparedStatement.setInt(1, id);
             }
         }, new ExpenseMapper());
+    }
+
+    @Override
+    public List<ExpenseType> getTypes() {
+        String query = "SELECT  expense_type.id, expense_type.name " +
+                "FROM expense_type";
+        return jdbcTemplate.query(query, new ExpenseTypeMapper());
     }
 
     @Override
