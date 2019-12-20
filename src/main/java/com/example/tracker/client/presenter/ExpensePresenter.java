@@ -29,7 +29,7 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         HTMLPanel getProfileBarPanel();
-        List<Integer> getSelectedRows();
+        List<Integer> getSelectedIds();
         void setData(List<Expense> data);
         Widget asWidget();
     }
@@ -62,6 +62,7 @@ public class ExpensePresenter implements Presenter {
                     @Override
                     public void onSuccess(Method method, List<Expense> response) {
                         expenseList = response;
+
                         display.setData(expenseList);
                     }
                 });
@@ -85,34 +86,32 @@ public class ExpensePresenter implements Presenter {
         display.getEditButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                List<Integer> selectedRows = display.getSelectedRows();
+                List<Integer> selectedIds = display.getSelectedIds();
 
-                if (selectedRows.size() == 1) {
-                    int id = expenseList.get(selectedRows.get(0) - 1).getId();
-                    eventBus.fireEvent(new EditExpenseEvent(id));
+                if (selectedIds.size() == 1) {
+                    eventBus.fireEvent(new EditExpenseEvent(selectedIds.get(0)));
                 } else {
-                    Window.alert("Select 1 row");
+                    Window.alert("Select one row");
                 }
             }
         });
 
+
+
         display.getDeleteButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                deleteSelectedRows();
+                deleteSelectedIds();
             }
         });
+
     }
 
-    private void deleteSelectedRows() {
-        List<Integer> selectedRows = display.getSelectedRows();
-        List<Integer> ids = new ArrayList<>();
 
-        for (int i = 0; i < selectedRows.size(); i++) {
-            ids.add(expenseList.get((selectedRows.get(i)) - 1).getId());
-        }
+    private void deleteSelectedIds() {
+        List<Integer> selectedIds = display.getSelectedIds();
 
-        expenseWebService.deleteExpenses(ids, new MethodCallback<List<Expense>>() {
+        expenseWebService.deleteExpenses(selectedIds, new MethodCallback<List<Expense>>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
                 Window.alert("Error deleting expenses");
@@ -125,6 +124,7 @@ public class ExpensePresenter implements Presenter {
             }
         });
     }
+
 
     @Override
     public void go(HasWidgets container) {

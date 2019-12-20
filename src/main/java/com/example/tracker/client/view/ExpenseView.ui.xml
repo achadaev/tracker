@@ -13,6 +13,7 @@
                 <g:HTMLPanel ui:field="profileBarPanel"/>
             </g:cell>
         </g:HorizontalPanel>
-        <g:FlexTable ui:field="expenseTable" addStyleNames="expenseTable"/>
+
+        <g:HTMLPanel ui:field="tablePanel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

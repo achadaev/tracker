@@ -2,11 +2,18 @@ package com.example.tracker.client.view;
 
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.shared.model.Expense;
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.NumberCell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.MultiSelectionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +22,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     interface MainViewUiBinder extends UiBinder<HTMLPanel, ExpenseView> {
     }
 
+    @UiField
+    HTMLPanel tablePanel;
     @UiField
     Button expensesButton;
     @UiField
@@ -25,21 +34,127 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Button editButton;
     @UiField
     Button deleteButton;
-    @UiField
-    FlexTable expenseTable;
+//    @UiField
+//    FlexTable expenseTable;
     @UiField
     HTMLPanel profileBarPanel;
 
+    private CellTable<Expense> expenseTable;
+
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
+
+    private MultiSelectionModel<Expense> selectionModel;
 
     public ExpenseView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        expenseTable.setVisible(false);
+        //expenseTable.setVisible(false);
     }
 
     @Override
     public void setData(List<Expense> data) {
+        tablePanel.clear();
+        expenseTable = new CellTable<>();
         expenseTable.setVisible(true);
+        selectionModel = new MultiSelectionModel<>();
+        expenseTable.setSelectionModel(selectionModel);
+
+        CheckboxCell checkboxCell = new CheckboxCell();
+
+        Column<Expense, Boolean> checkColumn = new Column<Expense, Boolean>(checkboxCell) {
+            @Override
+            public Boolean getValue(Expense expense) {
+                return selectionModel.isSelected(expense);
+            }
+        };
+
+        CheckboxCell checkAllHeaderCB = new CheckboxCell(true, true);
+        Header<Boolean> checkAllHeader = new Header<Boolean>(checkAllHeaderCB) {
+            @Override
+            public Boolean getValue() {
+                return selectionModel.getSelectedSet().size() == data.size();
+            }
+        };
+
+        checkAllHeader.setUpdater(new ValueUpdater<Boolean>() {
+            @Override
+            public void update(Boolean value) {
+                for (Expense expense : data) {
+                    selectionModel.setSelected(expense, value);
+                }
+            }
+        });
+        expenseTable.addColumn(checkColumn, checkAllHeader);
+
+        Column<Expense, Number> idColumn = new Column<Expense, Number>(new NumberCell()) {
+            @Override
+            public Number getValue(Expense expense) {
+                return expense.getId();
+            }
+        };
+        expenseTable.addColumn(idColumn, "ID");
+
+        Column<Expense, Number> typeIdColumn = new Column<Expense, Number>(new NumberCell()) {
+            @Override
+            public Number getValue(Expense expense) {
+                return expense.getTypeId();
+            }
+        };
+        expenseTable.addColumn(typeIdColumn, "Type");
+
+        TextColumn<Expense> nameColumn = new TextColumn<Expense>() {
+            @Override
+            public String getValue(Expense expense) {
+                return expense.getName();
+            }
+        };
+        expenseTable.addColumn(nameColumn, "Name");
+
+        TextColumn<Expense> dateColumn = new TextColumn<Expense>() {
+            @Override
+            public String getValue(Expense expense) {
+                return expense.getDate();
+            }
+        };
+        expenseTable.addColumn(dateColumn, "Date");
+
+        Column<Expense, Number> priceColumn = new Column<Expense, Number>(new NumberCell()) {
+            @Override
+            public Number getValue(Expense expense) {
+                return expense.getPrice();
+            }
+        };
+        expenseTable.addColumn(priceColumn, "Price");
+
+        expenseTable.setPageSize(10);
+        expenseTable.setRowData(0, data);
+        SimplePager pager = new SimplePager();
+        pager.setDisplay(expenseTable);
+
+        AsyncDataProvider<Expense> provider = new AsyncDataProvider<Expense>()
+        {
+            @Override
+            protected void onRangeChanged(HasData<Expense> display)
+            {
+                int start = display.getVisibleRange().getStart();
+                int end = start + display.getVisibleRange().getLength();
+                end = Math.min(end, data.size());
+                List<Expense> sub = data.subList(start, end);
+                updateRowData(start, sub);
+            }
+        };
+        provider.addDataDisplay(expenseTable);
+        provider.updateRowCount(data.size(), true);
+        tablePanel.add(expenseTable);
+    }
+
+
+/*
+    @Override
+    public void setData(List<Expense> data) {
+        expenseTable.setVisible(true);
+
+
+
         expenseTable.removeAllRows();
         expenseTable.setText(0, 0, "ID");
         expenseTable.setText(0, 1, "Type");
@@ -67,8 +182,9 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.getCellFormatter().addStyleName(i + 1, 4, "expenseTablePriceColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 3, "expenseTableDateColumn");
             expenseTable.getCellFormatter().addStyleName(i + 1, 2, "expenseTableNameColumn");
+
         }
-    }
+    }*/
 
     @Override
     public HasClickHandlers getExpensesButton() {
@@ -101,6 +217,19 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     }
 
     @Override
+    public List<Integer> getSelectedIds() {
+        List<Integer> selectedRows = new ArrayList<>();
+
+        for (Expense expense : selectionModel.getSelectedSet()) {
+            selectedRows.add(expense.getId());
+        }
+
+        return selectedRows;
+    }
+
+
+/*
+    @Override
     public List<Integer> getSelectedRows() {
         List<Integer> selectedRows = new ArrayList<>();
 
@@ -113,6 +242,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
         return selectedRows;
     }
+*/
 
     @Override
     public Widget asWidget() {
