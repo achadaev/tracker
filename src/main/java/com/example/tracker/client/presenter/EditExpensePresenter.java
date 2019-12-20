@@ -17,7 +17,6 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import java.sql.Date;
 import java.util.List;
 
 public class EditExpensePresenter implements Presenter {
@@ -107,7 +106,7 @@ public class EditExpensePresenter implements Presenter {
         expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert(exception.getMessage());
+                Window.alert("Error updating expense");
             }
 
             @Override

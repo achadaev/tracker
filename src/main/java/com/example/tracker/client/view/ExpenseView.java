@@ -2,6 +2,7 @@ package com.example.tracker.client.view;
 
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
@@ -36,8 +37,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Button editButton;
     @UiField
     Button deleteButton;
-//    @UiField
-//    FlexTable expenseTable;
     @UiField
     HTMLPanel profileBarPanel;
 
@@ -49,11 +48,10 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
     public ExpenseView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        //expenseTable.setVisible(false);
     }
 
     @Override
-    public void setData(List<Expense> data) {
+    public void setData(List<Expense> data, List<ExpenseType> types) {
         tablePanel.clear();
         expenseTable = new CellTable<>();
         expenseTable.setVisible(true);
@@ -95,13 +93,18 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
         expenseTable.addColumn(idColumn, "ID");
 
-        Column<Expense, Number> typeIdColumn = new Column<Expense, Number>(new NumberCell()) {
+        TextColumn<Expense> typeColumn = new TextColumn<Expense>() {
             @Override
-            public Number getValue(Expense expense) {
-                return expense.getTypeId();
+            public String getValue(Expense expense) {
+                for (ExpenseType type : types) {
+                    if (type.getId() == expense.getTypeId()) {
+                        return type.getName();
+                    }
+                }
+                return "undefined";
             }
         };
-        expenseTable.addColumn(typeIdColumn, "Type");
+        expenseTable.addColumn(typeColumn, "Type");
 
         TextColumn<Expense> nameColumn = new TextColumn<Expense>() {
             @Override

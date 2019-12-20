@@ -1,11 +1,13 @@
 package com.example.tracker.client.presenter;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.AddExpenseEvent;
 import com.example.tracker.client.event.EditExpenseEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.client.view.ProfileBarView;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -29,7 +31,7 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getDeleteButton();
         HTMLPanel getProfileBarPanel();
         List<Integer> getSelectedIds();
-        void setData(List<Expense> data);
+        void setData(List<Expense> data, List<ExpenseType> types);
         Widget asWidget();
     }
 
@@ -62,7 +64,7 @@ public class ExpensePresenter implements Presenter {
                     public void onSuccess(Method method, List<Expense> response) {
                         expenseList = response;
 
-                        display.setData(expenseList);
+                        display.setData(expenseList, ExpensesGWTController.getTypes());
                     }
                 });
             }
@@ -95,8 +97,6 @@ public class ExpensePresenter implements Presenter {
             }
         });
 
-
-
         display.getDeleteButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -105,7 +105,6 @@ public class ExpensePresenter implements Presenter {
         });
 
     }
-
 
     private void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
@@ -119,7 +118,7 @@ public class ExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
-                display.setData(expenseList);
+                display.setData(expenseList, ExpensesGWTController.getTypes());
             }
         });
     }

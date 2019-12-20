@@ -10,6 +10,7 @@ import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.EditExpenseView;
 import com.example.tracker.client.view.ExpenseView;
 import com.example.tracker.client.view.ProfileView;
+import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -21,9 +22,12 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import java.util.List;
+
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
 
     private static User user;
+    private static List<ExpenseType> types;
 
     private HandlerManager eventBus;
     private ExpenseWebService expenseWebService;
@@ -44,6 +48,18 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             @Override
             public void onSuccess(Method method, User response) {
                 user = response;
+            }
+        });
+
+        expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Window.alert("Error getting types");
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ExpenseType> response) {
+                types = response;
             }
         });
 
@@ -137,5 +153,9 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     public static User getUser() {
         return user;
+    }
+
+    public static List<ExpenseType> getTypes() {
+        return types;
     }
 }
