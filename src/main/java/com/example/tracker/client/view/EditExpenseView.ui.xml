@@ -5,7 +5,7 @@
         <g:ListBox ui:field="typeId"/>
         <g:TextBox ui:field="name"/>
 <!--        <dp:DatePicker ui:field="date"/>-->
-        <g:TextBox ui:field="date"/>
+        <dp:DatePicker ui:field="date"/>
         <g:TextBox ui:field="price"/>
         <g:FlexTable ui:field="table"/>
         <g:Button ui:field="saveButton" text="Save"/>

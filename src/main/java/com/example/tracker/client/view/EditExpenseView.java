@@ -8,7 +8,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class EditExpenseView extends Composite implements EditExpensePresenter.Display {
     interface EditExpenseViewUiBinder extends UiBinder<HTMLPanel, EditExpenseView> {
@@ -18,7 +18,7 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     @UiField
     TextBox name;
     @UiField
-    TextBox date;
+    DatePicker date;
 //    DatePicker date;
     @UiField
     TextBox price;
@@ -57,8 +57,8 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     @Override
-//    public DatePicker getDate() {
-    public HasValue<String> getDate() {
+    public DatePicker getDate() {
+//    public HasValue<Date> getDate() {
         return date;
     }
 

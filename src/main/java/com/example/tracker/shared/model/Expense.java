@@ -1,13 +1,15 @@
 package com.example.tracker.shared.model;
 
+import java.util.Date;
+
 public class Expense {
     private int id;
     private int typeId;
     private String name;
-    private String date;
+    private Date date;
     private int price;
 
-    public Expense(int id, int typeId, String name, String date, int price) {
+    public Expense(int id, int typeId, String name, Date date, int price) {
         this.id = id;
         this.typeId = typeId;
         this.name = name;
@@ -42,11 +44,11 @@ public class Expense {
         this.name = name;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

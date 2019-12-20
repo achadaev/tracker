@@ -3,6 +3,7 @@ package com.example.tracker.client.view;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.shared.model.Expense;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -16,6 +17,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ExpenseView extends Composite implements ExpensePresenter.Display {
@@ -109,9 +111,10 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
         expenseTable.addColumn(nameColumn, "Name");
 
-        TextColumn<Expense> dateColumn = new TextColumn<Expense>() {
+        DateCell dateCell = new DateCell();
+        Column<Expense, Date> dateColumn = new Column<Expense, Date>(dateCell) {
             @Override
-            public String getValue(Expense expense) {
+            public Date getValue(Expense expense) {
                 return expense.getDate();
             }
         };

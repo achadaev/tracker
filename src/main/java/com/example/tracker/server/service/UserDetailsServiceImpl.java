@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -29,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             String password = user.getPassword();
             logger.info("Username: " + user.getLogin());
             logger.info("Password: " + password);
-            logger.info("Registration date: " + user.getRegDate());
+            logger.info("Registration date: " + new SimpleDateFormat("yyyy-MM-dd").format(user.getRegDate()));
 
             Collection<GrantedAuthority> authorities= new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));

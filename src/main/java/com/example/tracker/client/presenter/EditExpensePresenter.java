@@ -17,7 +17,7 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class EditExpensePresenter implements Presenter {
@@ -25,8 +25,8 @@ public class EditExpensePresenter implements Presenter {
         HasClickHandlers getSaveButton();
         ListBox getTypeId();
         HasValue<String> getName();
-//        DatePicker getDate();
-        HasValue<String> getDate();
+        DatePicker getDate();
+//        HasValue<Date> getDate();
         HasValue<String> getPrice();
         Widget asWidget();
     }
@@ -101,7 +101,6 @@ public class EditExpensePresenter implements Presenter {
     private void doSave() {
         expense.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
         expense.setName(display.getName().getValue());
-//        expense.setDate(display.getDate().getHighlightedDate().toString());
         expense.setDate(display.getDate().getValue());
         expense.setPrice(Integer.parseInt(display.getPrice().getValue()));
 

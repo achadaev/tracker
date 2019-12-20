@@ -2,10 +2,8 @@ package com.example.tracker.server.dao;
 
 import com.example.tracker.server.dao.mapper.ExpenseMapper;
 import com.example.tracker.server.dao.mapper.ExpenseTypeMapper;
-import com.example.tracker.server.service.ExpensesService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
-import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class IExpenseDaoImpl implements IExpenseDao {
@@ -26,6 +25,8 @@ public class IExpenseDaoImpl implements IExpenseDao {
     private JdbcTemplate jdbcTemplate;
 
     final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public IExpenseDaoImpl() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
@@ -79,7 +80,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
             public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
                 preparedStatement.setInt(1, expense.getTypeId());
                 preparedStatement.setString(2, expense.getName());
-                preparedStatement.setString(3, expense.getDate());
+                preparedStatement.setString(3, dateFormat.format(expense.getDate()));
                 preparedStatement.setInt(4, expense.getPrice());
                 return preparedStatement.execute();
             }
@@ -120,7 +121,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
             public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
                 preparedStatement.setInt(1, expense.getTypeId());
                 preparedStatement.setString(2, expense.getName());
-                preparedStatement.setString(3, expense.getDate());
+                preparedStatement.setString(3, dateFormat.format(expense.getDate()));
                 preparedStatement.setInt(4, expense.getPrice());
                 preparedStatement.setInt(5, expense.getId());
                 return preparedStatement.execute();

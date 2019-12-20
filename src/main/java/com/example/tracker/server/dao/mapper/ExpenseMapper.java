@@ -5,18 +5,25 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class ExpenseMapper implements RowMapper<Expense> {
     @Override
     public Expense mapRow(ResultSet resultSet, int i) throws SQLException {
-        Expense expense = new Expense();
+        try {
+            Expense expense = new Expense();
 
-        expense.setId(resultSet.getInt("id"));
-        expense.setTypeId(resultSet.getInt("type_id"));
-        expense.setName(resultSet.getString("name"));
-        expense.setDate(resultSet.getString("date"));
-        expense.setPrice(resultSet.getInt("price"));
+            expense.setId(resultSet.getInt("id"));
+            expense.setTypeId(resultSet.getInt("type_id"));
+            expense.setName(resultSet.getString("name"));
+            expense.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(resultSet.getString("date")));
+            expense.setPrice(resultSet.getInt("price"));
 
-        return expense;
+            return expense;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

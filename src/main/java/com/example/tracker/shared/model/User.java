@@ -1,10 +1,13 @@
 package com.example.tracker.shared.model;
 
+
+import java.util.Date;
+
 public class User {
     private int id;
     private String login;
     private String password;
-    private String regDate;
+    private Date regDate;
 
     public int getId() {
         return id;
@@ -22,9 +25,9 @@ public class User {
 
     public void setPassword(String password) { this.password = password; }
 
-    public String getRegDate() { return regDate; }
+    public Date getRegDate() { return regDate; }
 
-    public void setRegDate(String regDate) { this.regDate = regDate; }
+    public void setRegDate(Date regDate) { this.regDate = regDate; }
 
     @Override
     public String toString() {

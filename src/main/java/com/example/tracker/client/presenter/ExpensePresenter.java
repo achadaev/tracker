@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExpensePresenter implements Presenter {
