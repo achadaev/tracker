@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -39,6 +40,12 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Button deleteButton;
     @UiField
     ListBox types;
+    @UiField
+    CheckBox dateCheckBox;
+    @UiField
+    DatePicker startDate;
+    @UiField
+    DatePicker endDate;
     @UiField
     Button filter;
     @UiField
@@ -157,45 +164,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         tablePanel.add(expenseTable);
     }
 
-
-/*
-    @Override
-    public void setData(List<Expense> data) {
-        expenseTable.setVisible(true);
-
-
-
-        expenseTable.removeAllRows();
-        expenseTable.setText(0, 0, "ID");
-        expenseTable.setText(0, 1, "Type");
-        expenseTable.setText(0, 2, "Name");
-        expenseTable.setText(0, 3, "Date");
-        expenseTable.setText(0, 4, "Price");
-        expenseTable.setText(0, 5, "");
-        expenseTable.getRowFormatter().addStyleName(0, "expenseTableHeader");
-        expenseTable.getCellFormatter().addStyleName(0, 4, "expenseTablePriceColumn");
-        expenseTable.getCellFormatter().addStyleName(0, 3, "expenseTableDateColumn");
-        expenseTable.getCellFormatter().addStyleName(0, 2, "expenseTableNameColumn");
-
-        for (int i = 0; i < data.size(); i++) {
-            expenseTable.setText(i + 1, 0, Integer.toString(data.get(i).getId()));
-            expenseTable.setText(i + 1, 1, Integer.toString(data.get(i).getTypeId()));
-            expenseTable.setText(i + 1, 2, data.get(i).getName());
-            expenseTable.setText(i + 1, 3, data.get(i).getDate());
-            expenseTable.setText(i + 1, 4, Integer.toString(data.get(i).getPrice()));
-            expenseTable.setWidget(i + 1, 5, new CheckBox());
-
-
-            if (i % 2 == 0) {
-                expenseTable.getRowFormatter().addStyleName(i, "evenRow");
-            }
-            expenseTable.getCellFormatter().addStyleName(i + 1, 4, "expenseTablePriceColumn");
-            expenseTable.getCellFormatter().addStyleName(i + 1, 3, "expenseTableDateColumn");
-            expenseTable.getCellFormatter().addStyleName(i + 1, 2, "expenseTableNameColumn");
-
-        }
-    }*/
-
     @Override
     public HasClickHandlers getExpensesButton() {
         return expensesButton;
@@ -243,25 +211,24 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     }
 
     @Override
+    public CheckBox dateCheckBox() {
+        return dateCheckBox;
+    }
+
+    @Override
+    public DatePicker getStartDate() {
+        return startDate;
+    }
+
+    @Override
+    public DatePicker getEndDate() {
+        return endDate;
+    }
+
+    @Override
     public HasClickHandlers getFilerButton() {
         return filter;
     }
-
-    /*
-    @Override
-    public List<Integer> getSelectedRows() {
-        List<Integer> selectedRows = new ArrayList<>();
-
-        for (int i = 1; i < expenseTable.getRowCount(); i++) {
-            CheckBox checkBox = (CheckBox) expenseTable.getWidget(i, 5);
-            if (checkBox.getValue()) {
-                selectedRows.add(i);
-            }
-        }
-
-        return selectedRows;
-    }
-*/
 
     @Override
     public Widget asWidget() {

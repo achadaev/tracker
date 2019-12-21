@@ -1,6 +1,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
-    <g:HTMLPanel>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
+<g:HTMLPanel>
         <g:HorizontalPanel width="100%">
             <g:HorizontalPanel width="300px" height="80px">
                 <g:Button ui:field="expensesButton" text="Expenses"/>
@@ -14,8 +15,12 @@
             </g:cell>
         </g:HorizontalPanel>
 
-        <g:HorizontalPanel width="100px">
+        <g:HorizontalPanel width="700px">
             <g:ListBox ui:field="types" height="25px"/>
+            <g:Label text="Filter by date"/>
+            <g:CheckBox ui:field="dateCheckBox"/>
+            <dp:DatePicker ui:field="startDate"/>
+            <dp:DatePicker ui:field="endDate"/>
             <g:Button ui:field="filter" text="Filter"/>
         </g:HorizontalPanel>
 

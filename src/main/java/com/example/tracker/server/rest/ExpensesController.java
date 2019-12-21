@@ -6,11 +6,13 @@ import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
+import org.fusesource.restygwt.client.MethodCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +47,13 @@ public class ExpensesController {
     @GetMapping("/expenses/typeId={id}")
     List<Expense> getExpensesByTypeId(@PathVariable int id) {
         return expenseService.getExpensesByTypeId(id);
+    }
+
+    @GetMapping("/expenses/typeId={typeId}/{startDate}/{endDate}")
+    List<Expense> getExpensesByDateAndTypeId(@PathVariable int typeId,
+                                             @PathVariable Date startDate,
+                                             @PathVariable Date endDate) {
+        return expenseService.getExpensesByDate(typeId, startDate, endDate);
     }
 
     @GetMapping("/expenses/types")

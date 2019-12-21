@@ -4,6 +4,7 @@ import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.user.client.ui.ListBox;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,10 @@ public interface IExpenseDao {
     Expense getExpenseById(int id);
 
     List<Expense> getExpensesByTypeId(int userId, int typeId);
+
+    List<Expense> getExpensesByDate(int userId, Date startDate, Date endDate);
+
+    List<Expense> getExpensesByDateAndTypeId(int userId, int typeId, Date startDate, Date endDate);
 
     Boolean addExpense(Expense expense, int userId);
 

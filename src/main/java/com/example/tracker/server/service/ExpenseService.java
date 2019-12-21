@@ -4,9 +4,11 @@ import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.User;
+import com.google.gwt.user.client.ui.ListBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -42,6 +44,14 @@ public class ExpenseService {
             return getUsersExpenses();
         } else {
             return iExpenseDao.getExpensesByTypeId(getCurrentUser().getId(), id);
+        }
+    }
+
+    public List<Expense> getExpensesByDate(int typeId, Date startDate, Date endDate) {
+        if (typeId == 0) {
+            return iExpenseDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+        } else {
+            return iExpenseDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
         }
     }
 

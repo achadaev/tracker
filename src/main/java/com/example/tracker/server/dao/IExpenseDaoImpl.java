@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -81,6 +82,37 @@ public class IExpenseDaoImpl implements IExpenseDao {
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
                 preparedStatement.setInt(1, userId);
                 preparedStatement.setInt(2, typeId);
+            }
+        }, new ExpenseMapper());
+    }
+
+    @Override
+    public List<Expense> getExpensesByDate(int userId, Date startDate, Date endDate) {
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
+                "WHERE user_expense.user_id = ? AND (expense.date BETWEEN ? AND ?)";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setString(2, dateFormat.format(startDate));
+                preparedStatement.setString(3, dateFormat.format(endDate));
+            }
+        }, new ExpenseMapper());
+    }
+
+    @Override
+    public List<Expense> getExpensesByDateAndTypeId(int userId, int typeId, Date startDate, Date endDate) {
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
+                "WHERE user_expense.user_id = ? AND type_id = ? AND (expense.date BETWEEN ? AND ?)";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(2, typeId);
+                preparedStatement.setString(3, dateFormat.format(startDate));
+                preparedStatement.setString(4, dateFormat.format(endDate));
             }
         }, new ExpenseMapper());
     }

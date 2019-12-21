@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.List;
 
 public interface ExpenseWebService extends RestService {
@@ -30,6 +31,12 @@ public interface ExpenseWebService extends RestService {
     @Path("/typeId={id}")
     @Produces(MediaType.APPLICATION_JSON)
     void getExpensesByTypeId(@PathParam("id") int id, MethodCallback<List<Expense>> callback);
+
+    @GET
+    @Path("/typeId={typeId}/{startDate}/{endDate}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
+                           @PathParam("endDate") Date endDate, MethodCallback<List<Expense>> callback);
 
     @GET
     @Path("/types")

@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -31,6 +32,9 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getDeleteButton();
         HTMLPanel getProfileBarPanel();
         ListBox getTypesListBox();
+        CheckBox dateCheckBox();
+        DatePicker getStartDate();
+        DatePicker getEndDate();
         HasClickHandlers getFilerButton();
         List<Integer> getSelectedIds();
         void setData(List<Expense> data, List<ExpenseType> types);
@@ -151,18 +155,38 @@ public class ExpensePresenter implements Presenter {
     }
 
     private void filterExpenses(int id) {
-        expenseWebService.getExpensesByTypeId(id, new MethodCallback<List<Expense>>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error filtering expenses");
-            }
+        if (display.dateCheckBox().getValue()) {
+            if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
+                expenseWebService.getExpensesByDate(id, display.getStartDate().getValue(), display.getEndDate().getValue(),
+                        new MethodCallback<List<Expense>>() {
+                            @Override
+                            public void onFailure(Method method, Throwable throwable) {
+                                Window.alert("Error filtering expenses by date");
+                            }
 
-            @Override
-            public void onSuccess(Method method, List<Expense> response) {
-                expenseList = response;
-                display.setData(expenseList, ExpensesGWTController.getTypes());
+                            @Override
+                            public void onSuccess(Method method, List<Expense> response) {
+                                expenseList = response;
+                                display.setData(expenseList, ExpensesGWTController.getTypes());
+                            }
+                        });
+            } else {
+                Window.alert("Select dates");
             }
-        });
+        } else {
+            expenseWebService.getExpensesByTypeId(id, new MethodCallback<List<Expense>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    Window.alert("Error filtering expenses");
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Expense> response) {
+                    expenseList = response;
+                    display.setData(expenseList, ExpensesGWTController.getTypes());
+                }
+            });
+        }
     }
 
     @Override
