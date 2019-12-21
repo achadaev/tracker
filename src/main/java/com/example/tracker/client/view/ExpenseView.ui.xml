@@ -14,6 +14,11 @@
             </g:cell>
         </g:HorizontalPanel>
 
+        <g:HorizontalPanel width="100px">
+            <g:ListBox ui:field="types" height="25px"/>
+            <g:Button ui:field="filter" text="Filter"/>
+        </g:HorizontalPanel>
+
         <g:HTMLPanel ui:field="tablePanel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

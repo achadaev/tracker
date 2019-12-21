@@ -17,6 +17,8 @@ public interface IExpenseDao {
 
     Expense getExpenseById(int id);
 
+    List<Expense> getExpensesByTypeId(int userId, int typeId);
+
     Boolean addExpense(Expense expense, int userId);
 
     Boolean updateExpense(Expense expense);

@@ -30,6 +30,8 @@ public class ExpensePresenter implements Presenter {
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         HTMLPanel getProfileBarPanel();
+        ListBox getTypesListBox();
+        HasClickHandlers getFilerButton();
         List<Integer> getSelectedIds();
         void setData(List<Expense> data, List<ExpenseType> types);
         Widget asWidget();
@@ -48,6 +50,23 @@ public class ExpensePresenter implements Presenter {
 
         profileBarPresenter = new ProfileBarPresenter(new ProfileBarView());
         profileBarPresenter.go(display.getProfileBarPanel());
+    }
+
+    private void initTypesListBox(ListBox listBox) {
+        expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Window.alert(throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ExpenseType> expenseTypes) {
+                listBox.addItem("All", "0");
+                for (ExpenseType type : expenseTypes) {
+                    listBox.addItem(type.getName(), Integer.toString(type.getId()));
+                }
+            }
+        });
     }
 
     public void bind() {
@@ -104,6 +123,14 @@ public class ExpensePresenter implements Presenter {
             }
         });
 
+        display.getFilerButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                filterExpenses(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+            }
+        });
+
+        initTypesListBox(this.display.getTypesListBox());
     }
 
     private void deleteSelectedIds() {
@@ -123,6 +150,20 @@ public class ExpensePresenter implements Presenter {
         });
     }
 
+    private void filterExpenses(int id) {
+        expenseWebService.getExpensesByTypeId(id, new MethodCallback<List<Expense>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Window.alert("Error filtering expenses");
+            }
+
+            @Override
+            public void onSuccess(Method method, List<Expense> response) {
+                expenseList = response;
+                display.setData(expenseList, ExpensesGWTController.getTypes());
+            }
+        });
+    }
 
     @Override
     public void go(HasWidgets container) {

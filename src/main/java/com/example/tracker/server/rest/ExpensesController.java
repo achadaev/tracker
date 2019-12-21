@@ -2,7 +2,7 @@ package com.example.tracker.server.rest;
 
 import com.example.tracker.server.dao.IExpenseDao;
 import com.example.tracker.server.dao.IUserDao;
-import com.example.tracker.server.service.ExpensesService;
+import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.MediaType;
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class ExpensesController {
     IUserDao userService;
 
     @Autowired
-    ExpensesService expensesService;
+    ExpenseService expenseService;
 
     @GetMapping("/expenses")
     List<Expense> getAllExpenses() {
@@ -35,12 +34,17 @@ public class ExpensesController {
 
     @GetMapping("/expenses/user")
     List<Expense> getUsersExpenses() {
-        return expensesService.getUsersExpenses();
+        return expenseService.getUsersExpenses();
     }
 
     @GetMapping("/expenses/id={id}")
     Expense getExpenseById(@PathVariable int id) {
-        return expensesService.getExpenseById(id);
+        return expenseService.getExpenseById(id);
+    }
+
+    @GetMapping("/expenses/typeId={id}")
+    List<Expense> getExpensesByTypeId(@PathVariable int id) {
+        return expenseService.getExpensesByTypeId(id);
     }
 
     @GetMapping("/expenses/types")
@@ -50,21 +54,21 @@ public class ExpensesController {
 
     @GetMapping("/expenses/profile")
     User getUser() {
-        return expensesService.getCurrentUser();
+        return expenseService.getCurrentUser();
     }
 
     @PostMapping(value = "/expenses/add", produces = MediaType.APPLICATION_JSON)
     Map<String, Boolean> addExpense(@RequestBody Expense expense) {
-        return Collections.singletonMap("response", expensesService.addExpense(expense));
+        return Collections.singletonMap("response", expenseService.addExpense(expense));
     }
 
     @PutMapping(value = "/expenses/update", produces = MediaType.APPLICATION_JSON)
     Map<String, Boolean> updateExpense(@RequestBody Expense expense) {
-        return Collections.singletonMap("response", expensesService.updateExpense(expense));
+        return Collections.singletonMap("response", expenseService.updateExpense(expense));
     }
 
     @DeleteMapping("/expenses/delete")
     List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
-        return expensesService.deleteExpenses(ids);
+        return expenseService.deleteExpenses(ids);
     }
 }

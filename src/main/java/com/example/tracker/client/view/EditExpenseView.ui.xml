@@ -2,9 +2,8 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
     <g:HTMLPanel>
-        <g:ListBox ui:field="typeId"/>
+        <g:ListBox ui:field="typeId" height="25px"/>
         <g:TextBox ui:field="name"/>
-<!--        <dp:DatePicker ui:field="date"/>-->
         <dp:DatePicker ui:field="date"/>
         <g:TextBox ui:field="price"/>
         <g:FlexTable ui:field="table"/>

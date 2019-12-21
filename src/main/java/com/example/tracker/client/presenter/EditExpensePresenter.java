@@ -25,7 +25,6 @@ public class EditExpensePresenter implements Presenter {
         ListBox getTypeId();
         HasValue<String> getName();
         DatePicker getDate();
-//        HasValue<Date> getDate();
         HasValue<String> getPrice();
         Widget asWidget();
     }

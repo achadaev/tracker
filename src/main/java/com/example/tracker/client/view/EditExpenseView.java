@@ -19,7 +19,6 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     TextBox name;
     @UiField
     DatePicker date;
-//    DatePicker date;
     @UiField
     TextBox price;
     @UiField
@@ -35,7 +34,6 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     private void initTable() {
-//        typeId.getElement().setPropertyString("placeholder", "Type ID");
         name.getElement().setPropertyString("placeholder", "Name");
         date.getElement().setPropertyString("placeholder", "Date");
         price.getElement().setPropertyString("placeholder", "Price");
@@ -58,7 +56,6 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
 
     @Override
     public DatePicker getDate() {
-//    public HasValue<Date> getDate() {
         return date;
     }
 

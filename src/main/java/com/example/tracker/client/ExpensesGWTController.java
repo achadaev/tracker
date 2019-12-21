@@ -12,7 +12,6 @@ import com.example.tracker.client.view.ExpenseView;
 import com.example.tracker.client.view.ProfileView;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Component
-public class ExpensesService {
+public class ExpenseService {
     @Autowired
     private IUserDao iUserDao;
 
@@ -35,6 +35,14 @@ public class ExpensesService {
             }
         }
         throw new NoSuchElementException("No such expense");
+    }
+
+    public List<Expense> getExpensesByTypeId(int id) {
+        if (id == 0) {
+            return getUsersExpenses();
+        } else {
+            return iExpenseDao.getExpensesByTypeId(getCurrentUser().getId(), id);
+        }
     }
 
     public Boolean addExpense(Expense expense) {

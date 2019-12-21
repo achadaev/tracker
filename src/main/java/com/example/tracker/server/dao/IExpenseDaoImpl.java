@@ -72,6 +72,20 @@ public class IExpenseDaoImpl implements IExpenseDao {
     }
 
     @Override
+    public List<Expense> getExpensesByTypeId(int userId, int typeId) {
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
+                "WHERE user_expense.user_id = ? AND type_id = ?";
+        return jdbcTemplate.query(query, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(2, typeId);
+            }
+        }, new ExpenseMapper());
+    }
+
+    @Override
     public Boolean addExpense(Expense expense, int userId) {
         String query = "INSERT INTO expense (type_id, name, date, price) VALUES " +
                 "(?, ?, ?, ?)";

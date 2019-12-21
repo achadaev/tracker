@@ -38,6 +38,10 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Button deleteButton;
     @UiField
+    ListBox types;
+    @UiField
+    Button filter;
+    @UiField
     HTMLPanel profileBarPanel;
 
     private CellTable<Expense> expenseTable;
@@ -233,8 +237,17 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         return selectedRows;
     }
 
+    @Override
+    public ListBox getTypesListBox() {
+        return types;
+    }
 
-/*
+    @Override
+    public HasClickHandlers getFilerButton() {
+        return filter;
+    }
+
+    /*
     @Override
     public List<Integer> getSelectedRows() {
         List<Integer> selectedRows = new ArrayList<>();

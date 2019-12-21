@@ -4,6 +4,7 @@ import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -24,6 +25,11 @@ public interface ExpenseWebService extends RestService {
     @Path("/user")
     @Produces(MediaType.APPLICATION_JSON)
     void getUsersExpenses(MethodCallback<List<Expense>> callback);
+
+    @GET
+    @Path("/typeId={id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getExpensesByTypeId(@PathParam("id") int id, MethodCallback<List<Expense>> callback);
 
     @GET
     @Path("/types")
