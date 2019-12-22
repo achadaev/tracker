@@ -7,9 +7,9 @@ public class Expense {
     private int typeId;
     private String name;
     private Date date;
-    private int price;
+    private double price;
 
-    public Expense(int id, int typeId, String name, Date date, int price) {
+    public Expense(int id, int typeId, String name, Date date, double price) {
         this.id = id;
         this.typeId = typeId;
         this.name = name;
@@ -52,11 +52,11 @@ public class Expense {
         this.date = date;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

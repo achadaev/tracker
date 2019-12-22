@@ -2,6 +2,6 @@ package com.example.tracker.server.dao;
 
 import com.example.tracker.shared.model.User;
 
-public interface IUserDao {
+public interface IUserDAO {
     User getUserByName(String name);
 }

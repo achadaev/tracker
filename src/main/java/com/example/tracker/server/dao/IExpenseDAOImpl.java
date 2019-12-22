@@ -20,16 +20,16 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class IExpenseDaoImpl implements IExpenseDao {
+public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    final static Logger logger = LoggerFactory.getLogger(IExpenseDaoImpl.class);
+    final static Logger logger = LoggerFactory.getLogger(IExpenseDAOImpl.class);
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public IExpenseDaoImpl() throws ClassNotFoundException {
+    public IExpenseDAOImpl() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
     }
 
@@ -127,7 +127,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 preparedStatement.setInt(1, expense.getTypeId());
                 preparedStatement.setString(2, expense.getName());
                 preparedStatement.setString(3, dateFormat.format(expense.getDate()));
-                preparedStatement.setInt(4, expense.getPrice());
+                preparedStatement.setDouble(4, expense.getPrice());
                 return preparedStatement.execute();
             }
         });
@@ -168,7 +168,7 @@ public class IExpenseDaoImpl implements IExpenseDao {
                 preparedStatement.setInt(1, expense.getTypeId());
                 preparedStatement.setString(2, expense.getName());
                 preparedStatement.setString(3, dateFormat.format(expense.getDate()));
-                preparedStatement.setInt(4, expense.getPrice());
+                preparedStatement.setDouble(4, expense.getPrice());
                 preparedStatement.setInt(5, expense.getId());
                 return preparedStatement.execute();
             }

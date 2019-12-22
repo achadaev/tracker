@@ -1,12 +1,11 @@
 package com.example.tracker.server.rest;
 
-import com.example.tracker.server.dao.IExpenseDao;
-import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.server.dao.IExpenseDAO;
+import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
-import org.fusesource.restygwt.client.MethodCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +20,10 @@ import java.util.Map;
 public class ExpensesController {
 
     @Autowired
-    IExpenseDao iExpenseDao;
+    IExpenseDAO iExpenseDao;
 
     @Autowired
-    IUserDao userService;
+    IUserDAO userService;
 
     @Autowired
     ExpenseService expenseService;

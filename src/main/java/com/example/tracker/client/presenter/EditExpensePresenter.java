@@ -60,7 +60,7 @@ public class EditExpensePresenter implements Presenter {
                 EditExpensePresenter.this.display.getTypeId().setItemSelected(expense.getTypeId() - 1, true);
                 EditExpensePresenter.this.display.getName().setValue(expense.getName());
                 EditExpensePresenter.this.display.getDate().setValue(expense.getDate());
-                EditExpensePresenter.this.display.getPrice().setValue(Integer.toString(expense.getPrice()));
+                EditExpensePresenter.this.display.getPrice().setValue(Double.toString(expense.getPrice()));
             }
         });
     }
@@ -100,7 +100,7 @@ public class EditExpensePresenter implements Presenter {
         expense.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
         expense.setName(display.getName().getValue());
         expense.setDate(display.getDate().getValue());
-        expense.setPrice(Integer.parseInt(display.getPrice().getValue()));
+        expense.setPrice(Double.parseDouble(display.getPrice().getValue()));
 
         expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
             @Override

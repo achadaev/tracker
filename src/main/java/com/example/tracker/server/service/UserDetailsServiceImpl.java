@@ -1,6 +1,6 @@
 package com.example.tracker.server.service;
 
-import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.Collection;
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    IUserDao userService;
+    IUserDAO userService;
 
     private final static Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 

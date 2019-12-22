@@ -1,10 +1,9 @@
 package com.example.tracker.server.service;
 
-import com.example.tracker.server.dao.IExpenseDao;
-import com.example.tracker.server.dao.IUserDao;
+import com.example.tracker.server.dao.IExpenseDAO;
+import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.User;
-import com.google.gwt.user.client.ui.ListBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +14,10 @@ import java.util.NoSuchElementException;
 @Component
 public class ExpenseService {
     @Autowired
-    private IUserDao iUserDao;
+    private IUserDAO iUserDao;
 
     @Autowired
-    private IExpenseDao iExpenseDao;
+    private IExpenseDAO iExpenseDao;
 
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
