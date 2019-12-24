@@ -2,22 +2,15 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
 <g:HTMLPanel>
-        <g:HorizontalPanel width="100%">
-            <g:HorizontalPanel width="300px" height="80px">
-                <g:Button ui:field="expensesButton" text="Expenses"/>
-                <g:Button ui:field="profileButton" text="Profile"/>
-                <g:Button ui:field="addButton" text="Add"/>
-                <g:Button ui:field="editButton" text="Edit"/>
-                <g:Button ui:field="deleteButton" text="Delete"/>
-            </g:HorizontalPanel>
-            <g:cell horizontalAlignment="ALIGN_RIGHT">
-                <g:HTMLPanel ui:field="profileBarPanel"/>
-            </g:cell>
+        <g:HorizontalPanel width="200px">
+            <g:Button ui:field="addButton" text="Add"/>
+            <g:Button ui:field="editButton" text="Edit"/>
+            <g:Button ui:field="deleteButton" text="Delete"/>
         </g:HorizontalPanel>
 
         <g:HorizontalPanel width="700px">
             <g:ListBox ui:field="types" height="25px"/>
-            <g:Label text="Filter by date"/>
+            <g:Label text="Filter by date" horizontalAlignment="LEFT"/>
             <g:CheckBox ui:field="dateCheckBox"/>
             <dp:DatePicker ui:field="startDate"/>
             <dp:DatePicker ui:field="endDate"/>
@@ -25,5 +18,9 @@
         </g:HorizontalPanel>
 
         <g:HTMLPanel ui:field="tablePanel"/>
+    <g:HorizontalPanel>
+        <g:Label text="Total: "/>
+        <g:Label ui:field="total"/>
+    </g:HorizontalPanel>
     </g:HTMLPanel>
 </ui:UiBinder>

@@ -11,10 +11,13 @@ import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
+import org.apache.tapestry.wml.Do;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -25,19 +28,17 @@ public class ExpensePresenter implements Presenter {
     private List<Expense> expenseList;
 
     public interface Display {
-        HasClickHandlers getExpensesButton();
         HasClickHandlers getAddButton();
-        HasClickHandlers getProfileButton();
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
-        HTMLPanel getProfileBarPanel();
         ListBox getTypesListBox();
-        CheckBox dateCheckBox();
+        CheckBox getDateCheckBox();
         DatePicker getStartDate();
         DatePicker getEndDate();
         HasClickHandlers getFilerButton();
         List<Integer> getSelectedIds();
         void setData(List<Expense> data, List<ExpenseType> types);
+        Label getTotalLabel();
         Widget asWidget();
     }
 
@@ -45,15 +46,11 @@ public class ExpensePresenter implements Presenter {
     private HandlerManager eventBus;
     private Display display;
 
-    private ProfileBarPresenter profileBarPresenter;
 
     public ExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display view) {
         this.expenseWebService = expenseWebService;
         this.eventBus = eventBus;
         this.display = view;
-
-        profileBarPresenter = new ProfileBarPresenter(new ProfileBarView());
-        profileBarPresenter.go(display.getProfileBarPanel());
     }
 
     private void initTypesListBox(ListBox listBox) {
@@ -74,36 +71,11 @@ public class ExpensePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getExpensesButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
-                    @Override
-                    public void onFailure(Method method, Throwable exception) {
-                        Window.alert(exception.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(Method method, List<Expense> response) {
-                        expenseList = response;
-
-                        display.setData(expenseList, ExpensesGWTController.getTypes());
-                    }
-                });
-            }
-        });
 
         display.getAddButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 eventBus.fireEvent(new AddExpenseEvent());
-            }
-        });
-
-        display.getProfileButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowProfileEvent());
             }
         });
 
@@ -134,6 +106,19 @@ public class ExpensePresenter implements Presenter {
             }
         });
 
+        display.getDateCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                if (display.getDateCheckBox().getValue()) {
+                    display.getStartDate().setVisible(true);
+                    display.getEndDate().setVisible(true);
+                } else {
+                    display.getStartDate().setVisible(false);
+                    display.getEndDate().setVisible(false);
+                }
+            }
+        });
+
         initTypesListBox(this.display.getTypesListBox());
     }
 
@@ -150,12 +135,21 @@ public class ExpensePresenter implements Presenter {
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
                 display.setData(expenseList, ExpensesGWTController.getTypes());
+                updateTotal(display.getTotalLabel());
             }
         });
     }
 
+    private void updateTotal(Label label) {
+        double total = 0.0;
+        for (Expense expense : expenseList) {
+            total += expense.getPrice();
+        }
+        label.setText(Double.toString(total));
+    }
+
     private void filterExpenses(int id) {
-        if (display.dateCheckBox().getValue()) {
+        if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
                 expenseWebService.getExpensesByDate(id, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         new MethodCallback<List<Expense>>() {
@@ -168,6 +162,7 @@ public class ExpensePresenter implements Presenter {
                             public void onSuccess(Method method, List<Expense> response) {
                                 expenseList = response;
                                 display.setData(expenseList, ExpensesGWTController.getTypes());
+                                updateTotal(display.getTotalLabel());
                             }
                         });
             } else {
@@ -184,9 +179,27 @@ public class ExpensePresenter implements Presenter {
                 public void onSuccess(Method method, List<Expense> response) {
                     expenseList = response;
                     display.setData(expenseList, ExpensesGWTController.getTypes());
+                    updateTotal(display.getTotalLabel());
                 }
             });
         }
+    }
+
+    private void setExpenseTableData() {
+        expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                Window.alert(exception.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Method method, List<Expense> response) {
+                expenseList = response;
+
+                display.setData(expenseList, ExpensesGWTController.getTypes());
+                updateTotal(display.getTotalLabel());
+            }
+        });
     }
 
     @Override
@@ -194,5 +207,6 @@ public class ExpensePresenter implements Presenter {
         bind();
         container.clear();
         container.add(display.asWidget());
+        setExpenseTableData();
     }
 }

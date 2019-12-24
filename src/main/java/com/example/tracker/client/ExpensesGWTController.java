@@ -1,15 +1,10 @@
 package com.example.tracker.client;
 
 import com.example.tracker.client.event.*;
-import com.example.tracker.client.presenter.EditExpensePresenter;
-import com.example.tracker.client.presenter.ExpensePresenter;
-import com.example.tracker.client.presenter.Presenter;
-import com.example.tracker.client.presenter.ProfilePresenter;
+import com.example.tracker.client.presenter.*;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.client.services.UserWebService;
-import com.example.tracker.client.view.EditExpenseView;
-import com.example.tracker.client.view.ExpenseView;
-import com.example.tracker.client.view.ProfileView;
+import com.example.tracker.client.view.*;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -68,6 +63,29 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     private void bind() {
         History.addValueChangeHandler(this);
 
+        eventBus.addHandler(ShowHomeEvent.TYPE, new ShowHomeEventHandler() {
+            @Override
+            public void onShowHomeEvent(ShowHomeEvent event) {
+                doShowHome();
+            }
+        });
+
+        eventBus.addHandler(ShowExpensesEvent.TYPE, new ShowExpensesEventHandler() {
+            @Override
+            public void onShowExpensesEvent(ShowExpensesEvent event) {
+                doShowExpenses();
+            }
+        });
+
+        eventBus.addHandler(ShowProfileEvent.TYPE, new ShowProfileEventHandler() {
+            @Override
+            public void onShowProfileEvent(ShowProfileEvent event) {
+                doShowProfile();
+            }
+        });
+
+        //TODO ShowCalendarEvent
+
         eventBus.addHandler(AddExpenseEvent.TYPE, new AddExpenseEventHandler() {
             @Override
             public void onAddExpense(AddExpenseEvent event) {
@@ -89,12 +107,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
         });
 
-        eventBus.addHandler(ShowProfileEvent.TYPE, new ShowProfileEventHandler() {
-            @Override
-            public void onShowProfileEvent(ShowProfileEvent event) {
-                doShowProfile();
-            }
-        });
     }
 
     private void doAddNewExpense() {
@@ -111,15 +123,27 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem("list");
     }
 
+    private void doShowHome() {
+        History.newItem("home");
+    }
+
+    private void doShowExpenses() {
+        History.newItem("list");
+    }
+
     private void doShowProfile() {
         History.newItem("profile");
     }
 
     public void go(HasWidgets container) {
-        this.container = container;
+        MainView mainView = new MainView();
+        MainPresenter mainPresenter = new MainPresenter(eventBus, mainView);
+
+        this.container = mainPresenter.getPanel();
+        container.add(mainView);
 
         if ("".equals(History.getToken())) {
-            History.newItem("list");
+            History.newItem("home");
         } else {
             History.fireCurrentHistoryState();
         }
@@ -131,7 +155,10 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         if (token != null) {
             Presenter presenter = null;
 
-            if (token.equals("list")) {
+            if (token.equals("home")) {
+                presenter = new HomePresenter(expenseWebService, eventBus, new HomeView());
+            }
+            else if (token.equals("list")) {
                 presenter = new ExpensePresenter(expenseWebService, eventBus, new ExpenseView());
             }
             else if (token.equals("add")) {

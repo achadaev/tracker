@@ -29,11 +29,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     HTMLPanel tablePanel;
     @UiField
-    Button expensesButton;
-    @UiField
     Button addButton;
-    @UiField
-    Button profileButton;
     @UiField
     Button editButton;
     @UiField
@@ -49,7 +45,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Button filter;
     @UiField
-    HTMLPanel profileBarPanel;
+    Label total;
 
     private CellTable<Expense> expenseTable;
 
@@ -59,6 +55,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
     public ExpenseView() {
         initWidget(ourUiBinder.createAndBindUi(this));
+        startDate.setVisible(false);
+        endDate.setVisible(false);
     }
 
     @Override
@@ -161,22 +159,13 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
         provider.addDataDisplay(expenseTable);
         provider.updateRowCount(data.size(), true);
-        tablePanel.add(expenseTable);
-    }
 
-    @Override
-    public HasClickHandlers getExpensesButton() {
-        return expensesButton;
+        tablePanel.add(expenseTable);
     }
 
     @Override
     public HasClickHandlers getAddButton() {
         return addButton;
-    }
-
-    @Override
-    public HasClickHandlers getProfileButton() {
-        return profileButton;
     }
 
     @Override
@@ -187,11 +176,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getDeleteButton() {
         return deleteButton;
-    }
-
-    @Override
-    public HTMLPanel getProfileBarPanel() {
-        return profileBarPanel;
     }
 
     @Override
@@ -211,7 +195,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     }
 
     @Override
-    public CheckBox dateCheckBox() {
+    public CheckBox getDateCheckBox() {
         return dateCheckBox;
     }
 
@@ -228,6 +212,11 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @Override
     public HasClickHandlers getFilerButton() {
         return filter;
+    }
+
+    @Override
+    public Label getTotalLabel() {
+        return total;
     }
 
     @Override
