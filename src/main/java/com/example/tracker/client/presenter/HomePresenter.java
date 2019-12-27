@@ -1,8 +1,11 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
+import com.example.tracker.client.event.ShowExpensesEvent;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -23,7 +26,7 @@ public class HomePresenter implements Presenter {
     public interface Display {
         Label getGreetingLabel();
         Panel getReviewPanel();
-        void setReviewData(double amount, double month, double week);
+        Label getMoreLabel();
         Widget asWidget();
     }
 
@@ -38,17 +41,23 @@ public class HomePresenter implements Presenter {
     }
 
     public void bind() {
+        display.getMoreLabel().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                eventBus.fireEvent(new ShowExpensesEvent());
+            }
+        });
     }
 
-    private double getTotal() {
+    private double getTotal(List<Expense> list) {
         double total = 0.0;
-        for (Expense expense : expenseList) {
+        for (Expense expense : list) {
             total += expense.getPrice();
         }
         return total;
     }
 
-    private double getAmountPrice() {
+    private void setAmountPrice() {
         expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -58,12 +67,13 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
+                double amount = getTotal(expenseList);
+                display.getReviewPanel().add(new Label("Total expenses: " + amount));
             }
         });
-        return getTotal();
     }
 
-    private double getMonthPrice() {
+    private void setMonthPrice() {
         Date monthBefore = new Date();
         CalendarUtil.addMonthsToDate(monthBefore, -1);
         expenseWebService.getExpensesByDate(0, monthBefore, new Date(), new MethodCallback<List<Expense>>() {
@@ -75,12 +85,13 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
+                double month = getTotal(expenseList);
+                display.getReviewPanel().add(new Label("This month expenses: " + month));
             }
         });
-        return getTotal();
     }
 
-    private double getWeekPrice() {
+    private void setWeekPrice() {
         Date weekBefore = new Date();
         CalendarUtil.addDaysToDate(weekBefore, -7);
         expenseWebService.getExpensesByDate(0, weekBefore, new Date(), new MethodCallback<List<Expense>>() {
@@ -92,9 +103,10 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
+                double week = getTotal(expenseList);
+                display.getReviewPanel().add(new Label("This week expenses: " + week));
             }
         });
-        return getTotal();
     }
 
     @Override
@@ -103,6 +115,8 @@ public class HomePresenter implements Presenter {
         container.clear();
         container.add(display.asWidget());
         display.getGreetingLabel().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
-        display.setReviewData(getAmountPrice(), getMonthPrice(), getWeekPrice());
+        setAmountPrice();
+        setMonthPrice();
+        setWeekPrice();
     }
 }

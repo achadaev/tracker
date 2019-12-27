@@ -3,9 +3,7 @@
     <g:HTMLPanel>
         <g:Label ui:field="greetingLabel"/>
         <g:HTMLPanel ui:field="reviewPanel">
-            <g:Label ui:field="amountLabel"/>
-            <g:Label ui:field="monthLabel"/>
-            <g:Label ui:field="weekLabel"/>
         </g:HTMLPanel>
+        <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

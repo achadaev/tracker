@@ -141,6 +141,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
         this.container = mainPresenter.getPanel();
         container.add(mainView);
+        HomePresenter homePresenter = new HomePresenter(expenseWebService, eventBus, new HomeView());
+        homePresenter.go(this.container);
 
         if ("".equals(History.getToken())) {
             History.newItem("home");

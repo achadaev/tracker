@@ -15,23 +15,12 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @UiField
     HTMLPanel reviewPanel;
     @UiField
-    Label amountLabel;
-    @UiField
-    Label monthLabel;
-    @UiField
-    Label weekLabel;
+    Label moreLabel;
 
     private static HomeViewUiBinder ourUiBinder = GWT.create(HomeViewUiBinder.class);
 
     public HomeView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-    }
-
-    @Override
-    public void setReviewData(double amount, double month, double week) {
-        amountLabel.setText("Amount expenses: " + amount);
-        amountLabel.setText("This month expenses: " + month);
-        amountLabel.setText("This week expenses: " + week);
     }
 
     @Override
@@ -42,6 +31,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @Override
     public Panel getReviewPanel() {
         return reviewPanel;
+    }
+
+    @Override
+    public Label getMoreLabel() {
+        return moreLabel;
     }
 
     @Override

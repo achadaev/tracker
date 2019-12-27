@@ -78,7 +78,6 @@ public class MainPresenter implements Presenter {
 
     @Override
     public void go(HasWidgets container) {
-
     }
 
     public HorizontalPanel getPanel() {
