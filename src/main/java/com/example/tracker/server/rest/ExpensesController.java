@@ -5,6 +5,7 @@ import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ReviewInfo;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +39,9 @@ public class ExpensesController {
         return expenseService.getUsersExpenses();
     }
 
-    @GetMapping("/expenses/total")
-    Map<String, Double> getTotal(@RequestBody List<Expense> expenseList) {
-        return Collections.singletonMap("response", iExpenseDao.getTotal(expenseList));
+    @GetMapping("/expenses/review")
+    ReviewInfo getReview() {
+        return expenseService.getReview();
     }
 
     @GetMapping("/expenses/id={id}")

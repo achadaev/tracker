@@ -2,6 +2,7 @@ package com.example.tracker.server.dao;
 
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ReviewInfo;
 import com.google.gwt.user.client.ui.ListBox;
 
 import java.util.Date;
@@ -14,7 +15,7 @@ public interface IExpenseDAO {
 
     List<Expense> getUsersExpenses(int id);
 
-    double getTotal(List<Expense> expenseList);
+    ReviewInfo getReview(int id);
 
     List<ExpenseType> getTypes();
 

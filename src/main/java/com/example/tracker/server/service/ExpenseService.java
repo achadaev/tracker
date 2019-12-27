@@ -3,6 +3,7 @@ package com.example.tracker.server.service;
 import com.example.tracker.server.dao.IExpenseDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ReviewInfo;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,10 @@ public class ExpenseService {
             }
         }
         throw new NoSuchElementException("No such expense");
+    }
+
+    public ReviewInfo getReview() {
+        return iExpenseDao.getReview(getCurrentUser().getId());
     }
 
     public List<Expense> getExpensesByTypeId(int id) {

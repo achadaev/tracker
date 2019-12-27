@@ -2,6 +2,7 @@ package com.example.tracker.client.services;
 
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ReviewInfo;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
 import org.springframework.stereotype.Component;
@@ -30,10 +31,9 @@ public interface ExpenseWebService extends RestService {
     void getUsersExpenses(MethodCallback<List<Expense>> callback);
 
     @GET
-    @Path("/total")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/review")
     @Produces(MediaType.APPLICATION_JSON)
-    void getTotal(List<Expense> expenseList, MethodCallback<Map<String, Double>> callback);
+    void getReview(MethodCallback<ReviewInfo> callback);
 
     @GET
     @Path("/typeId={id}")
