@@ -14,6 +14,8 @@ public interface IExpenseDAO {
 
     List<Expense> getUsersExpenses(int id);
 
+    double getTotal(List<Expense> expenseList);
+
     List<ExpenseType> getTypes();
 
     Expense getExpenseById(int id);

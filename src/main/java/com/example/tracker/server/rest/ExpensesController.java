@@ -38,6 +38,11 @@ public class ExpensesController {
         return expenseService.getUsersExpenses();
     }
 
+    @GetMapping("/expenses/total")
+    Map<String, Double> getTotal(@RequestBody List<Expense> expenseList) {
+        return Collections.singletonMap("response", iExpenseDao.getTotal(expenseList));
+    }
+
     @GetMapping("/expenses/id={id}")
     Expense getExpenseById(@PathVariable int id) {
         return expenseService.getExpenseById(id);

@@ -13,7 +13,6 @@ public class ExpensesGWTApplication implements EntryPoint {
         ExpenseWebService expenseWebService = GWT.create(ExpenseWebService.class);
         UserWebService userWebService = GWT.create(UserWebService.class);
         HandlerManager eventBus = new HandlerManager(null);
-        ExpensesGWTController expensesViewer = new ExpensesGWTController(expenseWebService, userWebService, eventBus);
-        expensesViewer.go(RootPanel.get());
+        new ExpensesGWTController(expenseWebService, userWebService, eventBus);
     }
 }

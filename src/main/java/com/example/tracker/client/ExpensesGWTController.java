@@ -13,6 +13,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.RootPanel;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -33,18 +34,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         this.userWebService = userWebService;
         this.expenseWebService = expenseWebService;
 
-        userWebService.getUser(new MethodCallback<User>() {
-            @Override
-            public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error getting user");
-            }
-
-            @Override
-            public void onSuccess(Method method, User response) {
-                user = response;
-            }
-        });
-
         expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -54,6 +43,19 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             @Override
             public void onSuccess(Method method, List<ExpenseType> response) {
                 types = response;
+            }
+        });
+
+        userWebService.getUser(new MethodCallback<User>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                Window.alert("Error getting user");
+            }
+
+            @Override
+            public void onSuccess(Method method, User response) {
+                user = response;
+                go(RootPanel.get());
             }
         });
 

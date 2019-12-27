@@ -1,6 +1,7 @@
 .moreLabel {
     color: darkblue;
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .changePassPanel {

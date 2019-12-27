@@ -3,6 +3,9 @@
     <g:HTMLPanel>
         <g:Label ui:field="greetingLabel"/>
         <g:HTMLPanel ui:field="reviewPanel">
+            <g:Label ui:field="amountLabel" text="Total expenses: "/>
+            <g:Label ui:field="monthLabel" text="This month expenses: "/>
+            <g:Label ui:field="weekLabel" text="This week expenses: "/>
         </g:HTMLPanel>
         <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
     </g:HTMLPanel>

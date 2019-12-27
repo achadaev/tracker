@@ -4,6 +4,7 @@ import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.ShowExpensesEvent;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
@@ -18,6 +19,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class HomePresenter implements Presenter {
 
@@ -26,6 +28,9 @@ public class HomePresenter implements Presenter {
     public interface Display {
         Label getGreetingLabel();
         Panel getReviewPanel();
+        Label getAmountLabel();
+        Label getMonthLabel();
+        Label getWeekLabel();
         Label getMoreLabel();
         Widget asWidget();
     }
@@ -49,9 +54,9 @@ public class HomePresenter implements Presenter {
         });
     }
 
-    private double getTotal(List<Expense> list) {
+    private double getTotal(List<Expense> expenseList) {
         double total = 0.0;
-        for (Expense expense : list) {
+        for (Expense expense : expenseList) {
             total += expense.getPrice();
         }
         return total;
@@ -67,8 +72,20 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
-                double amount = getTotal(expenseList);
-                display.getReviewPanel().add(new Label("Total expenses: " + amount));
+                display.getAmountLabel().setText(display.getAmountLabel().getText() + getTotal(expenseList));
+/*
+                expenseWebService.getTotal(expenseList, new MethodCallback<Map<String, Double>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Window.alert("Error getting total");
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, Map<String, Double> response) {
+                        display.getReviewPanel().add(new Label("Total expenses: " + response.get("response")));
+                    }
+                });
+*/
             }
         });
     }
@@ -85,8 +102,20 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
-                double month = getTotal(expenseList);
-                display.getReviewPanel().add(new Label("This month expenses: " + month));
+                display.getMonthLabel().setText(display.getMonthLabel().getText() + getTotal(expenseList));
+/*
+                expenseWebService.getTotal(expenseList, new MethodCallback<Map<String, Double>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Window.alert("Error getting total");
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, Map<String, Double> response) {
+                        display.getReviewPanel().add(new Label("This month expenses: " + response.get("response")));
+                    }
+                });
+*/
             }
         });
     }
@@ -103,8 +132,20 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, List<Expense> response) {
                 expenseList = response;
-                double week = getTotal(expenseList);
-                display.getReviewPanel().add(new Label("This week expenses: " + week));
+                display.getWeekLabel().setText(display.getWeekLabel().getText() + getTotal(expenseList));
+/*
+                expenseWebService.getTotal(expenseList, new MethodCallback<Map<String, Double>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Window.alert("Error getting total");
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, Map<String, Double> response) {
+                        display.getReviewPanel().add(new Label("This week expenses: " + response.get("response")));
+                    }
+                });
+*/
             }
         });
     }

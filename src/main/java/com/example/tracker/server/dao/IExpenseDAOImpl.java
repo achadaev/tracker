@@ -53,6 +53,15 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     @Override
+    public double getTotal(List<Expense> expenseList) {
+        double total = 0.0;
+        for (Expense expense : expenseList) {
+            total += expense.getPrice();
+        }
+        return total;
+    }
+
+    @Override
     public List<ExpenseType> getTypes() {
         String query = "SELECT  expense_type.id, expense_type.name " +
                 "FROM expense_type";

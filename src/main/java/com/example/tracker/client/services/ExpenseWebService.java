@@ -4,12 +4,14 @@ import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ExpenseWebService extends RestService {
     @GET
@@ -26,6 +28,12 @@ public interface ExpenseWebService extends RestService {
     @Path("/user")
     @Produces(MediaType.APPLICATION_JSON)
     void getUsersExpenses(MethodCallback<List<Expense>> callback);
+
+    @GET
+    @Path("/total")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void getTotal(List<Expense> expenseList, MethodCallback<Map<String, Double>> callback);
 
     @GET
     @Path("/typeId={id}")
