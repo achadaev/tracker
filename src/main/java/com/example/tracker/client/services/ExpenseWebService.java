@@ -26,7 +26,7 @@ public interface ExpenseWebService extends RestService {
     void getExpenseById(@PathParam("id") int id, MethodCallback<Expense> callback);
 
     @GET
-    @Path("/user")
+    @Path("/user-expenses")
     @Produces(MediaType.APPLICATION_JSON)
     void getUsersExpenses(MethodCallback<List<Expense>> callback);
 

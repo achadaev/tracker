@@ -18,9 +18,9 @@
         </g:HorizontalPanel>
 
         <g:HTMLPanel ui:field="tablePanel"/>
-    <g:HorizontalPanel>
-        <g:Label text="Total: "/>
-        <g:Label ui:field="total"/>
-    </g:HorizontalPanel>
-    </g:HTMLPanel>
+            <g:HorizontalPanel>
+                <g:Label text="Total: "/>
+                <g:Label ui:field="total"/>
+            </g:HorizontalPanel>
+        </g:HTMLPanel>
 </ui:UiBinder>

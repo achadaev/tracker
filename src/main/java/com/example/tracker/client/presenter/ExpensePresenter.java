@@ -17,7 +17,6 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
-import org.apache.tapestry.wml.Do;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
@@ -186,20 +185,37 @@ public class ExpensePresenter implements Presenter {
     }
 
     private void setExpenseTableData() {
-        expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
-            @Override
-            public void onFailure(Method method, Throwable exception) {
-                Window.alert(exception.getMessage());
-            }
+        if (ExpensesGWTController.isAdmin) {
+            expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    Window.alert("Error getting all expenses");
+                }
 
-            @Override
-            public void onSuccess(Method method, List<Expense> response) {
-                expenseList = response;
+                @Override
+                public void onSuccess(Method method, List<Expense> response) {
+                    expenseList = response;
 
-                display.setData(expenseList, ExpensesGWTController.getTypes());
-                updateTotal(display.getTotalLabel());
-            }
-        });
+                    display.setData(expenseList, ExpensesGWTController.getTypes());
+                    updateTotal(display.getTotalLabel());
+                }
+            });
+        } else {
+            expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
+                @Override
+                public void onFailure(Method method, Throwable exception) {
+                    Window.alert(exception.getMessage());
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Expense> response) {
+                    expenseList = response;
+
+                    display.setData(expenseList, ExpensesGWTController.getTypes());
+                    updateTotal(display.getTotalLabel());
+                }
+            });
+        }
     }
 
     @Override

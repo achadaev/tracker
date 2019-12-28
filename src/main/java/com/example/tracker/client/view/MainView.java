@@ -1,5 +1,6 @@
 package com.example.tracker.client.view;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.MainPresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -26,7 +27,6 @@ public class MainView extends Composite implements MainPresenter.Display {
     Button calendarButton;
     @UiField
     HTMLPanel profileBarPanel;
-
     @UiField
     HorizontalPanel contentPanel;
 

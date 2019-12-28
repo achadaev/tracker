@@ -9,7 +9,8 @@
                 <g:Button ui:field="calendarButton" text="Calendar"/>
             </g:HorizontalPanel>
             <g:cell horizontalAlignment="ALIGN_RIGHT">
-                <g:HTMLPanel ui:field="profileBarPanel"/>
+                <g:HTMLPanel ui:field="profileBarPanel">
+                </g:HTMLPanel>
             </g:cell>
         </g:HorizontalPanel>
         <g:HorizontalPanel ui:field="contentPanel"/>

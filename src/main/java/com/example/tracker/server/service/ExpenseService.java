@@ -8,6 +8,7 @@ import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -75,5 +76,42 @@ public class ExpenseService {
 
     public List<Expense> deleteExpenses(List<Integer> ids) {
         return iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+    }
+
+    public User getUserById(int id) throws AccessDeniedException {
+        if ("admin".equals(getCurrentUser().getRole())) {
+            return iUserDao.getUserById(id);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    public Boolean updateUser(User user) throws AccessDeniedException {
+        if ("admin".equals(getCurrentUser().getRole())) {
+            for (User temp : getAllUsers()) {
+                if (temp.getId() == user.getId()) {
+                    return iUserDao.updateUser(user);
+                }
+            }
+            return iUserDao.addUser(user);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    public List<User> getAllUsers() throws AccessDeniedException {
+        if ("admin".equals(getCurrentUser().getRole())) {
+            return iUserDao.getAllUsers();
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    public List<User> deleteUsers(List<Integer> ids) throws AccessDeniedException {
+        if ("admin".equals(getCurrentUser().getRole())) {
+            return iUserDao.deleteUsers(ids);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 }

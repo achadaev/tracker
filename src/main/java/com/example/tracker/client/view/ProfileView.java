@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.*;
 
 public class ProfileView extends Composite implements ProfilePresenter.Display {
@@ -16,13 +17,18 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
     @UiField
     FlexTable table;
     @UiField
-    Button refreshButton;
-    @UiField
     FlowPanel changePassPanel;
     @UiField
     PasswordTextBox passwordTextBox;
     @UiField
     Button changePassButton;
+
+    private static ProfileViewUiBinder ourUiBinder = GWT.create(ProfileViewUiBinder.class);
+
+    public ProfileView() {
+        initWidget(ourUiBinder.createAndBindUi(this));
+        changePassPanel.addStyleName("changePassPanel");
+    }
 
     @Override
     public PasswordTextBox getPasswordBox() {
@@ -40,28 +46,14 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
     }
 
     @Override
-    public void updateData(User user) {
-        setUsername(user.getLogin());
-    }
-
-    @Override
-    public HasClickHandlers getRefreshButton() {
-        return refreshButton;
-    }
-
-    private void setUsername(String username) {
+    public void setData(User user) {
         table.setText(0, 0, "Username: ");
-        if (!"".equals(username) && username != null) {
-            table.setText(0, 1, username);
-        } else {
-            table.setText(0, 1, "undefined");
-        }
-    }
-
-    private static ProfileViewUiBinder ourUiBinder = GWT.create(ProfileViewUiBinder.class);
-
-    public ProfileView() {
-        initWidget(ourUiBinder.createAndBindUi(this));
-        changePassPanel.addStyleName("changePassPanel");
+        table.setText(0, 1, ExpensesGWTController.getUser().getLogin());
+        table.setText(1, 0, "Name: ");
+        table.setText(1, 1, ExpensesGWTController.getUser().getName());
+        table.setText(2, 0, "Surname: ");
+        table.setText(2, 1, ExpensesGWTController.getUser().getSurname());
+        table.setText(3, 0, "Email: ");
+        table.setText(3, 1, ExpensesGWTController.getUser().getEmail());
     }
 }

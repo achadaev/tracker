@@ -2,6 +2,8 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     <g:HTMLPanel>
         <g:HorizontalPanel ui:field="horizontalPanel" width="100%">
+            <g:Label ui:field="usernameLabel"/>
+            <g:Button ui:field="manageButton" text="Manage"/>
             <g:cell width="100%">
                 <g:Button ui:field="logoutButton" text="Logout"/>
             </g:cell>

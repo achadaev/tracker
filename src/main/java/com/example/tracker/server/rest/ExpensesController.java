@@ -10,11 +10,10 @@ import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/")
@@ -24,7 +23,7 @@ public class ExpensesController {
     IExpenseDAO iExpenseDao;
 
     @Autowired
-    IUserDAO userService;
+    IUserDAO iUserDAO;
 
     @Autowired
     ExpenseService expenseService;
@@ -34,7 +33,7 @@ public class ExpensesController {
         return iExpenseDao.getAllExpenses();
     }
 
-    @GetMapping("/expenses/user")
+    @GetMapping("/expenses/user-expenses")
     List<Expense> getUsersExpenses() {
         return expenseService.getUsersExpenses();
     }
@@ -69,6 +68,51 @@ public class ExpensesController {
     @GetMapping("/expenses/profile")
     User getUser() {
         return expenseService.getCurrentUser();
+    }
+
+    @GetMapping("/expenses/profileId={id}")
+    User getUserById(@PathVariable int id) {
+        try {
+            return expenseService.getUserById(id);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return new User();
+    }
+
+    @PostMapping(value = "expenses/add-profile", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> addUser(@RequestBody User user) {
+        return Collections.singletonMap("response", iUserDAO.addUser(user));
+    }
+
+    @PutMapping(value = "expenses/update-profile", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> updateUser(@RequestBody User user) {
+        try {
+            return Collections.singletonMap("response", expenseService.updateUser(user));
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @GetMapping("/expenses/all-profiles")
+    List<User> getAllUsers() {
+        try {
+            return expenseService.getAllUsers();
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    @DeleteMapping("/expenses/delete-profiles")
+    List<User> deleteUsers(@RequestBody List<Integer> ids) {
+        try {
+            return expenseService.deleteUsers(ids);
+        } catch (AccessDeniedException e) {
+            e.getStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     @PostMapping(value = "/expenses/add", produces = MediaType.APPLICATION_JSON)

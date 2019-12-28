@@ -5,6 +5,7 @@ import com.example.tracker.server.dao.mapper.ExpenseTypeMapper;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.ReviewInfo;
+import com.example.tracker.shared.model.User;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -71,19 +71,16 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
         List<Expense> tempList = getUsersExpenses(id);
         reviewInfo.setAmount(getTotal(tempList));
-        logger.info("AMOUNT: " + reviewInfo.getAmount());
 
         Calendar monthBefore = Calendar.getInstance();
         monthBefore.add(Calendar.MONTH, -1);
         tempList = getExpensesByDate(id, monthBefore.getTime(), new Date());
         reviewInfo.setMonth(getTotal(tempList));
-        logger.info("MONTH: " + reviewInfo.getMonth());
 
         Calendar weekBefore = Calendar.getInstance();
         weekBefore.add(Calendar.WEEK_OF_YEAR, -1);
         tempList = getExpensesByDate(id, weekBefore.getTime(), new Date());
         reviewInfo.setWeek(getTotal(tempList));
-        logger.info("WEEK: " + reviewInfo.getWeek());
 
         return reviewInfo;
     }

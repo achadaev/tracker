@@ -3,6 +3,7 @@ package com.example.tracker.server.dao;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.ReviewInfo;
+import com.example.tracker.shared.model.User;
 import com.google.gwt.user.client.ui.ListBox;
 
 import java.util.Date;
