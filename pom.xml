@@ -178,8 +178,22 @@
 					</webResources>
 				</configuration>
 			</plugin>
-		</plugins>
 
+		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<format>txt</format>
+				</configuration>
+			</plugin>
+		</plugins>
+		<outputDirectory>src\main\resources\report</outputDirectory>
+	</reporting>
 
 </project>

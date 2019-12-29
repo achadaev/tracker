@@ -5,7 +5,6 @@ import com.example.tracker.client.services.UserWebService;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.ui.*;
 
 public class ExpensesGWTApplication implements EntryPoint {
     @Override

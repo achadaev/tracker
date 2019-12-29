@@ -2,7 +2,6 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.ShowExpensesEvent;
 import com.example.tracker.client.event.ShowHomeEvent;
-import com.example.tracker.client.event.ShowManageEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.view.ProfileBarView;
 import com.google.gwt.event.dom.client.ClickEvent;

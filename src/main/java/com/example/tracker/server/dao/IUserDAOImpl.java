@@ -2,7 +2,6 @@ package com.example.tracker.server.dao;
 
 import com.example.tracker.server.dao.mapper.UserMapper;
 import com.example.tracker.shared.model.User;
-import org.apache.xpath.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +60,7 @@ public class IUserDAOImpl implements IUserDAO {
         return jdbcTemplate.query(query, new UserMapper());
     }
 
-    @Override
-    public Boolean addUser(User user) {
-        String query = "INSERT INTO user (login, name, surname, email, pass, role, reg_date) VALUES " +
-                "(?, ?, ?, ?, ?, ?, ?)";
+    private Boolean executeAddOrUpdate(User user, String query) {
         jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
             @Override
             public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
@@ -82,6 +78,13 @@ public class IUserDAOImpl implements IUserDAO {
     }
 
     @Override
+    public Boolean addUser(User user) {
+        String query = "INSERT INTO user (login, name, surname, email, pass, role, reg_date) VALUES " +
+                "(?, ?, ?, ?, ?, ?, ?)";
+        return executeAddOrUpdate(user, query);
+    }
+
+    @Override
     public Boolean updateUser(User user) {
         String query = "UPDATE user " +
                 "SET login = ?, " +
@@ -92,20 +95,7 @@ public class IUserDAOImpl implements IUserDAO {
                 "role = ?, " +
                 "reg_date = ? " +
                 "WHERE id = ?";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setString(1, user.getLogin());
-                preparedStatement.setString(2, user.getName());
-                preparedStatement.setString(3, user.getSurname());
-                preparedStatement.setString(4, user.getEmail());
-                preparedStatement.setString(5, user.getPassword());
-                preparedStatement.setString(6, user.getRole());
-                preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
-                preparedStatement.setInt(8, user.getId());
-                return preparedStatement.execute();
-            }
-        });
+        return executeAddOrUpdate(user, query);
     }
 
     private Boolean deleteUser(int id) {

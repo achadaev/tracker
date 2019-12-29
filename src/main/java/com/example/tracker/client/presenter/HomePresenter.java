@@ -3,7 +3,6 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.ShowExpensesEvent;
 import com.example.tracker.client.services.ExpenseWebService;
-import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ReviewInfo;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -5,14 +5,11 @@ import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.ReviewInfo;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface ExpenseWebService extends RestService {
     @GET

@@ -10,7 +10,6 @@ import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.nio.file.AccessDeniedException;
 import java.util.*;

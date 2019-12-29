@@ -1,7 +1,6 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.AddUserEvent;
-import com.example.tracker.client.event.EditExpenseEvent;
 import com.example.tracker.client.event.EditUserEvent;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;

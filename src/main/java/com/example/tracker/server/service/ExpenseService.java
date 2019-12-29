@@ -21,6 +21,10 @@ public class ExpenseService {
     @Autowired
     private IExpenseDAO iExpenseDao;
 
+    private boolean isAdmin() {
+        return "admin".equals(getCurrentUser().getRole());
+    }
+
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
         return iUserDao.getUserByName(login);
@@ -75,11 +79,16 @@ public class ExpenseService {
     }
 
     public List<Expense> deleteExpenses(List<Integer> ids) {
-        return iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+        if (isAdmin()) {
+            iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+            return iExpenseDao.getAllExpenses();
+        } else {
+            return iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+        }
     }
 
     public User getUserById(int id) throws AccessDeniedException {
-        if ("admin".equals(getCurrentUser().getRole())) {
+        if (isAdmin()) {
             return iUserDao.getUserById(id);
         } else {
             throw new AccessDeniedException("Access denied");
@@ -87,7 +96,7 @@ public class ExpenseService {
     }
 
     public Boolean updateUser(User user) throws AccessDeniedException {
-        if ("admin".equals(getCurrentUser().getRole())) {
+        if (isAdmin()) {
             for (User temp : getAllUsers()) {
                 if (temp.getId() == user.getId()) {
                     return iUserDao.updateUser(user);
@@ -100,7 +109,7 @@ public class ExpenseService {
     }
 
     public List<User> getAllUsers() throws AccessDeniedException {
-        if ("admin".equals(getCurrentUser().getRole())) {
+        if (isAdmin()) {
             return iUserDao.getAllUsers();
         } else {
             throw new AccessDeniedException("Access denied");
@@ -108,7 +117,7 @@ public class ExpenseService {
     }
 
     public List<User> deleteUsers(List<Integer> ids) throws AccessDeniedException {
-        if ("admin".equals(getCurrentUser().getRole())) {
+        if (isAdmin()) {
             return iUserDao.deleteUsers(ids);
         } else {
             throw new AccessDeniedException("Access denied");

@@ -8,8 +8,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-import java.sql.Date;
-
 public class EditExpenseView extends Composite implements EditExpensePresenter.Display {
     interface EditExpenseViewUiBinder extends UiBinder<HTMLPanel, EditExpenseView> {
     }

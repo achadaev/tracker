@@ -14,22 +14,6 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
 
     @UiField
     FlexTable table;
-/*
-    @UiField
-    TextBox login;
-    @UiField
-    TextBox name;
-    @UiField
-    TextBox surname;
-    @UiField
-    TextBox email;
-    @UiField
-    TextBox password;
-    @UiField
-    TextBox role;
-    @UiField
-    DatePicker regDate;
-*/
     @UiField
     Button saveButton;
 

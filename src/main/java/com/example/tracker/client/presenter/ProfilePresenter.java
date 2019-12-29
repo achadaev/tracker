@@ -6,16 +6,9 @@ import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
-import org.fusesource.restygwt.client.Method;
-import org.fusesource.restygwt.client.MethodCallback;
-
-import java.util.List;
 
 public class ProfilePresenter implements Presenter {
     public interface Display {
@@ -31,20 +24,6 @@ public class ProfilePresenter implements Presenter {
     public ProfilePresenter(UserWebService userWebService, Display display) {
         this.display = display;
         this.userWebService = userWebService;
-/*
-            userWebService.getAllUsers(new MethodCallback<List<User>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    Window.alert("Error getting all users");
-                }
-
-                @Override
-                public void onSuccess(Method method, List<User> response) {
-                    users = response;
-
-                }
-            });
-*/
         bind();
     }
 
