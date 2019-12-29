@@ -2,9 +2,6 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     <g:HTMLPanel>
         <g:FlexTable ui:field="table"/>
-        <g:FlowPanel ui:field="changePassPanel">
-            <g:PasswordTextBox ui:field="passwordTextBox"/>
-            <g:Button ui:field="changePassButton" text="Change Password"/>
-        </g:FlowPanel>
+        <g:Button ui:field="editProfile" text="Edit Profile"/>
     </g:HTMLPanel>
 </ui:UiBinder>

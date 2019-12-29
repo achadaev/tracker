@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,13 +22,13 @@ public class ExpenseService {
     @Autowired
     private IExpenseDAO iExpenseDao;
 
-    private boolean isAdmin() {
-        return "admin".equals(getCurrentUser().getRole());
-    }
-
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
         return iUserDao.getUserByName(login);
+    }
+
+    private boolean isAdmin() {
+        return "admin".equals(getCurrentUser().getRole());
     }
 
     public List<Expense> getUsersExpenses() {
@@ -35,13 +36,17 @@ public class ExpenseService {
     }
 
     public Expense getExpenseById(int id) {
-        List<Expense> userExpenses = getUsersExpenses();
-        for (Expense expense : userExpenses) {
-            if (expense.getId() == id) {
-                return expense;
+        if (isAdmin()) {
+            List<Expense> expenseList = iExpenseDao.getAllExpenses();
+            for (Expense expense : expenseList) {
+                if (expense.getId() == id) {
+                    return expense;
+                }
             }
+            throw new NoSuchElementException("No such Expense");
+        } else {
+            return iExpenseDao.getExpenseById(getCurrentUser().getId(), id);
         }
-        throw new NoSuchElementException("No such expense");
     }
 
     public ReviewInfo getReview() {
@@ -69,8 +74,13 @@ public class ExpenseService {
     }
 
     public Boolean updateExpense(Expense expense) {
-        List<Expense> userExpenses = getUsersExpenses();
-        for (Expense temp : userExpenses) {
+        List<Expense> expenseList;
+        if (isAdmin()) {
+            expenseList = iExpenseDao.getAllExpenses();
+        } else {
+            expenseList = iExpenseDao.getUsersExpenses(getCurrentUser().getId());
+        }
+        for (Expense temp : expenseList) {
             if (expense.getId() == temp.getId()) {
                 return iExpenseDao.updateExpense(expense);
             }
@@ -88,7 +98,7 @@ public class ExpenseService {
     }
 
     public User getUserById(int id) throws AccessDeniedException {
-        if (isAdmin()) {
+        if (isAdmin() || id == getCurrentUser().getId()) {
             return iUserDao.getUserById(id);
         } else {
             throw new AccessDeniedException("Access denied");
@@ -103,6 +113,8 @@ public class ExpenseService {
                 }
             }
             return iUserDao.addUser(user);
+        } else if (user.getId() == getCurrentUser().getId()) {
+            return iUserDao.updateUser(user);
         } else {
             throw new AccessDeniedException("Access denied");
         }

@@ -16,27 +16,12 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
     @UiField
     FlexTable table;
     @UiField
-    FlowPanel changePassPanel;
-    @UiField
-    PasswordTextBox passwordTextBox;
-    @UiField
-    Button changePassButton;
+    Button editProfile;
 
     private static ProfileViewUiBinder ourUiBinder = GWT.create(ProfileViewUiBinder.class);
 
     public ProfileView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        changePassPanel.addStyleName("changePassPanel");
-    }
-
-    @Override
-    public PasswordTextBox getPasswordBox() {
-        return passwordTextBox;
-    }
-
-    @Override
-    public HasClickHandlers getChangePassButton() {
-        return changePassButton;
     }
 
     @Override
@@ -47,12 +32,17 @@ public class ProfileView extends Composite implements ProfilePresenter.Display {
     @Override
     public void setData(User user) {
         table.setText(0, 0, "Username: ");
-        table.setText(0, 1, ExpensesGWTController.getUser().getLogin());
+        table.setText(0, 1, user.getLogin());
         table.setText(1, 0, "Name: ");
-        table.setText(1, 1, ExpensesGWTController.getUser().getName());
+        table.setText(1, 1, user.getName());
         table.setText(2, 0, "Surname: ");
-        table.setText(2, 1, ExpensesGWTController.getUser().getSurname());
+        table.setText(2, 1, user.getSurname());
         table.setText(3, 0, "Email: ");
-        table.setText(3, 1, ExpensesGWTController.getUser().getEmail());
+        table.setText(3, 1, user.getEmail());
+    }
+
+    @Override
+    public HasClickHandlers getEditProfileButton() {
+        return editProfile;
     }
 }

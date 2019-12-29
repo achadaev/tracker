@@ -40,12 +40,13 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     private void initTable() {
-        login.getElement().setPropertyString("placeholder", "Login");
-        name.getElement().setPropertyString("placeholder", "Name");
-        surname.getElement().setPropertyString("placeholder", "Surname");
-        email.getElement().setPropertyString("placeholder", "Email");
-        password.getElement().setPropertyString("placeholder", "Password");
-        role.getElement().setPropertyString("placeholder", "Role");
+        table.setText(0, 0, "Login");
+        table.setText(1, 0, "Name");
+        table.setText(2, 0, "Surname");
+        table.setText(3, 0, "Email");
+        table.setText(4, 0, "Password");
+        table.setText(5, 0, "Role");
+        table.setText(6, 0, "Registration Date");
 
         table.setWidget(0, 1, login);
         table.setWidget(1, 1, name);

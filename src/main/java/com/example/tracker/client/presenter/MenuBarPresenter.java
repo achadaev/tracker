@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ProfileBarPresenter implements Presenter {
+public class MenuBarPresenter implements Presenter {
     public interface Display {
         Label getUsernameLabel();
         Button getManageButton();
@@ -24,7 +24,7 @@ public class ProfileBarPresenter implements Presenter {
     HandlerManager eventBus;
     private Display display;
 
-    public ProfileBarPresenter(HandlerManager eventBus, Display display) {
+    public MenuBarPresenter(HandlerManager eventBus, Display display) {
         this.eventBus = eventBus;
         this.display = display;
         bind();

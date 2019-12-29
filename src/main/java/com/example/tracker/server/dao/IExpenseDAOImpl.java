@@ -91,14 +91,15 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     @Override
-    public Expense getExpenseById(int id) {
+    public Expense getExpenseById(int userId, int id) {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
-                "FROM expense " +
-                "WHERE expense.id = ?";
+                "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
+                "WHERE expense.id = ? AND user_id = ?";
         return jdbcTemplate.query(query, new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
                 preparedStatement.setInt(1, id);
+                preparedStatement.setInt(2, userId);
             }
         }, new ExpenseMapper()).get(0);
     }

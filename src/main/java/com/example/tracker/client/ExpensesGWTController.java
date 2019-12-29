@@ -165,7 +165,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doUserUpdated() {
-        History.newItem("manage");
+        if (isAdmin) {
+            History.newItem("manage");
+        } else {
+            History.newItem("profile");
+        }
     }
 
     private void doShowHome() {
@@ -217,7 +221,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
             }
             else if (token.equals("profile")) {
-                presenter = new ProfilePresenter(userWebService, new ProfileView());
+                presenter = new ProfilePresenter(userWebService, eventBus, new ProfileView());
             }
             else if (token.equals("edit")) {
                 presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());

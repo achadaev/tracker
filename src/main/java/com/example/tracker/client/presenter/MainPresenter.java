@@ -3,7 +3,7 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.event.ShowExpensesEvent;
 import com.example.tracker.client.event.ShowHomeEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
-import com.example.tracker.client.view.ProfileBarView;
+import com.example.tracker.client.view.MenuBarView;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -26,14 +26,14 @@ public class MainPresenter implements Presenter {
     private HandlerManager eventBus;
     private Display display;
 
-    private ProfileBarPresenter profileBarPresenter;
+    private MenuBarPresenter menuBarPresenter;
 
     public MainPresenter(HandlerManager eventBus, Display display) {
         this.eventBus = eventBus;
         this.display = display;
 
-        profileBarPresenter = new ProfileBarPresenter(eventBus, new ProfileBarView());
-        profileBarPresenter.go(display.getProfileBarPanel());
+        menuBarPresenter = new MenuBarPresenter(eventBus, new MenuBarView());
+        menuBarPresenter.go(display.getProfileBarPanel());
         bind();
     }
 

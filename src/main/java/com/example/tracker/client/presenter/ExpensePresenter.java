@@ -68,7 +68,6 @@ public class ExpensePresenter implements Presenter {
     }
 
     public void bind() {
-
         display.getAddButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {

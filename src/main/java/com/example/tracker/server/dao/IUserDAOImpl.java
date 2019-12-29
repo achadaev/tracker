@@ -60,28 +60,18 @@ public class IUserDAOImpl implements IUserDAO {
         return jdbcTemplate.query(query, new UserMapper());
     }
 
-    private Boolean executeAddOrUpdate(User user, String query) {
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setString(1, user.getLogin());
-                preparedStatement.setString(2, user.getName());
-                preparedStatement.setString(3, user.getSurname());
-                preparedStatement.setString(4, user.getEmail());
-                preparedStatement.setString(5, user.getPassword());
-                preparedStatement.setString(6, user.getRole());
-                preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
-                return preparedStatement.execute();
-            }
-        });
-        return false;
-    }
-
     @Override
     public Boolean addUser(User user) {
         String query = "INSERT INTO user (login, name, surname, email, pass, role, reg_date) VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?)";
-        return executeAddOrUpdate(user, query);
+        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                setUserFields(preparedStatement, user);
+                return preparedStatement.execute();
+            }
+        });
+        return false;
     }
 
     @Override
@@ -95,7 +85,25 @@ public class IUserDAOImpl implements IUserDAO {
                 "role = ?, " +
                 "reg_date = ? " +
                 "WHERE id = ?";
-        return executeAddOrUpdate(user, query);
+        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
+            @Override
+            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
+                setUserFields(preparedStatement, user);
+                preparedStatement.setInt(8, user.getId());
+                return preparedStatement.execute();
+            }
+        });
+        return false;
+    }
+
+    private void setUserFields(PreparedStatement preparedStatement, User user) throws SQLException {
+        preparedStatement.setString(1, user.getLogin());
+        preparedStatement.setString(2, user.getName());
+        preparedStatement.setString(3, user.getSurname());
+        preparedStatement.setString(4, user.getEmail());
+        preparedStatement.setString(5, user.getPassword());
+        preparedStatement.setString(6, user.getRole());
+        preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
     }
 
     private Boolean deleteUser(int id) {
