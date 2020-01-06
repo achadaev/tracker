@@ -1,6 +1,6 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.UserUpdatedEvent;
+import com.example.tracker.client.event.user.UserUpdatedEvent;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;

@@ -1,6 +1,6 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.ShowExpensesEvent;
+import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.event.ShowHomeEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.view.MenuBarView;

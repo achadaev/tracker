@@ -1,15 +1,16 @@
 package com.example.tracker.server.service;
 
 import com.example.tracker.server.dao.IExpenseDAO;
+import com.example.tracker.server.dao.IExpenseTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.ExpenseType;
 import com.example.tracker.shared.model.ReviewInfo;
 import com.example.tracker.shared.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +22,9 @@ public class ExpenseService {
 
     @Autowired
     private IExpenseDAO iExpenseDao;
+
+    @Autowired
+    private IExpenseTypeDAO iExpenseTypeDAO;
 
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
@@ -135,4 +139,18 @@ public class ExpenseService {
             throw new AccessDeniedException("Access denied");
         }
     }
+
+    public Boolean updateType(ExpenseType type) throws AccessDeniedException {
+        if (isAdmin()) {
+            for (ExpenseType temp : iExpenseTypeDAO.getTypes()) {
+                if (temp.getId() == type.getId()) {
+                    return iExpenseTypeDAO.updateType(type);
+                }
+            }
+            return iExpenseTypeDAO.addType(type);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
 }

@@ -1,7 +1,8 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
-import com.example.tracker.client.event.ShowManageEvent;
+import com.example.tracker.client.event.ShowManageProfilesEvent;
+import com.example.tracker.client.event.ShowManageTypesEvent;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,7 +17,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class MenuBarPresenter implements Presenter {
     public interface Display {
         Label getUsernameLabel();
-        Button getManageButton();
+        Button getManageProfilesButton();
+        Button getManageTypesButton();
         Button getLogoutButton();
         Widget asWidget();
     }
@@ -39,10 +41,17 @@ public class MenuBarPresenter implements Presenter {
             }
         });
 
-        display.getManageButton().addClickHandler(new ClickHandler() {
+        display.getManageProfilesButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowManageEvent());
+                eventBus.fireEvent(new ShowManageProfilesEvent());
+            }
+        });
+
+        display.getManageTypesButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                eventBus.fireEvent(new ShowManageTypesEvent());
             }
         });
     }

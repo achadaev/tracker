@@ -1,9 +1,9 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.AddUserEvent;
-import com.example.tracker.client.event.EditUserEvent;
-import com.example.tracker.client.services.UserWebService;
-import com.example.tracker.shared.model.User;
+import com.example.tracker.client.event.type.AddTypeEvent;
+import com.example.tracker.client.event.type.EditTypeEvent;
+import com.example.tracker.client.services.TypeWebService;
+import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,25 +16,25 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
-public class ManagePresenter implements Presenter {
+public class ManageTypesPresenter implements Presenter {
 
-    private List<User> userList;
+    private List<ExpenseType> typeList;
 
     public interface Display {
         HasClickHandlers getAddButton();
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         List<Integer> getSelectedIds();
-        void setData(List<User> userList);
+        void setData(List<ExpenseType> typeList);
         Widget asWidget();
     }
 
-    private UserWebService userWebService;
+    private TypeWebService typeWebService;
     private HandlerManager eventBus;
     private Display display;
 
-    public ManagePresenter(UserWebService userWebService, HandlerManager eventBus, Display display) {
-        this.userWebService = userWebService;
+    public ManageTypesPresenter(TypeWebService typeWebService, HandlerManager eventBus, Display display) {
+        this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
     }
@@ -43,7 +43,7 @@ public class ManagePresenter implements Presenter {
         display.getAddButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new AddUserEvent());
+                eventBus.fireEvent(new AddTypeEvent());
             }
         });
 
@@ -53,7 +53,7 @@ public class ManagePresenter implements Presenter {
                 List<Integer> selectedIds = display.getSelectedIds();
 
                 if (selectedIds.size() == 1) {
-                    eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
+                    eventBus.fireEvent(new EditTypeEvent(selectedIds.get(0)));
                 } else {
                     Window.alert("Select one row");
                 }
@@ -66,36 +66,37 @@ public class ManagePresenter implements Presenter {
                 deleteSelectedIds();
             }
         });
+
     }
 
     private void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
 
-        userWebService.deleteUsers(selectedIds, new MethodCallback<List<User>>() {
+        typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error deleting users");
+                Window.alert("Error deleting types");
             }
 
             @Override
-            public void onSuccess(Method method, List<User> response) {
-                userList = response;
-                display.setData(userList);
+            public void onSuccess(Method method, List<ExpenseType> response) {
+                typeList = response;
+                display.setData(typeList);
             }
         });
     }
 
     private void initTable() {
-        userWebService.getAllUsers(new MethodCallback<List<User>>() {
+        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Window.alert("Error getting all users");
             }
 
             @Override
-            public void onSuccess(Method method, List<User> response) {
-                userList = response;
-                display.setData(userList);
+            public void onSuccess(Method method, List<ExpenseType> response) {
+                typeList = response;
+                display.setData(typeList);
             }
         });
     }

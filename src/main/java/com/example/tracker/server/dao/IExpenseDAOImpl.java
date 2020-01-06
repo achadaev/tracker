@@ -84,13 +84,6 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     @Override
-    public List<ExpenseType> getTypes() {
-        String query = "SELECT  expense_type.id, expense_type.name " +
-                "FROM expense_type";
-        return jdbcTemplate.query(query, new ExpenseTypeMapper());
-    }
-
-    @Override
     public Expense getExpenseById(int userId, int id) {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +

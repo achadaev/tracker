@@ -1,4 +1,4 @@
-package com.example.tracker.client.event;
+package com.example.tracker.client.event.expense;
 
 import com.example.tracker.shared.model.Expense;
 import com.google.gwt.event.shared.GwtEvent;

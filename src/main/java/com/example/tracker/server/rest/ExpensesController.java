@@ -1,6 +1,7 @@
 package com.example.tracker.server.rest;
 
 import com.example.tracker.server.dao.IExpenseDAO;
+import com.example.tracker.server.dao.IExpenseTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.Expense;
@@ -20,6 +21,9 @@ public class ExpensesController {
 
     @Autowired
     IExpenseDAO iExpenseDao;
+
+    @Autowired
+    IExpenseTypeDAO iExpenseTypeDAO;
 
     @Autowired
     IUserDAO iUserDAO;
@@ -61,7 +65,37 @@ public class ExpensesController {
 
     @GetMapping("/expenses/types")
     List<ExpenseType> getTypes() {
-        return iExpenseDao.getTypes();
+        return iExpenseTypeDAO.getTypes();
+    }
+
+    @GetMapping("/expenses/typesId={id}")
+    ExpenseType getTypeById(@PathVariable int id) {
+        return iExpenseTypeDAO.getTypeById(id);
+    }
+
+    @PostMapping(value = "/expenses/add-type", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> addType(@RequestBody ExpenseType type) {
+        try {
+            return Collections.singletonMap("response", expenseService.updateType(type));
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @PutMapping(value = "/expenses/update-type", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> updateType(@RequestBody ExpenseType type) {
+        try {
+            return Collections.singletonMap("response", expenseService.updateType(type));
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @DeleteMapping("/expenses/delete-types")
+    List<ExpenseType> deleteTypes(@RequestBody List<Integer> ids) {
+        return iExpenseTypeDAO.deleteTypes(ids);
     }
 
     @GetMapping("/expenses/profile")
@@ -81,7 +115,12 @@ public class ExpensesController {
 
     @PostMapping(value = "expenses/add-profile", produces = MediaType.APPLICATION_JSON)
     Map<String, Boolean> addUser(@RequestBody User user) {
-        return Collections.singletonMap("response", iUserDAO.addUser(user));
+        try {
+            return Collections.singletonMap("response", expenseService.updateUser(user));
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @PutMapping(value = "expenses/update-profile", produces = MediaType.APPLICATION_JSON)

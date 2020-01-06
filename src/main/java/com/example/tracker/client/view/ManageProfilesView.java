@@ -1,6 +1,6 @@
 package com.example.tracker.client.view;
 
-import com.example.tracker.client.presenter.ManagePresenter;
+import com.example.tracker.client.presenter.ManageProfilesPresenter;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.DateCell;
@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ManageView extends Composite implements ManagePresenter.Display {
-    interface ManageViewUiBinder extends UiBinder<HTMLPanel, ManageView> {
+public class ManageProfilesView extends Composite implements ManageProfilesPresenter.Display {
+    interface ManageViewUiBinder extends UiBinder<HTMLPanel, ManageProfilesView> {
     }
 
     @UiField
@@ -39,7 +39,7 @@ public class ManageView extends Composite implements ManagePresenter.Display {
 
     private static ManageViewUiBinder ourUiBinder = GWT.create(ManageViewUiBinder.class);
 
-    public ManageView() {
+    public ManageProfilesView() {
         initWidget(ourUiBinder.createAndBindUi(this));
     }
 

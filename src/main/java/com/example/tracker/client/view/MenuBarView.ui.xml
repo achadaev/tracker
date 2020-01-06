@@ -3,7 +3,8 @@
     <g:HTMLPanel>
         <g:HorizontalPanel ui:field="horizontalPanel" width="100%">
             <g:Label ui:field="usernameLabel"/>
-            <g:Button ui:field="manageButton" text="Manage"/>
+            <g:Button ui:field="manageProfilesButton" text="Manage Profiles"/>
+            <g:Button ui:field="manageTypesButton" text="Manage Types"/>
             <g:cell width="100%">
                 <g:Button ui:field="logoutButton" text="Logout"/>
             </g:cell>

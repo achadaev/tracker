@@ -134,7 +134,16 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-    </dependencies>
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13</version>
+			<scope>test</scope>
+		</dependency>
+
+
+	</dependencies>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>

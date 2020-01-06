@@ -43,11 +43,6 @@ public interface ExpenseWebService extends RestService {
     void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
                            @PathParam("endDate") Date endDate, MethodCallback<List<Expense>> callback);
 
-    @GET
-    @Path("/types")
-    @Produces(MediaType.APPLICATION_JSON)
-    void getTypes(MethodCallback<List<ExpenseType>> callback);
-    
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)

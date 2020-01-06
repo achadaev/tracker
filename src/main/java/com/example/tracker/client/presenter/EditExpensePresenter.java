@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.ExpenseUpdatedEvent;
+import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
+import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
@@ -31,19 +32,24 @@ public class EditExpensePresenter implements Presenter {
 
     private Expense expense;
     private ExpenseWebService expenseWebService;
+    private TypeWebService typeWebService;
     private HandlerManager eventBus;
     private Display display;
 
-    public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display) {
+    public EditExpensePresenter(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+                                HandlerManager eventBus, Display display) {
         this.expenseWebService = expenseWebService;
+        this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
         this.expense = new Expense();
         bind();
     }
 
-    public EditExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display display, int id) {
+    public EditExpensePresenter(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+                                HandlerManager eventBus, Display display, int id) {
         this.expenseWebService = expenseWebService;
+        this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
         bind();
@@ -66,7 +72,7 @@ public class EditExpensePresenter implements Presenter {
     }
 
     private void initTypesListBox(ListBox listBox) {
-        expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Window.alert(throwable.getMessage());

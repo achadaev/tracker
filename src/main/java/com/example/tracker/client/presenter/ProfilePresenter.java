@@ -1,7 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
-import com.example.tracker.client.event.EditUserEvent;
+import com.example.tracker.client.event.user.EditUserEvent;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;

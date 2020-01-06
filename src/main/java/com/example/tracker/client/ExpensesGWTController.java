@@ -1,7 +1,11 @@
 package com.example.tracker.client;
 
 import com.example.tracker.client.event.*;
+import com.example.tracker.client.event.expense.*;
+import com.example.tracker.client.event.type.*;
+import com.example.tracker.client.event.user.*;
 import com.example.tracker.client.presenter.*;
+import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.*;
@@ -27,15 +31,18 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private HandlerManager eventBus;
     private ExpenseWebService expenseWebService;
+    private TypeWebService typeWebService;
     private UserWebService userWebService;
     private HasWidgets container;
 
-    public ExpensesGWTController(ExpenseWebService expenseWebService, UserWebService userWebService, HandlerManager eventBus) {
+    public ExpensesGWTController(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+                                 UserWebService userWebService, HandlerManager eventBus) {
         this.eventBus = eventBus;
         this.userWebService = userWebService;
         this.expenseWebService = expenseWebService;
+        this.typeWebService = typeWebService;
 
-        expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Window.alert("Error getting types");
@@ -111,10 +118,10 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
         });
 
-        eventBus.addHandler(ShowManageEvent.TYPE, new ShowManageEventHandler() {
+        eventBus.addHandler(ShowManageProfilesEvent.TYPE, new ShowManageProfilesEventHandler() {
             @Override
-            public void onShowManage(ShowManageEvent event) {
-                doShowManage();
+            public void onShowManage(ShowManageProfilesEvent event) {
+                doShowManageProfiles();
             }
         });
 
@@ -138,6 +145,34 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 doUserUpdated();
             }
         });
+
+        eventBus.addHandler(ShowManageTypesEvent.TYPE, new ShowManageTypesEventHandler() {
+            @Override
+            public void onShowManage(ShowManageTypesEvent event) {
+                doShowManageTypes();
+            }
+        });
+
+        eventBus.addHandler(AddTypeEvent.TYPE, new AddTypeEventHandler() {
+            @Override
+            public void onAddType(AddTypeEvent event) {
+                doAddNewType();
+            }
+        });
+
+        eventBus.addHandler(EditTypeEvent.TYPE, new EditTypeEventHandler() {
+            @Override
+            public void onEditType(EditTypeEvent event) {
+                doEditType(event.getId());
+            }
+        });
+
+        eventBus.addHandler(TypeUpdatedEvent.TYPE, new TypeUpdatedEventHandler() {
+            @Override
+            public void onTypeUpdated(TypeUpdatedEvent event) {
+                doTypeUpdated();
+            }
+        });
     }
 
     private void doAddNewExpense() {
@@ -148,9 +183,14 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem("add-user");
     }
 
+    private void doAddNewType() {
+        History.newItem("add-type");
+    }
+
     private void doEditExpense(int id) {
         History.newItem("edit", false);
-        Presenter presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView(), id);
+        Presenter presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
+                new EditExpenseView(), id);
         presenter.go(container);
     }
 
@@ -160,16 +200,26 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         presenter.go(container);
     }
 
+    private void doEditType(int id) {
+        History.newItem("edit-type", false);
+        Presenter presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView(), id);
+        presenter.go(container);
+    }
+
     private void doExpenseUpdated() {
         History.newItem("list");
     }
 
     private void doUserUpdated() {
         if (isAdmin) {
-            History.newItem("manage");
+            History.newItem("manage-profiles");
         } else {
             History.newItem("profile");
         }
+    }
+
+    private void doTypeUpdated() {
+        History.newItem("manage-types");
     }
 
     private void doShowHome() {
@@ -184,8 +234,12 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem("profile");
     }
 
-    private void doShowManage() {
-        History.newItem("manage");
+    private void doShowManageProfiles() {
+        History.newItem("manage-profiles");
+    }
+
+    private void doShowManageTypes() {
+        History.newItem("manage-types");
     }
 
     public void go(HasWidgets container) {
@@ -212,25 +266,36 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter = new HomePresenter(expenseWebService, eventBus, new HomeView());
             }
             else if (token.equals("list")) {
-                presenter = new ExpensePresenter(expenseWebService, eventBus, new ExpenseView());
+                presenter = new ExpensePresenter(expenseWebService, typeWebService, eventBus, new ExpenseView());
             }
             else if (token.equals("add")) {
-                presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
+                presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
+                                new EditExpenseView());
             }
             else if (token.equals("add-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
+            }
+            else if (token.equals("add-type")) {
+                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView());
             }
             else if (token.equals("profile")) {
                 presenter = new ProfilePresenter(userWebService, eventBus, new ProfileView());
             }
             else if (token.equals("edit")) {
-                presenter = new EditExpensePresenter(expenseWebService, eventBus, new EditExpenseView());
+                presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
+                                new EditExpenseView());
             }
             else if (token.equals("edit-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
             }
-            else if (token.equals("manage")) {
-                presenter = new ManagePresenter(userWebService, eventBus, new ManageView());
+            else if (token.equals("edit-type")) {
+                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView());
+            }
+            else if (token.equals("manage-profiles")) {
+                presenter = new ManageProfilesPresenter(userWebService, eventBus, new ManageProfilesView());
+            }
+            else if (token.equals("manage-types")) {
+                presenter = new ManageTypesPresenter(typeWebService, eventBus, new ManageTypesView());
             }
 
             if (presenter != null) {

@@ -1,8 +1,9 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
-import com.example.tracker.client.event.AddExpenseEvent;
-import com.example.tracker.client.event.EditExpenseEvent;
+import com.example.tracker.client.event.expense.AddExpenseEvent;
+import com.example.tracker.client.event.expense.EditExpenseEvent;
+import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
@@ -40,18 +41,21 @@ public class ExpensePresenter implements Presenter {
     }
 
     private ExpenseWebService expenseWebService;
+    private TypeWebService typeWebService;
     private HandlerManager eventBus;
     private Display display;
 
 
-    public ExpensePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display view) {
+    public ExpensePresenter(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+                            HandlerManager eventBus, Display view) {
         this.expenseWebService = expenseWebService;
+        this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = view;
     }
 
     private void initTypesListBox(ListBox listBox) {
-        expenseWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Window.alert(throwable.getMessage());

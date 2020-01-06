@@ -1,4 +1,4 @@
-package com.example.tracker.client.event;
+package com.example.tracker.client.event.user;
 
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.shared.GwtEvent;
