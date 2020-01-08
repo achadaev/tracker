@@ -1,5 +1,6 @@
 package com.example.tracker.client.view;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
@@ -17,10 +18,13 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.googlecode.gwt.charts.client.ChartLoader;
+import com.googlecode.gwt.charts.client.ChartPackage;
+import com.googlecode.gwt.charts.client.ColumnType;
+import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.corechart.PieChart;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ExpenseView extends Composite implements ExpensePresenter.Display {
     interface MainViewUiBinder extends UiBinder<HTMLPanel, ExpenseView> {
@@ -47,6 +51,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Label total;
 
+    private PieChart chart;
+
     private CellTable<Expense> expenseTable;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
@@ -57,6 +63,49 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         initWidget(ourUiBinder.createAndBindUi(this));
         startDate.setVisible(false);
         endDate.setVisible(false);
+    }
+
+    private void initPieChart(List<Expense> expenseList) {
+        ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
+        chartLoader.loadApi(new Runnable() {
+            @Override
+            public void run() {
+                chart = new PieChart();
+                tablePanel.add(chart);
+                drawPieChart(expenseList);
+            }
+        });
+    }
+
+    private void drawPieChart(List<Expense> expenseList) {
+        DataTable dataTable = DataTable.create();
+        dataTable.addColumn(ColumnType.STRING, "Type");
+        dataTable.addColumn(ColumnType.NUMBER, "Price");
+
+        List<ExpenseType> types = ExpensesGWTController.getTypes();
+        List<Double> totalByType = new ArrayList<>();
+        dataTable.addRows(types.size());
+        int i = 0;
+        int j = 0;
+        for (ExpenseType type : types) {
+            dataTable.setValue(i, j, type.getName());
+            dataTable.setValue(i, j + 1, countByType(i + 1, expenseList));
+            i++;
+        }
+
+        chart.draw(dataTable);
+        chart.setWidth("400px");
+        chart.setHeight("400px");
+    }
+
+    private double countByType(int typeId, List<Expense> expenseList) {
+        double total = 0.0;
+        for (Expense expense : expenseList) {
+            if (expense.getTypeId() == typeId) {
+                total += expense.getPrice();
+            }
+        }
+        return total;
     }
 
     @Override
@@ -161,6 +210,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         provider.updateRowCount(data.size(), true);
 
         tablePanel.add(expenseTable);
+
+        initPieChart(data);
     }
 
     @Override

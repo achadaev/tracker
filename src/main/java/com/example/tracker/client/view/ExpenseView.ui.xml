@@ -23,4 +23,5 @@
                 <g:Label ui:field="total"/>
             </g:HorizontalPanel>
         </g:HTMLPanel>
+
 </ui:UiBinder>
