@@ -1,10 +1,12 @@
 package com.example.tracker.client.services;
 
 import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.ReviewInfo;
+import com.example.tracker.shared.model.SimpleDate;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -59,4 +61,15 @@ public interface ExpenseWebService extends RestService {
     @Path("/delete")
     @Consumes(MediaType.APPLICATION_JSON)
     void deleteExpenses(List<Integer> ids, MethodCallback<List<Expense>> callback);
+
+    @GET
+    @Path("/dates-between")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getDatesBetween(MethodCallback<List<SimpleDate>> callback);
+
+    @GET
+    @Path("/between")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getExpensesBetween(MethodCallback<List<MonthlyExpense>> callback);
+
 }

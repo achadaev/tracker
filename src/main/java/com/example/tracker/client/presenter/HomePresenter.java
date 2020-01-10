@@ -3,7 +3,11 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.services.ExpenseWebService;
+import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.ReviewInfo;
+import com.example.tracker.shared.model.SimpleDate;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
@@ -15,17 +19,21 @@ import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import java.util.Date;
+import java.util.List;
+
 public class HomePresenter implements Presenter {
 
     private ReviewInfo reviewInfo;
 
     public interface Display {
         Label getGreetingLabel();
-        Panel getReviewPanel();
         Label getAmountLabel();
         Label getMonthLabel();
         Label getWeekLabel();
         Label getMoreLabel();
+        void initPieChart(List<Expense> expenseList);
+        void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
         Widget asWidget();
     }
 
@@ -48,6 +56,48 @@ public class HomePresenter implements Presenter {
         });
     }
 
+    private void initPieChart() {
+        if (ExpensesGWTController.isAdmin) {
+            expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    Window.alert("Error getting expenses");
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Expense> response) {
+                    display.initPieChart(response);
+                }
+            });
+        } else {
+            expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    Window.alert("Error getting expenses");
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Expense> response) {
+                    display.initPieChart(response);
+                }
+            });
+        }
+    }
+
+    private void initAreaChart(List<SimpleDate> dates) {
+        expenseWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Window.alert("Error getting expenses between");
+            }
+
+            @Override
+            public void onSuccess(Method method, List<MonthlyExpense> response) {
+                display.initAreaChart(dates, response);
+            }
+        });
+    }
+
     @Override
     public void go(HasWidgets container) {
         bind();
@@ -66,6 +116,20 @@ public class HomePresenter implements Presenter {
                 display.getAmountLabel().setText(display.getAmountLabel().getText() + reviewInfo.getAmount());
                 display.getMonthLabel().setText(display.getMonthLabel().getText() + reviewInfo.getMonth());
                 display.getWeekLabel().setText(display.getWeekLabel().getText() + reviewInfo.getWeek());
+            }
+        });
+
+        initPieChart();
+
+        expenseWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Window.alert(throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Method method, List<SimpleDate> response) {
+                initAreaChart(response);
             }
         });
     }

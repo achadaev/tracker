@@ -2,7 +2,7 @@ package com.example.tracker.shared.model;
 
 import java.util.Date;
 
-public class Expense {
+public class Expense implements Comparable<Expense> {
     private int id;
     private int typeId;
     private String name;
@@ -58,5 +58,21 @@ public class Expense {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @Override
+    public int compareTo(Expense o) {
+        return this.getDate().compareTo(o.getDate());
+    }
+
+    @Override
+    public String toString() {
+        return "Expense{" +
+                "id=" + id +
+                ", typeId=" + typeId +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                ", price=" + price +
+                '}';
     }
 }

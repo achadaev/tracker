@@ -10,6 +10,7 @@ import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.*;
@@ -51,8 +52,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Label total;
 
-    private PieChart chart;
-
     private CellTable<Expense> expenseTable;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
@@ -63,49 +62,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         initWidget(ourUiBinder.createAndBindUi(this));
         startDate.setVisible(false);
         endDate.setVisible(false);
-    }
-
-    private void initPieChart(List<Expense> expenseList) {
-        ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
-        chartLoader.loadApi(new Runnable() {
-            @Override
-            public void run() {
-                chart = new PieChart();
-                tablePanel.add(chart);
-                drawPieChart(expenseList);
-            }
-        });
-    }
-
-    private void drawPieChart(List<Expense> expenseList) {
-        DataTable dataTable = DataTable.create();
-        dataTable.addColumn(ColumnType.STRING, "Type");
-        dataTable.addColumn(ColumnType.NUMBER, "Price");
-
-        List<ExpenseType> types = ExpensesGWTController.getTypes();
-        List<Double> totalByType = new ArrayList<>();
-        dataTable.addRows(types.size());
-        int i = 0;
-        int j = 0;
-        for (ExpenseType type : types) {
-            dataTable.setValue(i, j, type.getName());
-            dataTable.setValue(i, j + 1, countByType(i + 1, expenseList));
-            i++;
-        }
-
-        chart.draw(dataTable);
-        chart.setWidth("400px");
-        chart.setHeight("400px");
-    }
-
-    private double countByType(int typeId, List<Expense> expenseList) {
-        double total = 0.0;
-        for (Expense expense : expenseList) {
-            if (expense.getTypeId() == typeId) {
-                total += expense.getPrice();
-            }
-        }
-        return total;
     }
 
     @Override
@@ -172,6 +128,15 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
         expenseTable.addColumn(nameColumn, "Name");
 
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("d MMMM yyyy, EEEE");
+        TextColumn<Expense> dateColumn = new TextColumn<Expense>() {
+            @Override
+            public String getValue(Expense expense) {
+                return dateTimeFormat.format(expense.getDate());
+            }
+        };
+        expenseTable.addColumn(dateColumn, "Date");
+        /*
         DateCell dateCell = new DateCell();
         Column<Expense, Date> dateColumn = new Column<Expense, Date>(dateCell) {
             @Override
@@ -180,6 +145,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             }
         };
         expenseTable.addColumn(dateColumn, "Date");
+*/
 
         Column<Expense, Number> priceColumn = new Column<Expense, Number>(new NumberCell()) {
             @Override
@@ -210,8 +176,6 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         provider.updateRowCount(data.size(), true);
 
         tablePanel.add(expenseTable);
-
-        initPieChart(data);
     }
 
     @Override

@@ -4,10 +4,8 @@ import com.example.tracker.server.dao.IExpenseDAO;
 import com.example.tracker.server.dao.IExpenseTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ExpenseService;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
-import com.example.tracker.shared.model.ReviewInfo;
-import com.example.tracker.shared.model.User;
+import com.example.tracker.shared.model.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +41,12 @@ public class ExpensesController {
 
     @GetMapping("/expenses/review")
     ReviewInfo getReview() {
-        return expenseService.getReview();
+        try {
+            return expenseService.getReview();
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/expenses/id={id}")
@@ -53,14 +56,24 @@ public class ExpensesController {
 
     @GetMapping("/expenses/typeId={id}")
     List<Expense> getExpensesByTypeId(@PathVariable int id) {
-        return expenseService.getExpensesByTypeId(id);
+        try {
+            return expenseService.getExpensesByTypeId(id);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/expenses/typeId={typeId}/{startDate}/{endDate}")
     List<Expense> getExpensesByDateAndTypeId(@PathVariable int typeId,
                                              @PathVariable Date startDate,
                                              @PathVariable Date endDate) {
-        return expenseService.getExpensesByDate(typeId, startDate, endDate);
+        try {
+            return expenseService.getExpensesByDate(typeId, startDate, endDate);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/expenses/types")
@@ -166,5 +179,15 @@ public class ExpensesController {
     @DeleteMapping("/expenses/delete")
     List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
         return expenseService.deleteExpenses(ids);
+    }
+
+    @GetMapping("/expenses/dates-between")
+    List<SimpleDate> getDatesBetween() {
+        return expenseService.getDatesBetween();
+    }
+
+    @GetMapping("/expenses/between")
+    List<MonthlyExpense> getExpensesBetween() {
+        return expenseService.getExpensesBetween();
     }
 }

@@ -3,17 +3,18 @@ package com.example.tracker.server.service;
 import com.example.tracker.server.dao.IExpenseDAO;
 import com.example.tracker.server.dao.IExpenseTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
-import com.example.tracker.shared.model.ReviewInfo;
-import com.example.tracker.shared.model.User;
+import com.example.tracker.shared.model.*;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.DeflaterOutputStream;
 
 @Component
 public class ExpenseService {
@@ -25,6 +26,8 @@ public class ExpenseService {
 
     @Autowired
     private IExpenseTypeDAO iExpenseTypeDAO;
+
+    private final static Logger LOG = LoggerFactory.getLogger(ExpenseService.class);
 
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
@@ -53,23 +56,61 @@ public class ExpenseService {
         }
     }
 
-    public ReviewInfo getReview() {
-        return iExpenseDao.getReview(getCurrentUser().getId());
-    }
-
-    public List<Expense> getExpensesByTypeId(int id) {
-        if (id == 0) {
-            return getUsersExpenses();
+    public ReviewInfo getReview() throws AccessDeniedException {
+        if (isAdmin()) {
+            ReviewInfo result = new ReviewInfo();
+            for (User user : getAllUsers()) {
+                ReviewInfo temp = iExpenseDao.getReview(user.getId());
+                result.setWeek(result.getWeek() + temp.getWeek());
+                result.setMonth(result.getMonth() + temp.getMonth());
+                result.setAmount(result.getAmount() + temp.getAmount());
+            }
+            return result;
         } else {
-            return iExpenseDao.getExpensesByTypeId(getCurrentUser().getId(), id);
+            return iExpenseDao.getReview(getCurrentUser().getId());
         }
     }
 
-    public List<Expense> getExpensesByDate(int typeId, Date startDate, Date endDate) {
-        if (typeId == 0) {
-            return iExpenseDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+    public List<Expense> getExpensesByTypeId(int id) throws AccessDeniedException {
+        if (isAdmin()) {
+            List<Expense> result = new ArrayList<>();
+            if (id == 0) {
+                return iExpenseDao.getAllExpenses();
+            } else {
+                for (User user : getAllUsers()) {
+                    result.addAll(iExpenseDao.getExpensesByTypeId(user.getId(), id));
+                }
+                return result;
+            }
         } else {
-            return iExpenseDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+            if (id == 0) {
+                return getUsersExpenses();
+            } else {
+                return iExpenseDao.getExpensesByTypeId(getCurrentUser().getId(), id);
+            }
+        }
+    }
+
+    public List<Expense> getExpensesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
+        if (isAdmin()) {
+            List<Expense> result = new ArrayList<>();
+            if (typeId == 0) {
+                for (User user : getAllUsers()) {
+                    result.addAll(iExpenseDao.getExpensesByDate(user.getId(), startDate, endDate));
+                }
+                return result;
+            } else {
+                for (User user : getAllUsers()) {
+                    result.addAll(iExpenseDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                }
+                return result;
+            }
+        } else {
+            if (typeId == 0) {
+                return iExpenseDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+            } else {
+                return iExpenseDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+            }
         }
     }
 
@@ -153,4 +194,96 @@ public class ExpenseService {
         }
     }
 
+    public List<SimpleDate> getDatesBetween() {
+        List<Expense> expenseList;
+        if (isAdmin()) {
+            expenseList = iExpenseDao.getAllExpenses();
+        } else {
+            expenseList = getUsersExpenses();
+        }
+        if (expenseList != null) {
+            Collections.sort(expenseList);
+            DateTime first = new DateTime(expenseList.get(0).getDate()).dayOfMonth().withMinimumValue();
+            DateTime last = new DateTime(expenseList.get(expenseList.size() - 1).getDate());
+            List<SimpleDate> datesBetween = new ArrayList<>();
+
+            LOG.info("first " + first.toDate());
+            LOG.info("last " + last.toDate());
+            LOG.info("first.compareTo(last) <= 0 " + (first.compareTo(last) <= 0));
+
+            while (first.compareTo(last) <= 0) {
+                datesBetween.add(new SimpleDate(first.toDate()));
+                first = first.plusMonths(1).dayOfMonth().withMinimumValue();
+            }
+
+            return datesBetween;
+        }
+        return new ArrayList<>();
+    }
+
+    public List<MonthlyExpense> getExpensesBetween() {
+        Calendar calendar = Calendar.getInstance();
+        List<SimpleDate> dates = getDatesBetween();
+        List<MonthlyExpense> expensesBetween = new ArrayList<>();
+
+        for (SimpleDate date : dates) {
+            LOG.info("DATE  " + date.toString());
+        }
+
+        if (dates.size() > 1) {
+            DateTime first = new DateTime(dates.get(0).getDate());
+            DateTime last = new DateTime(dates.get(dates.size() - 1).getDate());
+            calendar.setTime(first.toDate());
+
+            Date firstDay;
+            Date lastDay;
+
+            while (calendar.getTime().compareTo(last.toDate()) <= 0) {
+                calendar.set(Calendar.DATE, 1);
+                firstDay = calendar.getTime();
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                lastDay = calendar.getTime();
+                List<Double> monthlyExpenses = new ArrayList<>();
+
+                for (ExpenseType type : iExpenseTypeDAO.getTypes()) {
+                    try {
+                        monthlyExpenses.add(getMonthlyExpenses(type.getId(), getExpensesByDate(type.getId(), firstDay, lastDay)));
+                    } catch (AccessDeniedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                expensesBetween.add(new MonthlyExpense(monthlyExpenses));
+                calendar.add(Calendar.MONTH, 1);
+                calendar.set(Calendar.DATE, 1);
+            }
+
+            return expensesBetween;
+
+        } else if (dates.size() == 1) {
+            calendar.setTime(new DateTime(dates.get(0).getDate()).toDate());
+            List<Double> monthlyExpenses = new ArrayList<>();
+
+            for (ExpenseType type : iExpenseTypeDAO.getTypes()) {
+                monthlyExpenses.add(getMonthlyExpenses(type.getId(), getUsersExpenses()));
+            }
+
+            expensesBetween.add(new MonthlyExpense(monthlyExpenses));
+
+            return expensesBetween;
+
+        } else {
+            return null;
+        }
+    }
+
+    private Double getMonthlyExpenses(int typeId, List<Expense> expenseList) {
+        double monthly = 0.0;
+        for (Expense expense : expenseList) {
+            if (expense.getTypeId() == typeId) {
+                monthly += expense.getPrice();
+            }
+        }
+        return monthly;
+    }
 }

@@ -6,7 +6,7 @@
             <g:Label ui:field="amountLabel" text="Total expenses: "/>
             <g:Label ui:field="monthLabel" text="This month expenses: "/>
             <g:Label ui:field="weekLabel" text="This week expenses: "/>
+            <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
         </g:HTMLPanel>
-        <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
     </g:HTMLPanel>
 </ui:UiBinder>
