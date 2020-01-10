@@ -6,7 +6,6 @@ import com.example.tracker.shared.model.ReviewInfo;
 import com.example.tracker.shared.model.SimpleDate;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

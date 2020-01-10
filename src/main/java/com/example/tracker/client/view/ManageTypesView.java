@@ -95,12 +95,9 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
             }
         };
 
-        checkAllHeader.setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                for (ExpenseType type: typeList) {
-                    selectionModel.setSelected(type, value);
-                }
+        checkAllHeader.setUpdater(value -> {
+            for (ExpenseType type: typeList) {
+                selectionModel.setSelected(type, value);
             }
         });
         typeTable.addColumn(checkColumn, checkAllHeader);

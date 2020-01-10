@@ -1,11 +1,8 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.type.EditTypeEvent;
 import com.example.tracker.client.event.type.TypeUpdatedEvent;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.ExpenseType;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
@@ -55,12 +52,7 @@ public class EditTypePresenter implements Presenter {
     }
 
     private void bind() {
-        display.getSaveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                doSave();
-            }
-        });
+        display.getSaveButton().addClickHandler((clickEvent) -> doSave());
     }
 
     private void doSave() {

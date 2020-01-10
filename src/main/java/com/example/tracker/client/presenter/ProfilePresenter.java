@@ -33,12 +33,8 @@ public class ProfilePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getEditProfileButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new EditUserEvent(ExpensesGWTController.getUser().getId()));
-            }
-        });
+        display.getEditProfileButton().addClickHandler(clickEvent -> eventBus
+                .fireEvent(new EditUserEvent(ExpensesGWTController.getUser().getId())));
     }
 
     private void updateUserInfo() {

@@ -48,12 +48,7 @@ public class HomePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getMoreLabel().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowExpensesEvent());
-            }
-        });
+        display.getMoreLabel().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
     }
 
     private void initPieChart() {

@@ -66,12 +66,7 @@ public class EditUserPresenter implements Presenter {
     }
 
     private void bind() {
-        display.getSaveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                doSave();
-            }
-        });
+        display.getSaveButton().addClickHandler(clickEvent -> doSave());
     }
 
     private void doSave() {

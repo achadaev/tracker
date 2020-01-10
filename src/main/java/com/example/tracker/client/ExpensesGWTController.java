@@ -74,105 +74,35 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     private void bind() {
         History.addValueChangeHandler(this);
 
-        eventBus.addHandler(ShowHomeEvent.TYPE, new ShowHomeEventHandler() {
-            @Override
-            public void onShowHomeEvent(ShowHomeEvent event) {
-                doShowHome();
-            }
-        });
+        eventBus.addHandler(ShowHomeEvent.TYPE, event -> doShowHome());
 
-        eventBus.addHandler(ShowExpensesEvent.TYPE, new ShowExpensesEventHandler() {
-            @Override
-            public void onShowExpensesEvent(ShowExpensesEvent event) {
-                doShowExpenses();
-            }
-        });
+        eventBus.addHandler(ShowExpensesEvent.TYPE, event -> doShowExpenses());
 
-        eventBus.addHandler(ShowProfileEvent.TYPE, new ShowProfileEventHandler() {
-            @Override
-            public void onShowProfileEvent(ShowProfileEvent event) {
-                doShowProfile();
-            }
-        });
+        eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
 
         //TODO ShowCalendarEvent
 
-        eventBus.addHandler(AddExpenseEvent.TYPE, new AddExpenseEventHandler() {
-            @Override
-            public void onAddExpense(AddExpenseEvent event) {
-                doAddNewExpense();
-            }
-        });
+        eventBus.addHandler(AddExpenseEvent.TYPE, event -> doAddNewExpense());
 
-        eventBus.addHandler(EditExpenseEvent.TYPE, new EditExpenseEventHandler() {
-            @Override
-            public void onEditExpense(EditExpenseEvent event) {
-                doEditExpense(event.getId());
-            }
-        });
+        eventBus.addHandler(EditExpenseEvent.TYPE, event -> doEditExpense(event.getId()));
 
-        eventBus.addHandler(ExpenseUpdatedEvent.TYPE, new ExpenseUpdatedEventHandler() {
-            @Override
-            public void onExpenseUpdated(ExpenseUpdatedEvent event) {
-                doExpenseUpdated();
-            }
-        });
+        eventBus.addHandler(ExpenseUpdatedEvent.TYPE, event -> doExpenseUpdated());
 
-        eventBus.addHandler(ShowManageProfilesEvent.TYPE, new ShowManageProfilesEventHandler() {
-            @Override
-            public void onShowManage(ShowManageProfilesEvent event) {
-                doShowManageProfiles();
-            }
-        });
+        eventBus.addHandler(ShowManageProfilesEvent.TYPE, event -> doShowManageProfiles());
 
-        eventBus.addHandler(AddUserEvent.TYPE, new AddUserEventHandler() {
-            @Override
-            public void onAddUser(AddUserEvent event) {
-                doAddNewUser();
-            }
-        });
+        eventBus.addHandler(AddUserEvent.TYPE, event -> doAddNewUser());
 
-        eventBus.addHandler(EditUserEvent.TYPE, new EditUserEventHandler() {
-            @Override
-            public void onEditUser(EditUserEvent event) {
-                doEditUser(event.getId());
-            }
-        });
+        eventBus.addHandler(EditUserEvent.TYPE, event -> doEditUser(event.getId()));
 
-        eventBus.addHandler(UserUpdatedEvent.TYPE, new UserUpdatedEventHandler() {
-            @Override
-            public void onUserUpdated(UserUpdatedEvent event) {
-                doUserUpdated();
-            }
-        });
+        eventBus.addHandler(UserUpdatedEvent.TYPE, event -> doUserUpdated());
 
-        eventBus.addHandler(ShowManageTypesEvent.TYPE, new ShowManageTypesEventHandler() {
-            @Override
-            public void onShowManage(ShowManageTypesEvent event) {
-                doShowManageTypes();
-            }
-        });
+        eventBus.addHandler(ShowManageTypesEvent.TYPE, event -> doShowManageTypes());
 
-        eventBus.addHandler(AddTypeEvent.TYPE, new AddTypeEventHandler() {
-            @Override
-            public void onAddType(AddTypeEvent event) {
-                doAddNewType();
-            }
-        });
+        eventBus.addHandler(AddTypeEvent.TYPE, event -> doAddNewType());
 
-        eventBus.addHandler(EditTypeEvent.TYPE, new EditTypeEventHandler() {
-            @Override
-            public void onEditType(EditTypeEvent event) {
-                doEditType(event.getId());
-            }
-        });
+        eventBus.addHandler(EditTypeEvent.TYPE, event -> doEditType(event.getId()));
 
-        eventBus.addHandler(TypeUpdatedEvent.TYPE, new TypeUpdatedEventHandler() {
-            @Override
-            public void onTypeUpdated(TypeUpdatedEvent event) {
-                doTypeUpdated();
-            }
-        });
+        eventBus.addHandler(TypeUpdatedEvent.TYPE, event -> doTypeUpdated());
     }
 
     private void doAddNewExpense() {

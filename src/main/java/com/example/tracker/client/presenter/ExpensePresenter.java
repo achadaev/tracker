@@ -7,11 +7,7 @@ import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
@@ -72,50 +68,29 @@ public class ExpensePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getAddButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new AddExpenseEvent());
+        display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddExpenseEvent()));
+
+        display.getEditButton().addClickHandler(clickEvent -> {
+            List<Integer> selectedIds = display.getSelectedIds();
+
+            if (selectedIds.size() == 1) {
+                eventBus.fireEvent(new EditExpenseEvent(selectedIds.get(0)));
+            } else {
+                Window.alert("Select one row");
             }
         });
 
-        display.getEditButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                List<Integer> selectedIds = display.getSelectedIds();
+        display.getDeleteButton().addClickHandler(clickEvent -> deleteSelectedIds());
 
-                if (selectedIds.size() == 1) {
-                    eventBus.fireEvent(new EditExpenseEvent(selectedIds.get(0)));
-                } else {
-                    Window.alert("Select one row");
-                }
-            }
-        });
+        display.getFilerButton().addClickHandler(clickEvent -> filterExpenses(Integer.parseInt(display.getTypesListBox().getSelectedValue())));
 
-        display.getDeleteButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                deleteSelectedIds();
-            }
-        });
-
-        display.getFilerButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                filterExpenses(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
-            }
-        });
-
-        display.getDateCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
-                if (display.getDateCheckBox().getValue()) {
-                    display.getStartDate().setVisible(true);
-                    display.getEndDate().setVisible(true);
-                } else {
-                    display.getStartDate().setVisible(false);
-                    display.getEndDate().setVisible(false);
-                }
+        display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
+            if (display.getDateCheckBox().getValue()) {
+                display.getStartDate().setVisible(true);
+                display.getEndDate().setVisible(true);
+            } else {
+                display.getStartDate().setVisible(false);
+                display.getEndDate().setVisible(false);
             }
         });
 

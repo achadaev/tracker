@@ -35,24 +35,17 @@ public class IExpenseTypeDAOImpl implements IExpenseTypeDAO {
         String query = "SELECT expense_type.id, expense_type.name  " +
                 "FROM expense_type " +
                 "WHERE id = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, id);
-            }
-        }, new ExpenseTypeMapper()).get(0);
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setInt(1, id), new ExpenseTypeMapper()).get(0);
     }
 
     @Override
     public Boolean addType(ExpenseType type) {
         String query = "INSERT INTO expense_type (name) VALUES " +
                 "(?)";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setString(1, type.getName());
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setString(1, type.getName());
+            return preparedStatement.execute();
         });
     }
 
@@ -61,25 +54,19 @@ public class IExpenseTypeDAOImpl implements IExpenseTypeDAO {
         String query = "UPDATE expense_type " +
                 "SET name = ? " +
                 "WHERE id = ?";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setString(1, type.getName());
-                preparedStatement.setInt(2, type.getId());
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setString(1, type.getName());
+            preparedStatement.setInt(2, type.getId());
+            return preparedStatement.execute();
         });
     }
 
     private Boolean deleteType(int id) {
         String query = "DELETE FROM expense_type " +
                 "WHERE id = ?";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, id);
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
         });
     }
 

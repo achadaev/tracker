@@ -46,12 +46,8 @@ public class IExpenseDAOImpl implements IExpenseDAO {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, id);
-            }
-        }, new ExpenseMapper());
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setInt(1, id), new ExpenseMapper());
     }
 
     private double getTotal(List<Expense> expenseList) {
@@ -88,12 +84,9 @@ public class IExpenseDAOImpl implements IExpenseDAO {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE expense.id = ? AND user_id = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, id);
-                preparedStatement.setInt(2, userId);
-            }
+        return jdbcTemplate.query(query, preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(2, userId);
         }, new ExpenseMapper()).get(0);
     }
 
@@ -102,12 +95,9 @@ public class IExpenseDAOImpl implements IExpenseDAO {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND type_id = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setInt(2, typeId);
-            }
+        return jdbcTemplate.query(query, preparedStatement -> {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, typeId);
         }, new ExpenseMapper());
     }
 
@@ -116,13 +106,10 @@ public class IExpenseDAOImpl implements IExpenseDAO {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND (expense.date BETWEEN ? AND ?)";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setString(2, dateFormat.format(startDate));
-                preparedStatement.setString(3, dateFormat.format(endDate));
-            }
+        return jdbcTemplate.query(query, preparedStatement -> {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(2, dateFormat.format(startDate));
+            preparedStatement.setString(3, dateFormat.format(endDate));
         }, new ExpenseMapper());
     }
 
@@ -131,14 +118,11 @@ public class IExpenseDAOImpl implements IExpenseDAO {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND type_id = ? AND (expense.date BETWEEN ? AND ?)";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, userId);
-                preparedStatement.setInt(2, typeId);
-                preparedStatement.setString(3, dateFormat.format(startDate));
-                preparedStatement.setString(4, dateFormat.format(endDate));
-            }
+        return jdbcTemplate.query(query, preparedStatement -> {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, typeId);
+            preparedStatement.setString(3, dateFormat.format(startDate));
+            preparedStatement.setString(4, dateFormat.format(endDate));
         }, new ExpenseMapper());
     }
 
@@ -146,15 +130,12 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     public Boolean addExpense(Expense expense, int userId) {
         String query = "INSERT INTO expense (type_id, name, date, price) VALUES " +
                 "(?, ?, ?, ?)";
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, expense.getTypeId());
-                preparedStatement.setString(2, expense.getName());
-                preparedStatement.setString(3, dateFormat.format(expense.getDate()));
-                preparedStatement.setDouble(4, expense.getPrice());
-                return preparedStatement.execute();
-            }
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, expense.getTypeId());
+            preparedStatement.setString(2, expense.getName());
+            preparedStatement.setString(3, dateFormat.format(expense.getDate()));
+            preparedStatement.setDouble(4, expense.getPrice());
+            return preparedStatement.execute();
         });
         return addUserExpense(getLastExpenseId(), userId);
     }
@@ -169,13 +150,10 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     private Boolean addUserExpense(int expenseId, int userId) {
         String query = "INSERT INTO user_expense (expense_id, user_id) VALUES " +
                 "(?, ?)";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, expenseId);
-                preparedStatement.setInt(2, userId);
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, expenseId);
+            preparedStatement.setInt(2, userId);
+            return preparedStatement.execute();
         });
     }
 
@@ -187,28 +165,22 @@ public class IExpenseDAOImpl implements IExpenseDAO {
                 "date = ?, " +
                 "price = ? " +
                 "WHERE id = ?";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, expense.getTypeId());
-                preparedStatement.setString(2, expense.getName());
-                preparedStatement.setString(3, dateFormat.format(expense.getDate()));
-                preparedStatement.setDouble(4, expense.getPrice());
-                preparedStatement.setInt(5, expense.getId());
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, expense.getTypeId());
+            preparedStatement.setString(2, expense.getName());
+            preparedStatement.setString(3, dateFormat.format(expense.getDate()));
+            preparedStatement.setDouble(4, expense.getPrice());
+            preparedStatement.setInt(5, expense.getId());
+            return preparedStatement.execute();
         });
     }
 
     private Boolean deleteExpense(int id) {
         String query = "DELETE FROM expense " +
                 "WHERE id = ?";
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, id);
-                return preparedStatement.execute();
-            }
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
         });
         return deleteUserExpense(id);
     }
@@ -216,12 +188,9 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     private Boolean deleteUserExpense(int id) {
         String query = "DELETE FROM user_expense " +
                 "WHERE expense_id = ?";
-        return jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, id);
-                return preparedStatement.execute();
-            }
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
         });
     }
 

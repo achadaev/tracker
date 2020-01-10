@@ -88,12 +88,7 @@ public class EditExpensePresenter implements Presenter {
     }
 
     public void bind() {
-        this.display.getSaveButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                doSave();
-            }
-        });
+        this.display.getSaveButton().addClickHandler(clickEvent -> doSave());
         initTypesListBox(this.display.getTypeId());
     }
 

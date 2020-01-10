@@ -31,12 +31,8 @@ public class IUserDAOImpl implements IUserDAO {
         String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date  " +
                 "FROM user WHERE user.login = ?";
 
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setString(1, name);
-            }
-        }, new UserMapper()).get(0);
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setString(1, name), new UserMapper()).get(0);
     }
 
     @Override
@@ -44,12 +40,8 @@ public class IUserDAOImpl implements IUserDAO {
         String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date  " +
                 "FROM user " +
                 "WHERE id = ?";
-        return jdbcTemplate.query(query, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setInt(1, id);
-            }
-        }, new UserMapper()).get(0);
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setInt(1, id), new UserMapper()).get(0);
     }
 
     @Override
@@ -64,12 +56,9 @@ public class IUserDAOImpl implements IUserDAO {
     public Boolean addUser(User user) {
         String query = "INSERT INTO user (login, name, surname, email, pass, role, reg_date) VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                setUserFields(preparedStatement, user);
-                return preparedStatement.execute();
-            }
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            setUserFields(preparedStatement, user);
+            return preparedStatement.execute();
         });
         return false;
     }
@@ -85,13 +74,10 @@ public class IUserDAOImpl implements IUserDAO {
                 "role = ?, " +
                 "reg_date = ? " +
                 "WHERE id = ?";
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                setUserFields(preparedStatement, user);
-                preparedStatement.setInt(8, user.getId());
-                return preparedStatement.execute();
-            }
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            setUserFields(preparedStatement, user);
+            preparedStatement.setInt(8, user.getId());
+            return preparedStatement.execute();
         });
         return false;
     }
@@ -109,12 +95,9 @@ public class IUserDAOImpl implements IUserDAO {
     private Boolean deleteUser(int id) {
         String query = "DELETE FROM user " +
                 "WHERE id = ?";
-        jdbcTemplate.execute(query, new PreparedStatementCallback<Boolean>() {
-            @Override
-            public Boolean doInPreparedStatement(PreparedStatement preparedStatement) throws SQLException, DataAccessException {
-                preparedStatement.setInt(1, id);
-                return preparedStatement.execute();
-            }
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
         });
         return true;
     }

@@ -5,7 +5,6 @@ import com.example.tracker.shared.model.User;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -68,12 +67,9 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
             }
         };
 
-        checkAllHeader.setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                for (User user : userList) {
-                    selectionModel.setSelected(user, value);
-                }
+        checkAllHeader.setUpdater(value -> {
+            for (User user : userList) {
+                selectionModel.setSelected(user, value);
             }
         });
         userTable.addColumn(checkColumn, checkAllHeader);

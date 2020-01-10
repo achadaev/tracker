@@ -1,6 +1,5 @@
 package com.example.tracker.client.view;
 
-import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.ProfilePresenter;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.core.client.GWT;

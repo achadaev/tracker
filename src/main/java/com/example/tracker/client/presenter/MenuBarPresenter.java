@@ -4,8 +4,6 @@ import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.ShowManageProfilesEvent;
 import com.example.tracker.client.event.ShowManageTypesEvent;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
@@ -33,27 +31,14 @@ public class MenuBarPresenter implements Presenter {
     }
 
     private void bind() {
-        display.getLogoutButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                Cookies.removeCookie("JSESSIONID");
-                Window.Location.replace(GWT.getHostPageBaseURL() + "login");
-            }
+        display.getLogoutButton().addClickHandler(clickEvent -> {
+            Cookies.removeCookie("JSESSIONID");
+            Window.Location.replace(GWT.getHostPageBaseURL() + "login");
         });
 
-        display.getManageProfilesButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowManageProfilesEvent());
-            }
-        });
+        display.getManageProfilesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowManageProfilesEvent()));
 
-        display.getManageTypesButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowManageTypesEvent());
-            }
-        });
+        display.getManageTypesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowManageTypesEvent()));
     }
 
     @Override

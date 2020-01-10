@@ -40,32 +40,19 @@ public class ManageProfilesPresenter implements Presenter {
     }
 
     public void bind() {
-        display.getAddButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new AddUserEvent());
+        display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddUserEvent()));
+
+        display.getEditButton().addClickHandler(clickEvent -> {
+            List<Integer> selectedIds = display.getSelectedIds();
+
+            if (selectedIds.size() == 1) {
+                eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
+            } else {
+                Window.alert("Select one row");
             }
         });
 
-        display.getEditButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                List<Integer> selectedIds = display.getSelectedIds();
-
-                if (selectedIds.size() == 1) {
-                    eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
-                } else {
-                    Window.alert("Select one row");
-                }
-            }
-        });
-
-        display.getDeleteButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                deleteSelectedIds();
-            }
-        });
+        display.getDeleteButton().addClickHandler(clickEvent -> deleteSelectedIds());
     }
 
     private void deleteSelectedIds() {

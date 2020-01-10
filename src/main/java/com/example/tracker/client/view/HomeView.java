@@ -47,26 +47,20 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @Override
     public void initPieChart(List<Expense> expenseList) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
-        chartLoader.loadApi(new Runnable() {
-            @Override
-            public void run() {
-                pieChart = new PieChart();
-                reviewPanel.add(pieChart);
-                drawPieChart(expenseList);
-            }
+        chartLoader.loadApi(() -> {
+            pieChart = new PieChart();
+            reviewPanel.add(pieChart);
+            drawPieChart(expenseList);
         });
     }
 
     @Override
     public void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
-        chartLoader.loadApi(new Runnable() {
-            @Override
-            public void run() {
-                areaChart = new AreaChart();
-                reviewPanel.add(areaChart);
-                drawAreaChart(dates, expenses);
-            }
+        chartLoader.loadApi(() -> {
+            areaChart = new AreaChart();
+            reviewPanel.add(areaChart);
+            drawAreaChart(dates, expenses);
         });
     }
 

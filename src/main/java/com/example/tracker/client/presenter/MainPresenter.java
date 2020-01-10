@@ -4,8 +4,6 @@ import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.event.ShowHomeEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
 import com.example.tracker.client.view.MenuBarView;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.*;
@@ -39,32 +37,14 @@ public class MainPresenter implements Presenter {
 
     public void bind() {
 
-        display.getHomeButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowHomeEvent());
-            }
-        });
+        display.getHomeButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowHomeEvent()));
 
-        display.getExpensesButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowExpensesEvent());
-            }
-        });
+        display.getExpensesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
 
-        display.getProfileButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                eventBus.fireEvent(new ShowProfileEvent());
-            }
-        });
+        display.getProfileButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowProfileEvent()));
 
-        display.getCalendarButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                //TODO CalendarEvent
-            }
+        display.getCalendarButton().addClickHandler(clickEvent -> {
+            //TODO CalendarEvent
         });
     }
 
