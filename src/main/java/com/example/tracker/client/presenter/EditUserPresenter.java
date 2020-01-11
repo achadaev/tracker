@@ -7,9 +7,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
@@ -18,13 +20,13 @@ import org.fusesource.restygwt.client.MethodCallback;
 public class EditUserPresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
-        HasValue<String> getLogin();
+        Label getLogin();
         HasValue<String> getName();
         HasValue<String> getSurname();
         HasValue<String> getEmail();
         HasValue<String> getPassword();
-        HasValue<String> getRole();
-        DatePicker getRegDate();
+        Label getRole();
+        Label getRegDate();
         Widget asWidget();
     }
 
@@ -32,6 +34,8 @@ public class EditUserPresenter implements Presenter {
     private UserWebService userWebService;
     private HandlerManager eventBus;
     private Display display;
+
+    private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("dd-MM-yyyy hh:mm:ss");
 
     public EditUserPresenter(UserWebService userWebService, HandlerManager eventBus, Display display) {
         this.userWebService = userWebService;
@@ -54,13 +58,13 @@ public class EditUserPresenter implements Presenter {
             @Override
             public void onSuccess(Method method, User response) {
                 user = response;
-                EditUserPresenter.this.display.getLogin().setValue(user.getLogin());
+                EditUserPresenter.this.display.getLogin().setText(user.getLogin());
                 EditUserPresenter.this.display.getName().setValue(user.getName());
                 EditUserPresenter.this.display.getSurname().setValue(user.getSurname());
                 EditUserPresenter.this.display.getEmail().setValue(user.getEmail());
                 EditUserPresenter.this.display.getPassword().setValue(user.getPassword());
-                EditUserPresenter.this.display.getRole().setValue(user.getRole());
-                EditUserPresenter.this.display.getRegDate().setValue(user.getRegDate());
+                EditUserPresenter.this.display.getRole().setText(user.getRole());
+                EditUserPresenter.this.display.getRegDate().setText(dateTimeFormat.format(user.getRegDate()));
             }
         });
     }
@@ -70,13 +74,13 @@ public class EditUserPresenter implements Presenter {
     }
 
     private void doSave() {
-        user.setLogin(display.getLogin().getValue());
+        user.setLogin(display.getLogin().getText());
         user.setName(display.getName().getValue());
         user.setSurname(display.getSurname().getValue());
         user.setEmail(display.getEmail().getValue());
         user.setPassword(display.getPassword().getValue());
-        user.setRole(display.getRole().getValue());
-        user.setRegDate(display.getRegDate().getValue());
+        user.setRole(display.getRole().getText());
+        user.setRegDate(dateTimeFormat.parse(display.getRegDate().getText()));
 
         userWebService.updateUser(user, new MethodCallback<User>() {
             @Override

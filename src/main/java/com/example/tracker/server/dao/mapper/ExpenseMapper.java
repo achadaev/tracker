@@ -19,6 +19,7 @@ public class ExpenseMapper implements RowMapper<Expense> {
             expense.setName(resultSet.getString("name"));
             expense.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(resultSet.getString("date")));
             expense.setPrice(resultSet.getDouble("price"));
+            expense.setIsArchived(resultSet.getInt("is_archived"));
 
             return expense;
         } catch (ParseException e) {

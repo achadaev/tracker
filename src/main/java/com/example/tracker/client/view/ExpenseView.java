@@ -155,7 +155,18 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
         expenseTable.addColumn(priceColumn, "Price");
 
-        expenseTable.setPageSize(10);
+        if (ExpensesGWTController.isAdmin) {
+            TextColumn<Expense> isArchivedColumn = new TextColumn<Expense>() {
+                @Override
+                public String getValue(Expense expense) {
+                    return expense.getIsArchived() == 1 ? "yes" : "no";
+                }
+            };
+            expenseTable.addColumn(isArchivedColumn, "Is Archived");
+        }
+
+
+        expenseTable.setPageSize(20);
         expenseTable.setRowData(0, data);
         SimplePager pager = new SimplePager();
         pager.setDisplay(expenseTable);

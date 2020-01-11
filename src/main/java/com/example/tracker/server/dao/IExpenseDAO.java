@@ -27,6 +27,8 @@ public interface IExpenseDAO {
 
     Boolean updateExpense(Expense expense);
 
+    List<Expense> archiveExpenses(List<Integer> ids, int userId);
+
     List<Expense> deleteExpenses(List<Integer> ids, int userId);
 
 }

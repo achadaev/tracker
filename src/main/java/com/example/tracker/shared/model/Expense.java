@@ -8,13 +8,15 @@ public class Expense implements Comparable<Expense> {
     private String name;
     private Date date;
     private double price;
+    private int isArchived;
 
-    public Expense(int id, int typeId, String name, Date date, double price) {
+    public Expense(int id, int typeId, String name, Date date, double price, int isArchived) {
         this.id = id;
         this.typeId = typeId;
         this.name = name;
         this.date = date;
         this.price = price;
+        this.isArchived = isArchived;
     }
 
     public Expense() {
@@ -58,6 +60,14 @@ public class Expense implements Comparable<Expense> {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getIsArchived() {
+        return isArchived;
+    }
+
+    public void setIsArchived(int isArchived) {
+        this.isArchived = isArchived;
     }
 
     @Override

@@ -100,7 +100,7 @@ public class ExpensePresenter implements Presenter {
     private void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
 
-        expenseWebService.deleteExpenses(selectedIds, new MethodCallback<List<Expense>>() {
+        expenseWebService.archiveExpenses(selectedIds, new MethodCallback<List<Expense>>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
                 Window.alert("Error deleting expenses");

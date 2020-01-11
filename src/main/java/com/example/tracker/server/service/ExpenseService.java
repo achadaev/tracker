@@ -133,6 +133,15 @@ public class ExpenseService {
         return addExpense(expense);
     }
 
+    public List<Expense> archiveExpenses(List<Integer> ids) {
+        if (isAdmin()) {
+            iExpenseDao.archiveExpenses(ids, getCurrentUser().getId());
+            return iExpenseDao.getAllExpenses();
+        } else {
+            return iExpenseDao.archiveExpenses(ids, getCurrentUser().getId());
+        }
+    }
+
     public List<Expense> deleteExpenses(List<Integer> ids) {
         if (isAdmin()) {
             iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
@@ -201,15 +210,11 @@ public class ExpenseService {
         } else {
             expenseList = getUsersExpenses();
         }
-        if (expenseList != null) {
+        if (!expenseList.isEmpty()) {
             Collections.sort(expenseList);
             DateTime first = new DateTime(expenseList.get(0).getDate()).dayOfMonth().withMinimumValue();
             DateTime last = new DateTime(expenseList.get(expenseList.size() - 1).getDate());
             List<SimpleDate> datesBetween = new ArrayList<>();
-
-            LOG.info("first " + first.toDate());
-            LOG.info("last " + last.toDate());
-            LOG.info("first.compareTo(last) <= 0 " + (first.compareTo(last) <= 0));
 
             while (first.compareTo(last) <= 0) {
                 datesBetween.add(new SimpleDate(first.toDate()));
@@ -225,10 +230,6 @@ public class ExpenseService {
         Calendar calendar = Calendar.getInstance();
         List<SimpleDate> dates = getDatesBetween();
         List<MonthlyExpense> expensesBetween = new ArrayList<>();
-
-        for (SimpleDate date : dates) {
-            LOG.info("DATE  " + date.toString());
-        }
 
         if (dates.size() > 1) {
             DateTime first = new DateTime(dates.get(0).getDate());

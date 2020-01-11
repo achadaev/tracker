@@ -5,8 +5,7 @@ import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
@@ -97,22 +96,38 @@ public class EditExpensePresenter implements Presenter {
         container.add(display.asWidget());
     }
 
+    private double toDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            Window.alert("Input correct price");
+        }
+        return 0.0;
+    }
+
     private void doSave() {
-        expense.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
-        expense.setName(display.getName().getValue());
-        expense.setDate(display.getDate().getValue());
-        expense.setPrice(Double.parseDouble(display.getPrice().getValue()));
+        if (!"".equals(display.getName().getValue())
+                && display.getDate().getValue() != null
+                && toDouble(display.getPrice().getValue()) != 0.0) {
 
-        expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
-            @Override
-            public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error updating expense");
-            }
+            expense.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
+            expense.setName(display.getName().getValue());
+            expense.setDate(display.getDate().getValue());
+            expense.setPrice(Double.parseDouble(display.getPrice().getValue()));
 
-            @Override
-            public void onSuccess(Method method, Expense response) {
-                eventBus.fireEvent(new ExpenseUpdatedEvent(response));
-            }
-        });
+            expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
+                @Override
+                public void onFailure(Method method, Throwable exception) {
+                    Window.alert("Error updating expense");
+                }
+
+                @Override
+                public void onSuccess(Method method, Expense response) {
+                    eventBus.fireEvent(new ExpenseUpdatedEvent(response));
+                }
+            });
+        } else {
+            Window.alert("Fill all fields");
+        }
     }
 }

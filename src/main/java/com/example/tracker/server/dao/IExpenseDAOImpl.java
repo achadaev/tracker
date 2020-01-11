@@ -37,15 +37,15 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Override
     public List<Expense> getAllExpenses() {
-        return jdbcTemplate.query("SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        return jdbcTemplate.query("SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense", new ExpenseMapper());
     }
 
     @Override
     public List<Expense> getUsersExpenses(int id) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
-                "WHERE user_expense.user_id = ?";
+                "WHERE user_expense.user_id = ? AND expense.is_archived = 0";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
                 .setInt(1, id), new ExpenseMapper());
     }
@@ -81,7 +81,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Override
     public Expense getExpenseById(int userId, int id) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE expense.id = ? AND user_id = ?";
         return jdbcTemplate.query(query, preparedStatement -> {
@@ -92,7 +92,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Override
     public List<Expense> getExpensesByTypeId(int userId, int typeId) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND type_id = ?";
         return jdbcTemplate.query(query, preparedStatement -> {
@@ -103,7 +103,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Override
     public List<Expense> getExpensesByDate(int userId, Date startDate, Date endDate) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND (expense.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
@@ -115,7 +115,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
 
     @Override
     public List<Expense> getExpensesByDateAndTypeId(int userId, int typeId, Date startDate, Date endDate) {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND type_id = ? AND (expense.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
@@ -141,7 +141,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     private int getLastExpenseId() {
-        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price " +
+        String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense " +
                 "WHERE id = (SELECT MAX(id) FROM expense)";
         return jdbcTemplate.query(query, new ExpenseMapper()).get(0).getId();
@@ -164,15 +164,35 @@ public class IExpenseDAOImpl implements IExpenseDAO {
                 "name = ?, " +
                 "date = ?, " +
                 "price = ? " +
+                "is_archived = ?" +
                 "WHERE id = ?";
         return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
             preparedStatement.setInt(1, expense.getTypeId());
             preparedStatement.setString(2, expense.getName());
             preparedStatement.setString(3, dateFormat.format(expense.getDate()));
             preparedStatement.setDouble(4, expense.getPrice());
+            preparedStatement.setInt(5, expense.getIsArchived());
             preparedStatement.setInt(5, expense.getId());
             return preparedStatement.execute();
         });
+    }
+
+    private Boolean archiveExpense(int id) {
+        String query = "UPDATE expense " +
+                "SET is_archived = 1 " +
+                "WHERE id = ?";
+        return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
+        });
+    }
+
+    @Override
+    public List<Expense> archiveExpenses(List<Integer> ids, int userId) {
+        for (int i = 0; i < ids.size(); i++) {
+            archiveExpense(ids.get(i));
+        }
+        return getUsersExpenses(userId);
     }
 
     private Boolean deleteExpense(int id) {

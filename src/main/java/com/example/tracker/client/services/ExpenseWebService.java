@@ -56,6 +56,12 @@ public interface ExpenseWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void updateExpense(Expense expense, MethodCallback<Expense> callback);
 
+    @PUT
+    @Path("/archive")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void archiveExpenses(List<Integer> ids, MethodCallback<List<Expense>> callback);
+
     @DELETE
     @Path("/delete")
     @Consumes(MediaType.APPLICATION_JSON)

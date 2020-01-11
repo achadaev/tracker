@@ -176,6 +176,11 @@ public class ExpensesController {
         return Collections.singletonMap("response", expenseService.updateExpense(expense));
     }
 
+    @PutMapping("/expenses/archive")
+    List<Expense> archiveExpenses(@RequestBody List<Integer> ids) {
+        return expenseService.archiveExpenses(ids);
+    }
+
     @DeleteMapping("/expenses/delete")
     List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
         return expenseService.deleteExpenses(ids);

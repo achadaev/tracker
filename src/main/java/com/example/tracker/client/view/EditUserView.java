@@ -17,25 +17,25 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     @UiField
     Button saveButton;
 
-    TextBox login;
+    Label login;
     TextBox name;
     TextBox surname;
     TextBox email;
     TextBox password;
-    TextBox role;
-    DatePicker regDate;
+    Label role;
+    Label regDate;
 
     private static EditUserViewUiBinder ourUiBinder = GWT.create(EditUserViewUiBinder.class);
 
     public EditUserView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        login = new TextBox();
+        login = new Label();
         name = new TextBox();
         surname = new TextBox();
         email = new TextBox();
         password = new TextBox();
-        role = new TextBox();
-        regDate = new DatePicker();
+        role = new Label();
+        regDate = new Label();
         initTable();
     }
 
@@ -63,7 +63,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     @Override
-    public HasValue<String> getLogin() {
+    public Label getLogin() {
         return login;
     }
 
@@ -88,12 +88,12 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     @Override
-    public HasValue<String> getRole() {
+    public Label getRole() {
         return role;
     }
 
     @Override
-    public DatePicker getRegDate() {
+    public Label getRegDate() {
         return regDate;
     }
 }
