@@ -19,7 +19,7 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.view.client.Range;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.ColumnType;
@@ -172,28 +172,34 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         SimplePager pager = new SimplePager();
         pager.setDisplay(expenseTable);
 
+        expenseTable.getColumnSortList().push(new ColumnSortList.ColumnSortInfo(priceColumn, false));
+
         AsyncDataProvider<Expense> provider = new AsyncDataProvider<Expense>()
         {
             @Override
             protected void onRangeChanged(HasData<Expense> display)
             {
-                int start = display.getVisibleRange().getStart();
-                int end = start + display.getVisibleRange().getLength();
+                final Range range = display.getVisibleRange();
+                final ColumnSortList sortList = expenseTable.getColumnSortList();
+
+                int start = range.getStart();
+                int end = start + range.getLength();
                 end = Math.min(end, data.size());
+
+                Collections.sort(data, (o1, o2) -> {
+                    int diff = Double.compare(o1.getPrice(), o2.getPrice());
+                    return sortList.get(0).isAscending() ? diff : -diff;
+                });
+
                 List<Expense> sub = data.subList(start, end);
                 updateRowData(start, sub);
             }
         };
         provider.addDataDisplay(expenseTable);
         provider.updateRowCount(data.size(), true);
-
-        ListHandler<Expense> columnSortHandler = new ListHandler<>(data);
-        columnSortHandler.setComparator(priceColumn,
-                (o1, o2) -> new Double (o1.getPrice() - o2.getPrice()).intValue());
+        ColumnSortEvent.AsyncHandler columnSortHandler = new ColumnSortEvent.AsyncHandler(expenseTable);
         expenseTable.addColumnSortHandler(columnSortHandler);
 
-        // We know that the data is sorted alphabetically by default.
-        expenseTable.getColumnSortList().push(priceColumn);
 
         tablePanel.add(expenseTable);
         tablePanel.add(pager);
