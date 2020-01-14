@@ -19,6 +19,7 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.ColumnType;
@@ -153,6 +154,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
                 return expense.getPrice();
             }
         };
+        priceColumn.setSortable(true);
         expenseTable.addColumn(priceColumn, "Price");
 
         if (ExpensesGWTController.isAdmin) {
@@ -165,8 +167,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             expenseTable.addColumn(isArchivedColumn, "Is Archived");
         }
 
-
-        expenseTable.setPageSize(20);
+        expenseTable.setPageSize(10);
         expenseTable.setRowData(0, data);
         SimplePager pager = new SimplePager();
         pager.setDisplay(expenseTable);
@@ -186,7 +187,16 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         provider.addDataDisplay(expenseTable);
         provider.updateRowCount(data.size(), true);
 
+        ListHandler<Expense> columnSortHandler = new ListHandler<>(data);
+        columnSortHandler.setComparator(priceColumn,
+                (o1, o2) -> new Double (o1.getPrice() - o2.getPrice()).intValue());
+        expenseTable.addColumnSortHandler(columnSortHandler);
+
+        // We know that the data is sorted alphabetically by default.
+        expenseTable.getColumnSortList().push(priceColumn);
+
         tablePanel.add(expenseTable);
+        tablePanel.add(pager);
     }
 
     @Override

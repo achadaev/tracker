@@ -3,23 +3,15 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.services.ExpenseWebService;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.MonthlyExpense;
-import com.example.tracker.shared.model.ReviewInfo;
-import com.example.tracker.shared.model.SimpleDate;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.example.tracker.shared.model.*;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
-import java.util.Date;
 import java.util.List;
 
 public class HomePresenter implements Presenter {

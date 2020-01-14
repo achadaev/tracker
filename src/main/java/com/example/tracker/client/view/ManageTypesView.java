@@ -139,6 +139,7 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
         provider.updateRowCount(typeList.size(), true);
 
         tablePanel.add(typeTable);
+        tablePanel.add(pager);
     }
 
     @Override

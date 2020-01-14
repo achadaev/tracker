@@ -160,6 +160,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
         provider.updateRowCount(userList.size(), true);
 
         tablePanel.add(userTable);
+        tablePanel.add(pager);
     }
 
     @Override
