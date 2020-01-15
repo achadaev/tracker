@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.DeflaterOutputStream;
 
 @Component
 public class ExpenseService {
@@ -274,7 +271,7 @@ public class ExpenseService {
             return expensesBetween;
 
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
