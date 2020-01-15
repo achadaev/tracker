@@ -19,13 +19,13 @@ import java.util.Collection;
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    IUserDAO userService;
+    IUserDAO iUserDAO;
 
     private final static Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.getUserByName(username);
+        User user = iUserDAO.getUserByName(username);
         if (user != null) {
             String password = user.getPassword();
             logger.info("Username: " + user.getLogin());
@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             org.springframework.security.core.userdetails.User securedUser
                     = new org.springframework.security.core.userdetails.User(
-                        username, "{noop}" + password, true, true,
+                        username, password, true, true,
                     true, true, authorities);
             return securedUser;
         } else {

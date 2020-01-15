@@ -9,6 +9,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -20,7 +22,10 @@ import java.util.List;
 public class IUserDAOImpl implements IUserDAO {
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     final static Logger logger = LoggerFactory.getLogger(IUserDAOImpl.class);
 
@@ -87,7 +92,7 @@ public class IUserDAOImpl implements IUserDAO {
         preparedStatement.setString(2, user.getName());
         preparedStatement.setString(3, user.getSurname());
         preparedStatement.setString(4, user.getEmail());
-        preparedStatement.setString(5, user.getPassword());
+        preparedStatement.setString(5, passwordEncoder.encode(user.getPassword()));
         preparedStatement.setString(6, user.getRole());
         preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
     }
