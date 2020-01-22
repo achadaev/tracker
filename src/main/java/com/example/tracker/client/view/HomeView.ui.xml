@@ -8,5 +8,6 @@
             <g:Label ui:field="weekLabel" text="This week expenses: "/>
             <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
         </g:HTMLPanel>
+        <g:HorizontalPanel ui:field="chartPanel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

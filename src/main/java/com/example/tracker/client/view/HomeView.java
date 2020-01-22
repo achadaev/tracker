@@ -16,12 +16,8 @@ import com.googlecode.gwt.charts.client.ChartPackage;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.AreaChart;
-import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
-import com.googlecode.gwt.charts.client.options.HAxis;
-import com.googlecode.gwt.charts.client.options.VAxis;
 
-import java.util.Date;
 import java.util.List;
 
 public class HomeView extends Composite implements HomePresenter.Display {
@@ -32,6 +28,8 @@ public class HomeView extends Composite implements HomePresenter.Display {
     Label greetingLabel;
     @UiField
     HTMLPanel reviewPanel;
+    @UiField
+    HorizontalPanel chartPanel;
     @UiField
     Label amountLabel;
     @UiField
@@ -49,7 +47,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             pieChart = new PieChart();
-            reviewPanel.add(pieChart);
+            chartPanel.add(pieChart);
             drawPieChart(expenseList);
         });
     }
@@ -59,7 +57,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             areaChart = new AreaChart();
-            reviewPanel.add(areaChart);
+            chartPanel.add(areaChart);
             drawAreaChart(dates, expenses);
         });
     }

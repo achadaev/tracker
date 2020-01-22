@@ -62,7 +62,7 @@ public class EditUserPresenter implements Presenter {
                 EditUserPresenter.this.display.getName().setValue(user.getName());
                 EditUserPresenter.this.display.getSurname().setValue(user.getSurname());
                 EditUserPresenter.this.display.getEmail().setValue(user.getEmail());
-                EditUserPresenter.this.display.getPassword().setValue(user.getPassword());
+                EditUserPresenter.this.display.getPassword().setValue("");
                 EditUserPresenter.this.display.getRole().setText(user.getRole());
                 EditUserPresenter.this.display.getRegDate().setText(dateTimeFormat.format(user.getRegDate()));
             }

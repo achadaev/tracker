@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class EditUserView extends Composite implements EditUserPresenter.Display {
     interface EditUserViewUiBinder extends UiBinder<HTMLPanel, EditUserView> {
@@ -21,7 +20,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     TextBox name;
     TextBox surname;
     TextBox email;
-    TextBox password;
+    PasswordTextBox password;
     Label role;
     Label regDate;
 
@@ -33,7 +32,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         name = new TextBox();
         surname = new TextBox();
         email = new TextBox();
-        password = new TextBox();
+        password = new PasswordTextBox();
         role = new Label();
         regDate = new Label();
         initTable();
@@ -44,7 +43,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         table.setText(1, 0, "Name");
         table.setText(2, 0, "Surname");
         table.setText(3, 0, "Email");
-        table.setText(4, 0, "Password");
+        table.setText(4, 0, "New Password");
         table.setText(5, 0, "Role");
         table.setText(6, 0, "Registration Date");
 

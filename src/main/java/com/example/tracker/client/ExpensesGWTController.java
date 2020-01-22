@@ -120,7 +120,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     private void doEditExpense(int id) {
         History.newItem("edit", false);
         Presenter presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                new EditExpenseView(), id);
+                new EditExpenseDialog(), id);
         presenter.go(container);
     }
 
@@ -132,7 +132,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doEditType(int id) {
         History.newItem("edit-type", false);
-        Presenter presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView(), id);
+        Presenter presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog(), id);
         presenter.go(container);
     }
 
@@ -200,26 +200,26 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
             else if (token.equals("add")) {
                 presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                                new EditExpenseView());
+                                new EditExpenseDialog());
             }
             else if (token.equals("add-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
             }
             else if (token.equals("add-type")) {
-                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView());
+                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
             }
             else if (token.equals("profile")) {
                 presenter = new ProfilePresenter(userWebService, eventBus, new ProfileView());
             }
             else if (token.equals("edit")) {
                 presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                                new EditExpenseView());
+                                new EditExpenseDialog());
             }
             else if (token.equals("edit-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
             }
             else if (token.equals("edit-type")) {
-                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeView());
+                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
             }
             else if (token.equals("manage-profiles")) {
                 presenter = new ManageProfilesPresenter(userWebService, eventBus, new ManageProfilesView());

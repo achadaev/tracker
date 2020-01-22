@@ -114,14 +114,6 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
         };
         userTable.addColumn(emailColumn, "Email");
 
-        TextColumn<User> passwordColumn = new TextColumn<User>() {
-            @Override
-            public String getValue(User user) {
-                return user.getPassword();
-            }
-        };
-        userTable.addColumn(passwordColumn, "Password");
-
         TextColumn<User> roleColumn = new TextColumn<User>() {
             @Override
             public String getValue(User user) {

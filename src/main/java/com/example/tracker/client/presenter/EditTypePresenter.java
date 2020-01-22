@@ -16,8 +16,11 @@ public class EditTypePresenter implements Presenter {
 
     public interface Display {
         HasClickHandlers getSaveButton();
+        HasClickHandlers getCancelButton();
         HasValue<String> getName();
         Widget asWidget();
+        void showDialog();
+        void hideDialog();
     }
 
     private ExpenseType type;
@@ -52,7 +55,8 @@ public class EditTypePresenter implements Presenter {
     }
 
     private void bind() {
-        display.getSaveButton().addClickHandler((clickEvent) -> doSave());
+        display.getSaveButton().addClickHandler(clickEvent -> doSave());
+        display.getCancelButton().addClickHandler(clickEvent -> display.hideDialog());
     }
 
     private void doSave() {
@@ -67,6 +71,7 @@ public class EditTypePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, ExpenseType response) {
                 eventBus.fireEvent(new TypeUpdatedEvent(response));
+                display.hideDialog();
             }
         });
     }
@@ -74,7 +79,6 @@ public class EditTypePresenter implements Presenter {
     @Override
     public void go(HasWidgets container) {
         bind();
-        container.clear();
-        container.add(display.asWidget());
+        display.showDialog();
     }
 }

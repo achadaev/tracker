@@ -163,8 +163,8 @@ public class IExpenseDAOImpl implements IExpenseDAO {
                 "SET type_id = ?, " +
                 "name = ?, " +
                 "date = ?, " +
-                "price = ? " +
-                "is_archived = ?" +
+                "price = ?, " +
+                "is_archived = ? " +
                 "WHERE id = ?";
         return jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
             preparedStatement.setInt(1, expense.getTypeId());
@@ -172,7 +172,7 @@ public class IExpenseDAOImpl implements IExpenseDAO {
             preparedStatement.setString(3, dateFormat.format(expense.getDate()));
             preparedStatement.setDouble(4, expense.getPrice());
             preparedStatement.setInt(5, expense.getIsArchived());
-            preparedStatement.setInt(5, expense.getId());
+            preparedStatement.setInt(6, expense.getId());
             return preparedStatement.execute();
         });
     }

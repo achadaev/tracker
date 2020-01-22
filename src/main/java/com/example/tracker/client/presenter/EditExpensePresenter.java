@@ -5,7 +5,6 @@ import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
@@ -22,11 +21,14 @@ import java.util.List;
 public class EditExpensePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
+        HasClickHandlers getCancelButton();
         ListBox getTypeId();
         HasValue<String> getName();
         DatePicker getDate();
         HasValue<String> getPrice();
         Widget asWidget();
+        void showDialog();
+        void hideDialog();
     }
 
     private Expense expense;
@@ -88,12 +90,12 @@ public class EditExpensePresenter implements Presenter {
 
     public void bind() {
         this.display.getSaveButton().addClickHandler(clickEvent -> doSave());
+        this.display.getCancelButton().addClickHandler(clickEvent -> display.hideDialog());
         initTypesListBox(this.display.getTypeId());
     }
 
     public void go(HasWidgets container) {
-        container.clear();
-        container.add(display.asWidget());
+        display.showDialog();
     }
 
     private double toDouble(String value) {
@@ -124,6 +126,7 @@ public class EditExpensePresenter implements Presenter {
                 @Override
                 public void onSuccess(Method method, Expense response) {
                     eventBus.fireEvent(new ExpenseUpdatedEvent(response));
+                    display.hideDialog();
                 }
             });
         } else {

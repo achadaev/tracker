@@ -5,12 +5,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class EditExpenseView extends Composite implements EditExpensePresenter.Display {
-    interface EditExpenseViewUiBinder extends UiBinder<HTMLPanel, EditExpenseView> {
+public class EditExpenseDialog extends DialogBox implements EditExpensePresenter.Display {
+    interface EditExpenseDialogUiBinder extends UiBinder<HTMLPanel, EditExpenseDialog> {
     }
+
+    private static EditExpenseDialogUiBinder ourUiBinder = GWT.create(EditExpenseDialogUiBinder.class);
+
+    @UiField
+    DialogBox dialogBox;
     @UiField
     ListBox typeId;
     @UiField
@@ -23,11 +29,13 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     FlexTable table;
     @UiField
     Button saveButton;
+    @UiField
+    Button cancelButton;
 
-    private static EditExpenseViewUiBinder ourUiBinder = GWT.create(EditExpenseViewUiBinder.class);
-
-    public EditExpenseView() {
-        initWidget(ourUiBinder.createAndBindUi(this));
+    public EditExpenseDialog() {
+        setWidget(ourUiBinder.createAndBindUi(this));
+        setAutoHideEnabled(true);
+        setGlassEnabled(true);
         initTable();
     }
 
@@ -68,7 +76,23 @@ public class EditExpenseView extends Composite implements EditExpensePresenter.D
     }
 
     @Override
+    public HasClickHandlers getCancelButton() {
+        return cancelButton;
+    }
+
+    @Override
     public Widget asWidget() {
         return this;
+    }
+
+    @Override
+    public void showDialog() {
+        dialogBox.center();
+    }
+
+    @Override
+    public void hideDialog() {
+        dialogBox.hide();
+        Window.Location.replace(GWT.getHostPageBaseURL() + "#list");
     }
 }
