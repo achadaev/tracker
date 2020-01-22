@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.type.TypeUpdatedEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -43,7 +44,7 @@ public class EditTypePresenter implements Presenter {
         typeWebService.getTypeById(id, new MethodCallback<ExpenseType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting type");
+                AlertWidget.alert("Error", "Error getting type").center();
             }
 
             @Override
@@ -65,7 +66,7 @@ public class EditTypePresenter implements Presenter {
         typeWebService.updateType(type, new MethodCallback<ExpenseType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error updating type");
+                AlertWidget.alert("Error", "Error updating type").center();
             }
 
             @Override

@@ -43,7 +43,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         table.setText(1, 0, "Name");
         table.setText(2, 0, "Surname");
         table.setText(3, 0, "Email");
-        table.setText(4, 0, "New Password");
+        table.setText(4, 0, "Password");
         table.setText(5, 0, "Role");
         table.setText(6, 0, "Registration Date");
 

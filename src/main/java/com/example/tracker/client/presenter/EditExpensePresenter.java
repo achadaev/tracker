@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
@@ -58,7 +59,7 @@ public class EditExpensePresenter implements Presenter {
         expenseWebService.getExpenseById(id, new MethodCallback<Expense>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error getting expense");
+                AlertWidget.alert("Error", "Error getting expense").center();
             }
 
             @Override
@@ -76,7 +77,7 @@ public class EditExpensePresenter implements Presenter {
         typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert(throwable.getMessage());
+                AlertWidget.alert("Error", throwable.getMessage()).center();
             }
 
             @Override
@@ -102,7 +103,7 @@ public class EditExpensePresenter implements Presenter {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            Window.alert("Input correct price");
+            AlertWidget.alert("Error", "Input correct price").center();
         }
         return 0.0;
     }
@@ -120,7 +121,7 @@ public class EditExpensePresenter implements Presenter {
             expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    Window.alert("Error updating expense");
+                    AlertWidget.alert("Error", "Error updating expense").center();
                 }
 
                 @Override
@@ -130,7 +131,7 @@ public class EditExpensePresenter implements Presenter {
                 }
             });
         } else {
-            Window.alert("Fill all fields");
+            AlertWidget.alert("Error", "Fill all fields").center();
         }
     }
 }

@@ -74,7 +74,6 @@ public class HomeView extends Composite implements HomePresenter.Display {
         dataTable.addRows(dates.size());
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MMMM, yyyy");
         for (int i = 0; i < dates.size(); i++) {
-            GWT.log(dates.get(i).toString());
             dataTable.setValue(i, 0, dateTimeFormat.format(dates.get(i).getDate()));
         }
 

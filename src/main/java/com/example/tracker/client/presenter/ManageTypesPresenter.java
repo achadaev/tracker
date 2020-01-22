@@ -2,6 +2,7 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.type.AddTypeEvent;
 import com.example.tracker.client.event.type.EditTypeEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -46,7 +47,7 @@ public class ManageTypesPresenter implements Presenter {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditTypeEvent(selectedIds.get(0)));
             } else {
-                Window.alert("Select one row");
+                AlertWidget.alert("Error", "Select one row").center();
             }
         });
 
@@ -59,7 +60,7 @@ public class ManageTypesPresenter implements Presenter {
         typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error deleting types");
+                AlertWidget.alert("Error", "Error deleting types").center();
             }
 
             @Override
@@ -74,7 +75,7 @@ public class ManageTypesPresenter implements Presenter {
         typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting all users");
+                AlertWidget.alert("Error", "Error getting all users").center();
             }
 
             @Override

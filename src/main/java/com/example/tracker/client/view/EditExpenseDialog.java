@@ -34,8 +34,8 @@ public class EditExpenseDialog extends DialogBox implements EditExpensePresenter
 
     public EditExpenseDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
-        setAutoHideEnabled(true);
-        setGlassEnabled(true);
+        dialogBox.setAutoHideEnabled(true);
+        dialogBox.setGlassEnabled(true);
         initTable();
     }
 

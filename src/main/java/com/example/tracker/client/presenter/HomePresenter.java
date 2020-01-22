@@ -2,6 +2,7 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.*;
 import com.google.gwt.event.shared.HandlerManager;
@@ -48,7 +49,7 @@ public class HomePresenter implements Presenter {
             expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    Window.alert("Error getting expenses");
+                    AlertWidget.alert("Error", "Error getting expenses").center();
                 }
 
                 @Override
@@ -60,7 +61,7 @@ public class HomePresenter implements Presenter {
             expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    Window.alert("Error getting expenses");
+                    AlertWidget.alert("Error", "Error getting expenses").center();
                 }
 
                 @Override
@@ -75,7 +76,7 @@ public class HomePresenter implements Presenter {
         expenseWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting expenses between");
+                AlertWidget.alert("Error", "Error getting expenses between").center();
             }
 
             @Override
@@ -94,7 +95,7 @@ public class HomePresenter implements Presenter {
         expenseWebService.getReview(new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting review");
+                AlertWidget.alert("Error", "Error getting review").center();
             }
 
             @Override
@@ -111,7 +112,7 @@ public class HomePresenter implements Presenter {
         expenseWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert(throwable.getMessage());
+                AlertWidget.alert("Error", throwable.getMessage()).center();
             }
 
             @Override

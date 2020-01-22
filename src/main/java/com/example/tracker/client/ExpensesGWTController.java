@@ -4,6 +4,7 @@ import com.example.tracker.client.event.*;
 import com.example.tracker.client.event.expense.*;
 import com.example.tracker.client.event.type.*;
 import com.example.tracker.client.event.user.*;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.presenter.*;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
@@ -45,7 +46,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting types");
+                AlertWidget.alert("Error", "Error getting types").center();
             }
 
             @Override
@@ -57,7 +58,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         userWebService.getUser(new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error getting user");
+                AlertWidget.alert("Error", "Error getting user").center();
             }
 
             @Override

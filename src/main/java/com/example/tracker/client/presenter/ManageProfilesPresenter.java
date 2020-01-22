@@ -2,6 +2,7 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.user.AddUserEvent;
 import com.example.tracker.client.event.user.EditUserEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -48,7 +49,7 @@ public class ManageProfilesPresenter implements Presenter {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
             } else {
-                Window.alert("Select one row");
+                AlertWidget.alert("Error", "Select one row").center();
             }
         });
 
@@ -61,7 +62,7 @@ public class ManageProfilesPresenter implements Presenter {
         userWebService.deleteUsers(selectedIds, new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error deleting users");
+                AlertWidget.alert("Error", "Error deleting users").center();
             }
 
             @Override
@@ -76,7 +77,7 @@ public class ManageProfilesPresenter implements Presenter {
         userWebService.getAllUsers(new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting all users");
+                AlertWidget.alert("Error", "Error getting all users").center();
             }
 
             @Override

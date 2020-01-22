@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.user.UserUpdatedEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -52,7 +53,7 @@ public class EditUserPresenter implements Presenter {
         userWebService.getUserById(id, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error getting user by id");
+                AlertWidget.alert("Error", "Error getting user by id").center();
             }
 
             @Override
@@ -62,7 +63,7 @@ public class EditUserPresenter implements Presenter {
                 EditUserPresenter.this.display.getName().setValue(user.getName());
                 EditUserPresenter.this.display.getSurname().setValue(user.getSurname());
                 EditUserPresenter.this.display.getEmail().setValue(user.getEmail());
-                EditUserPresenter.this.display.getPassword().setValue("");
+                EditUserPresenter.this.display.getPassword().setValue(user.getPassword());
                 EditUserPresenter.this.display.getRole().setText(user.getRole());
                 EditUserPresenter.this.display.getRegDate().setText(dateTimeFormat.format(user.getRegDate()));
             }
@@ -85,7 +86,7 @@ public class EditUserPresenter implements Presenter {
         userWebService.updateUser(user, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert("Error updating user");
+                AlertWidget.alert("Error", "Error updating user").center();
             }
 
             @Override

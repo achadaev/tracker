@@ -3,6 +3,7 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.AddExpenseEvent;
 import com.example.tracker.client.event.expense.EditExpenseEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
@@ -54,7 +55,7 @@ public class ExpensePresenter implements Presenter {
         typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Window.alert(throwable.getMessage());
+                AlertWidget.alert("Error", throwable.getMessage()).center();
             }
 
             @Override
@@ -76,7 +77,7 @@ public class ExpensePresenter implements Presenter {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditExpenseEvent(selectedIds.get(0)));
             } else {
-                Window.alert("Select one row");
+                AlertWidget.alert("Error", "Select one row").center();
             }
         });
 
@@ -103,7 +104,7 @@ public class ExpensePresenter implements Presenter {
         expenseWebService.archiveExpenses(selectedIds, new MethodCallback<List<Expense>>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error deleting expenses");
+                AlertWidget.alert("Error", "Error deleting expenses").center();
             }
 
             @Override
@@ -130,7 +131,7 @@ public class ExpensePresenter implements Presenter {
                         new MethodCallback<List<Expense>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                Window.alert("Error filtering expenses by date");
+                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
                             }
 
                             @Override
@@ -141,13 +142,13 @@ public class ExpensePresenter implements Presenter {
                             }
                         });
             } else {
-                Window.alert("Select dates");
+                AlertWidget.alert("Error", "Select dates").center();
             }
         } else {
             expenseWebService.getExpensesByTypeId(id, new MethodCallback<List<Expense>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    Window.alert("Error filtering expenses");
+                    AlertWidget.alert("Error", "Error filtering expenses").center();
                 }
 
                 @Override
@@ -165,7 +166,7 @@ public class ExpensePresenter implements Presenter {
             expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    Window.alert("Error getting all expenses");
+                    AlertWidget.alert("Error", "Error getting all expenses").center();
                 }
 
                 @Override
@@ -180,7 +181,7 @@ public class ExpensePresenter implements Presenter {
             expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    Window.alert(exception.getMessage());
+                    AlertWidget.alert("Error", exception.getMessage()).center();
                 }
 
                 @Override

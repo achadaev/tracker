@@ -27,6 +27,8 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
 
     public EditTypeDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
+        dialogBox.setAutoHideEnabled(true);
+        dialogBox.setGlassEnabled(true);
         name = new TextBox();
         initTable();
     }

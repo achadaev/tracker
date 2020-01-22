@@ -2,6 +2,7 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.user.EditUserEvent;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,7 +42,7 @@ public class ProfilePresenter implements Presenter {
         userWebService.getUser(new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                Window.alert("Error getting user");
+                AlertWidget.alert("Error", "Error getting user").center();
             }
 
             @Override
