@@ -1,11 +1,12 @@
 package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
+import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.presenter.ExpensePresenter;
+import com.example.tracker.client.services.ExpenseWebService;
 import com.example.tracker.shared.model.Expense;
 import com.example.tracker.shared.model.ExpenseType;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -20,11 +21,8 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.Range;
-import com.googlecode.gwt.charts.client.ChartLoader;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.ColumnType;
-import com.googlecode.gwt.charts.client.DataTable;
-import com.googlecode.gwt.charts.client.corechart.PieChart;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.*;
 
@@ -41,7 +39,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Button deleteButton;
     @UiField
-    ListBox types;
+    ListBox typesListBox;
     @UiField
     CheckBox dateCheckBox;
     @UiField
@@ -54,15 +52,17 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     Label total;
 
     private CellTable<Expense> expenseTable;
+    private ExpenseWebService expenseWebService;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
 
     private MultiSelectionModel<Expense> selectionModel;
 
-    public ExpenseView() {
+    public ExpenseView(ExpenseWebService expenseWebService) {
         initWidget(ourUiBinder.createAndBindUi(this));
         startDate.setVisible(false);
         endDate.setVisible(false);
+        this.expenseWebService = expenseWebService;
     }
 
     @Override
@@ -90,12 +90,9 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
             }
         };
 
-        checkAllHeader.setUpdater(new ValueUpdater<Boolean>() {
-            @Override
-            public void update(Boolean value) {
-                for (Expense expense : data) {
-                    selectionModel.setSelected(expense, value);
-                }
+        checkAllHeader.setUpdater(value -> {
+            for (Expense expense : data) {
+                selectionModel.setSelected(expense, value);
             }
         });
         expenseTable.addColumn(checkColumn, checkAllHeader);
@@ -174,8 +171,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
         expenseTable.getColumnSortList().push(new ColumnSortList.ColumnSortInfo(priceColumn, false));
 
-        AsyncDataProvider<Expense> provider = new AsyncDataProvider<Expense>()
-        {
+        AsyncDataProvider<Expense> provider = new AsyncDataProvider<Expense>() {
             @Override
             protected void onRangeChanged(HasData<Expense> display)
             {
@@ -183,16 +179,37 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
                 final ColumnSortList sortList = expenseTable.getColumnSortList();
 
                 int start = range.getStart();
-                int end = start + range.getLength();
-                end = Math.min(end, data.size());
+                int length = range.getLength();
+                if (startDate.getValue() == null && endDate.getValue() == null) {
+                    Date nullDate = new Date(0);
+                    expenseWebService.getSortedAndFilteredExpenses(Integer.parseInt(typesListBox.getSelectedValue()),
+                            nullDate, nullDate, start, length, sortList.get(0).isAscending(),
+                            new MethodCallback<List<Expense>>() {
+                                @Override
+                                public void onFailure(Method method, Throwable throwable) {
+                                    AlertWidget.alert("Error", "Error sorting expenses").center();
+                                }
 
-                Collections.sort(data, (o1, o2) -> {
-                    int diff = Double.compare(o1.getPrice(), o2.getPrice());
-                    return sortList.get(0).isAscending() ? diff : -diff;
-                });
+                                @Override
+                                public void onSuccess(Method method, List<Expense> response) {
+                                    updateRowData(start, response);
+                                }
+                            });
+                } else {
+                    expenseWebService.getSortedAndFilteredExpenses(Integer.parseInt(typesListBox.getSelectedValue()),
+                            startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
+                            new MethodCallback<List<Expense>>() {
+                                @Override
+                                public void onFailure(Method method, Throwable throwable) {
+                                    AlertWidget.alert("Error", "Error sorting expenses").center();
+                                }
 
-                List<Expense> sub = data.subList(start, end);
-                updateRowData(start, sub);
+                                @Override
+                                public void onSuccess(Method method, List<Expense> response) {
+                                    updateRowData(start, response);
+                                }
+                            });
+                }
             }
         };
         provider.addDataDisplay(expenseTable);
@@ -233,7 +250,7 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
 
     @Override
     public ListBox getTypesListBox() {
-        return types;
+        return typesListBox;
     }
 
     @Override

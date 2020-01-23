@@ -42,12 +42,12 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     @Override
-    public List<Expense> getUsersExpenses(int id) {
+    public List<Expense> getUsersExpenses(int userId) {
         String query = "SELECT expense.id, expense.type_id, expense.name, expense.date, expense.price, expense.is_archived " +
                 "FROM expense JOIN user_expense ON expense.id = user_expense.expense_id " +
                 "WHERE user_expense.user_id = ? AND expense.is_archived = 0";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
-                .setInt(1, id), new ExpenseMapper());
+                .setInt(1, userId), new ExpenseMapper());
     }
 
     private double getTotal(List<Expense> expenseList) {
@@ -60,20 +60,20 @@ public class IExpenseDAOImpl implements IExpenseDAO {
     }
 
     @Override
-    public ReviewInfo getReview(int id) {
+    public ReviewInfo getReview(int userId) {
         ReviewInfo reviewInfo = new ReviewInfo();
 
-        List<Expense> tempList = getUsersExpenses(id);
+        List<Expense> tempList = getUsersExpenses(userId);
         reviewInfo.setAmount(getTotal(tempList));
 
         Calendar monthBefore = Calendar.getInstance();
         monthBefore.add(Calendar.MONTH, -1);
-        tempList = getExpensesByDate(id, monthBefore.getTime(), new Date());
+        tempList = getExpensesByDate(userId, monthBefore.getTime(), new Date());
         reviewInfo.setMonth(getTotal(tempList));
 
         Calendar weekBefore = Calendar.getInstance();
         weekBefore.add(Calendar.WEEK_OF_YEAR, -1);
-        tempList = getExpensesByDate(id, weekBefore.getTime(), new Date());
+        tempList = getExpensesByDate(userId, weekBefore.getTime(), new Date());
         reviewInfo.setWeek(getTotal(tempList));
 
         return reviewInfo;

@@ -195,4 +195,19 @@ public class ExpensesController {
     List<MonthlyExpense> getExpensesBetween() {
         return expenseService.getExpensesBetween();
     }
+
+    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
+    List<Expense> getSortedAndFilteredExpenses(@PathVariable int typeId,
+                                               @PathVariable Date startDate,
+                                               @PathVariable Date endDate,
+                                               @PathVariable int startIndex,
+                                               @PathVariable int quantity,
+                                               @PathVariable boolean isAscending) {
+        try {
+            return expenseService.getSortedAndFilteredExpenses(typeId, startDate, endDate, startIndex, quantity, isAscending);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 }

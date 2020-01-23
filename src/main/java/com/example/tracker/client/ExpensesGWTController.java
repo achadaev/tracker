@@ -197,7 +197,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter = new HomePresenter(expenseWebService, eventBus, new HomeView());
             }
             else if (token.equals("list")) {
-                presenter = new ExpensePresenter(expenseWebService, typeWebService, eventBus, new ExpenseView());
+                presenter = new ExpensePresenter(expenseWebService, typeWebService, eventBus, new ExpenseView(expenseWebService));
             }
             else if (token.equals("add")) {
                 presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,

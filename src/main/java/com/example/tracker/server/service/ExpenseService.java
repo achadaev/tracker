@@ -208,7 +208,7 @@ public class ExpenseService {
             expenseList = getUsersExpenses();
         }
         if (!expenseList.isEmpty()) {
-            Collections.sort(expenseList);
+            Collections.sort(expenseList, (Comparator.comparing(Expense::getDate)));
             DateTime first = new DateTime(expenseList.get(0).getDate()).dayOfMonth().withMinimumValue();
             DateTime last = new DateTime(expenseList.get(expenseList.size() - 1).getDate());
             List<SimpleDate> datesBetween = new ArrayList<>();
@@ -284,4 +284,22 @@ public class ExpenseService {
         }
         return monthly;
     }
+
+    public List<Expense> getSortedAndFilteredExpenses(int typeId, Date startDate, Date endDate, int startIndex,
+                                                      int quantity, boolean isAscending) throws AccessDeniedException {
+        List<Expense> result;
+        Date nullDate = new Date(0);
+        if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
+            result = getExpensesByTypeId(typeId);
+        } else {
+            result = getExpensesByDate(typeId, startDate, endDate);
+        }
+        result.sort(Comparator.comparingDouble(Expense::getPrice));
+        if (isAscending) {
+            Collections.reverse(result);
+        }
+        int endIndex = Math.min(startIndex + quantity, result.size());
+        return result.subList(startIndex, endIndex);
+    }
+
 }

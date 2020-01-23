@@ -11,9 +11,9 @@ public interface IExpenseDAO {
 
     List<Expense> getAllExpenses();
 
-    List<Expense> getUsersExpenses(int id);
+    List<Expense> getUsersExpenses(int userId);
 
-    ReviewInfo getReview(int id);
+    ReviewInfo getReview(int userId);
 
     Expense getExpenseById(int userId, int id);
 

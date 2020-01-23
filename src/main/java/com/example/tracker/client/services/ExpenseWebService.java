@@ -77,4 +77,15 @@ public interface ExpenseWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void getExpensesBetween(MethodCallback<List<MonthlyExpense>> callback);
 
+    @GET
+    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getSortedAndFilteredExpenses(@PathParam("typeId") int typeId,
+                                      @PathParam("startDate") Date startDate,
+                                      @PathParam("endDate") Date endDate,
+                                      @PathParam("startIndex") int startIndex,
+                                      @PathParam("quantity") int quantity,
+                                      @PathParam("isAscending") boolean isAscending,
+                                      MethodCallback<List<Expense>> callback);
+
 }

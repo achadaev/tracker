@@ -9,7 +9,7 @@
         </g:HorizontalPanel>
 
         <g:HorizontalPanel width="700px">
-            <g:ListBox ui:field="types" height="25px"/>
+            <g:ListBox ui:field="typesListBox" height="25px"/>
             <g:Label text="Filter by date" horizontalAlignment="LEFT"/>
             <g:CheckBox ui:field="dateCheckBox"/>
             <dp:DatePicker ui:field="startDate"/>

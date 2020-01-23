@@ -2,7 +2,7 @@ package com.example.tracker.shared.model;
 
 import java.util.Date;
 
-public class Expense implements Comparable<Expense> {
+public class Expense {
     private int id;
     private int typeId;
     private String name;
@@ -68,11 +68,6 @@ public class Expense implements Comparable<Expense> {
 
     public void setIsArchived(int isArchived) {
         this.isArchived = isArchived;
-    }
-
-    @Override
-    public int compareTo(Expense o) {
-        return this.getDate().compareTo(o.getDate());
     }
 
     @Override
