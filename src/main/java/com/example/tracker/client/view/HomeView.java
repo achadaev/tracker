@@ -7,16 +7,16 @@ import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.SimpleDate;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
-import com.googlecode.gwt.charts.client.ChartLoader;
-import com.googlecode.gwt.charts.client.ChartPackage;
-import com.googlecode.gwt.charts.client.ColumnType;
-import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.*;
 import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
+import com.googlecode.gwt.charts.client.event.SelectEvent;
+import com.googlecode.gwt.charts.client.event.SelectHandler;
 
 import java.util.List;
 
@@ -42,11 +42,23 @@ public class HomeView extends Composite implements HomePresenter.Display {
     private PieChart pieChart;
     private AreaChart areaChart;
 
+    DataTable dataTable;
+
     @Override
     public void initPieChart(List<Procedure> procedureList) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             pieChart = new PieChart();
+
+            pieChart.addSelectHandler(new SelectHandler() {
+                @Override
+                public void onSelect(SelectEvent selectEvent) {
+                    JsArray<Selection> selection = pieChart.getSelection();
+                    String type = dataTable.getValueString (selection.get(0).getRow(), 0);
+                    double price = dataTable.getValueNumber (selection.get(0).getRow(), 1);
+                    GWT.log(String.valueOf(price));
+                }
+            });
             chartPanel.add(pieChart);
             drawPieChart(procedureList);
         });
@@ -89,7 +101,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
     }
 
     private void drawPieChart(List<Procedure> procedureList) {
-        DataTable dataTable = DataTable.create();
+        dataTable = DataTable.create();
         dataTable.addColumn(ColumnType.STRING, "Type");
         dataTable.addColumn(ColumnType.NUMBER, "Price");
 
