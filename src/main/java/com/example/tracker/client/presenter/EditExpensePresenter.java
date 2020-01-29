@@ -3,12 +3,11 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
 import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
-import com.example.tracker.client.services.ExpenseWebService;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.client.services.ProcedureWebService;
+import com.example.tracker.shared.model.Procedure;
+import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.ListBox;
@@ -32,57 +31,57 @@ public class EditExpensePresenter implements Presenter {
         void hideDialog();
     }
 
-    private Expense expense;
-    private ExpenseWebService expenseWebService;
-    private TypeWebService typeWebService;
-    private HandlerManager eventBus;
-    private Display display;
+    protected Procedure procedure;
+    protected ProcedureWebService procedureWebService;
+    protected TypeWebService typeWebService;
+    protected HandlerManager eventBus;
+    protected Display display;
 
-    public EditExpensePresenter(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+    public EditExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
                                 HandlerManager eventBus, Display display) {
-        this.expenseWebService = expenseWebService;
+        this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
-        this.expense = new Expense();
+        this.procedure = new Procedure();
         bind();
     }
 
-    public EditExpensePresenter(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+    public EditExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
                                 HandlerManager eventBus, Display display, int id) {
-        this.expenseWebService = expenseWebService;
+        this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
         bind();
 
-        expenseWebService.getExpenseById(id, new MethodCallback<Expense>() {
+        procedureWebService.getProcedureById(id, new MethodCallback<Procedure>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert("Error", "Error getting expense").center();
+                AlertWidget.alert("Error", "Error getting procedure").center();
             }
 
             @Override
-            public void onSuccess(Method method, Expense response) {
-                expense = response;
-                EditExpensePresenter.this.display.getTypeId().setItemSelected(expense.getTypeId() - 1, true);
-                EditExpensePresenter.this.display.getName().setValue(expense.getName());
-                EditExpensePresenter.this.display.getDate().setValue(expense.getDate());
-                EditExpensePresenter.this.display.getPrice().setValue(Double.toString(expense.getPrice()));
+            public void onSuccess(Method method, Procedure response) {
+                procedure = response;
+                EditExpensePresenter.this.display.getTypeId().setItemSelected(procedure.getTypeId() - 1, true);
+                EditExpensePresenter.this.display.getName().setValue(procedure.getName());
+                EditExpensePresenter.this.display.getDate().setValue(procedure.getDate());
+                EditExpensePresenter.this.display.getPrice().setValue(Double.toString(procedure.getPrice()));
             }
         });
     }
 
-    private void initTypesListBox(ListBox listBox) {
-        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+    protected void initTypesListBox(ListBox listBox) {
+        typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", throwable.getMessage()).center();
             }
 
             @Override
-            public void onSuccess(Method method, List<ExpenseType> expenseTypes) {
-                for (ExpenseType type : expenseTypes) {
+            public void onSuccess(Method method, List<ProcedureType> procedureTypes) {
+                for (ProcedureType type : procedureTypes) {
                     listBox.addItem(type.getName(), Integer.toString(type.getId()));
                 }
             }
@@ -99,7 +98,7 @@ public class EditExpensePresenter implements Presenter {
         display.showDialog();
     }
 
-    private double toDouble(String value) {
+    protected double toDouble(String value) {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
@@ -108,24 +107,25 @@ public class EditExpensePresenter implements Presenter {
         return 0.0;
     }
 
-    private void doSave() {
+    protected void doSave() {
         if (!"".equals(display.getName().getValue())
                 && display.getDate().getValue() != null
                 && toDouble(display.getPrice().getValue()) != 0.0) {
 
-            expense.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
-            expense.setName(display.getName().getValue());
-            expense.setDate(display.getDate().getValue());
-            expense.setPrice(Double.parseDouble(display.getPrice().getValue()));
+            procedure.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
+            procedure.setKind(-1);
+            procedure.setName(display.getName().getValue());
+            procedure.setDate(display.getDate().getValue());
+            procedure.setPrice(Double.parseDouble(display.getPrice().getValue()));
 
-            expenseWebService.updateExpense(expense, new MethodCallback<Expense>() {
+            procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
                     AlertWidget.alert("Error", "Error updating expense").center();
                 }
 
                 @Override
-                public void onSuccess(Method method, Expense response) {
+                public void onSuccess(Method method, Procedure response) {
                     eventBus.fireEvent(new ExpenseUpdatedEvent(response));
                     display.hideDialog();
                 }

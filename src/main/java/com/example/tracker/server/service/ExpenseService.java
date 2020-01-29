@@ -1,7 +1,7 @@
 package com.example.tracker.server.service;
 
-import com.example.tracker.server.dao.IExpenseDAO;
-import com.example.tracker.server.dao.IExpenseTypeDAO;
+import com.example.tracker.server.dao.IProcedureDAO;
+import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.*;
 import org.joda.time.DateTime;
@@ -19,10 +19,10 @@ public class ExpenseService {
     private IUserDAO iUserDao;
 
     @Autowired
-    private IExpenseDAO iExpenseDao;
+    private IProcedureDAO iProcedureDao;
 
     @Autowired
-    private IExpenseTypeDAO iExpenseTypeDAO;
+    private IProcedureTypeDAO iProcedureTypeDAO;
 
     private final static Logger LOG = LoggerFactory.getLogger(ExpenseService.class);
 
@@ -35,21 +35,25 @@ public class ExpenseService {
         return "admin".equals(getCurrentUser().getRole());
     }
 
-    public List<Expense> getUsersExpenses() {
-        return iExpenseDao.getUsersExpenses(getCurrentUser().getId());
+    public List<Procedure> getUsersExpenses() {
+        return iProcedureDao.getUsersExpenses(getCurrentUser().getId());
     }
 
-    public Expense getExpenseById(int id) {
+    public List<Procedure> getUsersIncomes() {
+        return iProcedureDao.getUsersIncomes(getCurrentUser().getId());
+    }
+
+    public Procedure getProcedureById(int id) {
         if (isAdmin()) {
-            List<Expense> expenseList = iExpenseDao.getAllExpenses();
-            for (Expense expense : expenseList) {
-                if (expense.getId() == id) {
-                    return expense;
+            List<Procedure> procedureList = iProcedureDao.getAllExpenses();
+            for (Procedure procedure : procedureList) {
+                if (procedure.getId() == id) {
+                    return procedure;
                 }
             }
             throw new NoSuchElementException("No such Expense");
         } else {
-            return iExpenseDao.getExpenseById(getCurrentUser().getId(), id);
+            return iProcedureDao.getProcedureById(getCurrentUser().getId(), id);
         }
     }
 
@@ -57,94 +61,142 @@ public class ExpenseService {
         if (isAdmin()) {
             ReviewInfo result = new ReviewInfo();
             for (User user : getAllUsers()) {
-                ReviewInfo temp = iExpenseDao.getReview(user.getId());
+                ReviewInfo temp = iProcedureDao.getReview(user.getId());
                 result.setWeek(result.getWeek() + temp.getWeek());
                 result.setMonth(result.getMonth() + temp.getMonth());
                 result.setAmount(result.getAmount() + temp.getAmount());
             }
             return result;
         } else {
-            return iExpenseDao.getReview(getCurrentUser().getId());
+            return iProcedureDao.getReview(getCurrentUser().getId());
         }
     }
 
-    public List<Expense> getExpensesByTypeId(int id) throws AccessDeniedException {
+    public List<Procedure> getProceduresByTypeId(int id) throws AccessDeniedException {
         if (isAdmin()) {
-            List<Expense> result = new ArrayList<>();
-            if (id == 0) {
-                return iExpenseDao.getAllExpenses();
+            List<Procedure> result = new ArrayList<>();
+            if (id == -100) {
+                return iProcedureDao.getAllExpenses();
+            } else if (id == 100) {
+                return iProcedureDao.getAllIncomes();
             } else {
                 for (User user : getAllUsers()) {
-                    result.addAll(iExpenseDao.getExpensesByTypeId(user.getId(), id));
+                    result.addAll(iProcedureDao.getProceduresByTypeId(user.getId(), id));
                 }
                 return result;
             }
         } else {
-            if (id == 0) {
+            if (id == -100) {
                 return getUsersExpenses();
+            } else if (id == 100) {
+                return getUsersIncomes();
             } else {
-                return iExpenseDao.getExpensesByTypeId(getCurrentUser().getId(), id);
+                return iProcedureDao.getProceduresByTypeId(getCurrentUser().getId(), id);
             }
         }
     }
 
-    public List<Expense> getExpensesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
+    public List<Procedure> getExpensesByTypeId(int id) {
+        List<Procedure> result = new ArrayList<>();
+        for (Procedure procedure : iProcedureDao.getExpensesByTypeId(getCurrentUser().getId(), id)) {
+            if (procedure.getKind() < 0) {
+                result.add(procedure);
+            }
+        }
+        return result;
+    }
+
+    public List<Procedure> getIncomesByTypeId(int id) {
+        List<Procedure> result = new ArrayList<>();
+        for (Procedure procedure : iProcedureDao.getIncomesByTypeId(getCurrentUser().getId(), id)) {
+            if (procedure.getKind() > 0) {
+                result.add(procedure);
+            }
+        }
+        return result;
+    }
+
+    public List<Procedure> getExpensesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
         if (isAdmin()) {
-            List<Expense> result = new ArrayList<>();
-            if (typeId == 0) {
+            List<Procedure> result = new ArrayList<>();
+            if (typeId == -100) {
                 for (User user : getAllUsers()) {
-                    result.addAll(iExpenseDao.getExpensesByDate(user.getId(), startDate, endDate));
+                    result.addAll(iProcedureDao.getExpensesByDate(user.getId(), startDate, endDate));
                 }
                 return result;
             } else {
                 for (User user : getAllUsers()) {
-                    result.addAll(iExpenseDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                    result.addAll(iProcedureDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
                 }
                 return result;
             }
         } else {
-            if (typeId == 0) {
-                return iExpenseDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+            if (typeId == -100) {
+                return iProcedureDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
             } else {
-                return iExpenseDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                return iProcedureDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
             }
         }
     }
 
-    public Boolean addExpense(Expense expense) {
-        return iExpenseDao.addExpense(expense, getCurrentUser().getId());
-    }
-
-    public Boolean updateExpense(Expense expense) {
-        List<Expense> expenseList;
+    public List<Procedure> getIncomesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
         if (isAdmin()) {
-            expenseList = iExpenseDao.getAllExpenses();
+            List<Procedure> result = new ArrayList<>();
+            if (typeId == 100) {
+                for (User user : getAllUsers()) {
+                    result.addAll(iProcedureDao.getIncomesByDate(user.getId(), startDate, endDate));
+                }
+                return result;
+            } else {
+                for (User user : getAllUsers()) {
+                    result.addAll(iProcedureDao.getIncomesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                }
+                return result;
+            }
         } else {
-            expenseList = iExpenseDao.getUsersExpenses(getCurrentUser().getId());
-        }
-        for (Expense temp : expenseList) {
-            if (expense.getId() == temp.getId()) {
-                return iExpenseDao.updateExpense(expense);
+            if (typeId == 100) {
+                return iProcedureDao.getIncomesByDate(getCurrentUser().getId(), startDate, endDate);
+            } else {
+                return iProcedureDao.getIncomesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
             }
         }
-        return addExpense(expense);
     }
 
-    public List<Expense> archiveExpenses(List<Integer> ids) {
+    public Boolean addProcedure(Procedure procedure) {
+        return iProcedureDao.addProcedure(procedure, getCurrentUser().getId());
+    }
+
+    public Boolean updateProcedure(Procedure procedure) {
+        List<Procedure> procedureList;
         if (isAdmin()) {
-            iExpenseDao.archiveExpenses(ids, getCurrentUser().getId());
-            return iExpenseDao.getAllExpenses();
+            procedureList = iProcedureDao.getAllExpenses();
         } else {
-            return iExpenseDao.archiveExpenses(ids, getCurrentUser().getId());
+            procedureList = iProcedureDao.getUsersExpenses(getCurrentUser().getId());
+        }
+        for (Procedure temp : procedureList) {
+            if (procedure.getId() == temp.getId()) {
+                return iProcedureDao.updateProcedure(procedure);
+            }
+        }
+        return addProcedure(procedure);
+    }
+
+    public List<Procedure> archiveProcedures(List<Integer> ids) {
+        if (isAdmin()) {
+            iProcedureDao.archiveProcedures(ids, getCurrentUser().getId());
+            //TODO same
+            return iProcedureDao.getAllExpenses();
+        } else {
+            return iProcedureDao.archiveProcedures(ids, getCurrentUser().getId());
         }
     }
 
-    public List<Expense> deleteExpenses(List<Integer> ids) {
+    public List<Procedure> deleteProcedures(List<Integer> ids) {
         if (isAdmin()) {
-            iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
-            return iExpenseDao.getAllExpenses();
+            iProcedureDao.deleteProcedures(ids, getCurrentUser().getId());
+            return iProcedureDao.getAllExpenses();
         } else {
-            return iExpenseDao.deleteExpenses(ids, getCurrentUser().getId());
+            return iProcedureDao.deleteProcedures(ids, getCurrentUser().getId());
         }
     }
 
@@ -187,30 +239,30 @@ public class ExpenseService {
         }
     }
 
-    public Boolean updateType(ExpenseType type) throws AccessDeniedException {
+    public Boolean updateType(ProcedureType type) throws AccessDeniedException {
         if (isAdmin()) {
-            for (ExpenseType temp : iExpenseTypeDAO.getTypes()) {
+            for (ProcedureType temp : iProcedureTypeDAO.getTypes()) {
                 if (temp.getId() == type.getId()) {
-                    return iExpenseTypeDAO.updateType(type);
+                    return iProcedureTypeDAO.updateType(type);
                 }
             }
-            return iExpenseTypeDAO.addType(type);
+            return iProcedureTypeDAO.addType(type);
         } else {
             throw new AccessDeniedException("Access denied");
         }
     }
 
     public List<SimpleDate> getDatesBetween() {
-        List<Expense> expenseList;
+        List<Procedure> procedureList;
         if (isAdmin()) {
-            expenseList = iExpenseDao.getAllExpenses();
+            procedureList = iProcedureDao.getAllExpenses();
         } else {
-            expenseList = getUsersExpenses();
+            procedureList = getUsersExpenses();
         }
-        if (!expenseList.isEmpty()) {
-            Collections.sort(expenseList, (Comparator.comparing(Expense::getDate)));
-            DateTime first = new DateTime(expenseList.get(0).getDate()).dayOfMonth().withMinimumValue();
-            DateTime last = new DateTime(expenseList.get(expenseList.size() - 1).getDate());
+        if (!procedureList.isEmpty()) {
+            Collections.sort(procedureList, (Comparator.comparing(Procedure::getDate)));
+            DateTime first = new DateTime(procedureList.get(0).getDate()).dayOfMonth().withMinimumValue();
+            DateTime last = new DateTime(procedureList.get(procedureList.size() - 1).getDate());
             List<SimpleDate> datesBetween = new ArrayList<>();
 
             while (first.compareTo(last) <= 0) {
@@ -243,7 +295,7 @@ public class ExpenseService {
                 lastDay = calendar.getTime();
                 List<Double> monthlyExpenses = new ArrayList<>();
 
-                for (ExpenseType type : iExpenseTypeDAO.getTypes()) {
+                for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
                     try {
                         monthlyExpenses.add(getMonthlyExpenses(type.getId(), getExpensesByDate(type.getId(), firstDay, lastDay)));
                     } catch (AccessDeniedException e) {
@@ -262,7 +314,7 @@ public class ExpenseService {
             calendar.setTime(new DateTime(dates.get(0).getDate()).toDate());
             List<Double> monthlyExpenses = new ArrayList<>();
 
-            for (ExpenseType type : iExpenseTypeDAO.getTypes()) {
+            for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
                 monthlyExpenses.add(getMonthlyExpenses(type.getId(), getUsersExpenses()));
             }
 
@@ -275,26 +327,26 @@ public class ExpenseService {
         }
     }
 
-    private Double getMonthlyExpenses(int typeId, List<Expense> expenseList) {
+    private Double getMonthlyExpenses(int typeId, List<Procedure> procedureList) {
         double monthly = 0.0;
-        for (Expense expense : expenseList) {
-            if (expense.getTypeId() == typeId) {
-                monthly += expense.getPrice();
+        for (Procedure procedure : procedureList) {
+            if (procedure.getTypeId() == typeId) {
+                monthly += procedure.getPrice();
             }
         }
         return monthly;
     }
 
-    public List<Expense> getSortedAndFilteredExpenses(int typeId, Date startDate, Date endDate, int startIndex,
-                                                      int quantity, boolean isAscending) throws AccessDeniedException {
-        List<Expense> result;
+    public List<Procedure> getSortedAndFilteredExpenses(int typeId, Date startDate, Date endDate, int startIndex,
+                                                        int quantity, boolean isAscending) throws AccessDeniedException {
+        List<Procedure> result;
         Date nullDate = new Date(0);
         if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
-            result = getExpensesByTypeId(typeId);
+            result = getProceduresByTypeId(typeId);
         } else {
             result = getExpensesByDate(typeId, startDate, endDate);
         }
-        result.sort(Comparator.comparingDouble(Expense::getPrice));
+        result.sort(Comparator.comparingDouble(Procedure::getPrice));
         if (isAscending) {
             Collections.reverse(result);
         }

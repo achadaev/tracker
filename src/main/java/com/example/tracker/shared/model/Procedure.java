@@ -2,24 +2,26 @@ package com.example.tracker.shared.model;
 
 import java.util.Date;
 
-public class Expense {
+public class Procedure {
     private int id;
     private int typeId;
+    private int kind;
     private String name;
     private Date date;
     private double price;
     private int isArchived;
 
-    public Expense(int id, int typeId, String name, Date date, double price, int isArchived) {
+    public Procedure(int id, int typeId, int kind, String name, Date date, double price, int isArchived) {
         this.id = id;
         this.typeId = typeId;
+        this.kind = kind;
         this.name = name;
         this.date = date;
         this.price = price;
         this.isArchived = isArchived;
     }
 
-    public Expense() {
+    public Procedure() {
     }
 
     public int getId() {
@@ -36,6 +38,14 @@ public class Expense {
 
     public void setTypeId(int typeId) {
         this.typeId = typeId;
+    }
+
+    public int getKind() {
+        return kind;
+    }
+
+    public void setKind(int kind) {
+        this.kind = kind;
     }
 
     public String getName() {
@@ -75,6 +85,7 @@ public class Expense {
         return "Expense{" +
                 "id=" + id +
                 ", typeId=" + typeId +
+                ", kind=" + kind +
                 ", name='" + name + '\'' +
                 ", date=" + date +
                 ", price=" + price +

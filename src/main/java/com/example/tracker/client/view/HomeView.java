@@ -2,8 +2,8 @@ package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.HomePresenter;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.Procedure;
+import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.SimpleDate;
 import com.google.gwt.core.client.GWT;
@@ -43,12 +43,12 @@ public class HomeView extends Composite implements HomePresenter.Display {
     private AreaChart areaChart;
 
     @Override
-    public void initPieChart(List<Expense> expenseList) {
+    public void initPieChart(List<Procedure> procedureList) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             pieChart = new PieChart();
             chartPanel.add(pieChart);
-            drawPieChart(expenseList);
+            drawPieChart(procedureList);
         });
     }
 
@@ -63,11 +63,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
     }
 
     private void drawAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses) {
-        List<ExpenseType> types = ExpensesGWTController.getTypes();
+        List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
         DataTable dataTable = DataTable.create();
         dataTable.addColumn(ColumnType.STRING, "Date");
 
-        for (ExpenseType type : types) {
+        for (ProcedureType type : expenseTypes) {
             dataTable.addColumn(ColumnType.NUMBER, type.getName());
         }
 
@@ -88,18 +88,18 @@ public class HomeView extends Composite implements HomePresenter.Display {
         areaChart.setWidth("700px");
     }
 
-    private void drawPieChart(List<Expense> expenseList) {
+    private void drawPieChart(List<Procedure> procedureList) {
         DataTable dataTable = DataTable.create();
         dataTable.addColumn(ColumnType.STRING, "Type");
         dataTable.addColumn(ColumnType.NUMBER, "Price");
 
-        List<ExpenseType> types = ExpensesGWTController.getTypes();
-        dataTable.addRows(types.size());
+        List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
+        dataTable.addRows(expenseTypes.size());
         int i = 0;
         int j = 0;
-        for (ExpenseType type : types) {
+        for (ProcedureType type : expenseTypes) {
             dataTable.setValue(i, j, type.getName());
-            dataTable.setValue(i, j + 1, countByType(i + 1, expenseList));
+            dataTable.setValue(i, j + 1, countByType(i + 1, procedureList));
             i++;
         }
 
@@ -108,11 +108,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
         pieChart.setHeight("400px");
     }
 
-    private double countByType(int typeId, List<Expense> expenseList) {
+    private double countByType(int typeId, List<Procedure> procedureList) {
         double total = 0.0;
-        for (Expense expense : expenseList) {
-            if (expense.getTypeId() == typeId) {
-                total += expense.getPrice();
+        for (Procedure procedure : procedureList) {
+            if (procedure.getTypeId() == typeId) {
+                total += procedure.getPrice();
             }
         }
         return total;

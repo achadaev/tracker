@@ -1,11 +1,10 @@
 package com.example.tracker.server.rest;
 
-import com.example.tracker.server.dao.IExpenseDAO;
-import com.example.tracker.server.dao.IExpenseTypeDAO;
+import com.example.tracker.server.dao.IProcedureDAO;
+import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ExpenseService;
 import com.example.tracker.shared.model.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +17,10 @@ import java.util.*;
 public class ExpensesController {
 
     @Autowired
-    IExpenseDAO iExpenseDao;
+    IProcedureDAO iProcedureDao;
 
     @Autowired
-    IExpenseTypeDAO iExpenseTypeDAO;
+    IProcedureTypeDAO iProcedureTypeDAO;
 
     @Autowired
     IUserDAO iUserDAO;
@@ -29,14 +28,24 @@ public class ExpensesController {
     @Autowired
     ExpenseService expenseService;
 
-    @GetMapping("/expenses")
-    List<Expense> getAllExpenses() {
-        return iExpenseDao.getAllExpenses();
+    @GetMapping("/expenses/all-expenses")
+    List<Procedure> getAllExpenses() {
+        return iProcedureDao.getAllExpenses();
+    }
+
+    @GetMapping("/expenses/all-incomes")
+    List<Procedure> getAllIncomes() {
+        return iProcedureDao.getAllIncomes();
     }
 
     @GetMapping("/expenses/user-expenses")
-    List<Expense> getUsersExpenses() {
+    List<Procedure> getUsersExpenses() {
         return expenseService.getUsersExpenses();
+    }
+
+    @GetMapping("/expenses/user-incomes")
+    List<Procedure> getUsersIncomes() {
+        return expenseService.getUsersIncomes();
     }
 
     @GetMapping("/expenses/review")
@@ -50,24 +59,25 @@ public class ExpensesController {
     }
 
     @GetMapping("/expenses/id={id}")
-    Expense getExpenseById(@PathVariable int id) {
-        return expenseService.getExpenseById(id);
+    Procedure getExpenseById(@PathVariable int id) {
+        Procedure result = expenseService.getProcedureById(id);
+        return result.getKind() < 0 ? result : null;
     }
 
     @GetMapping("/expenses/typeId={id}")
-    List<Expense> getExpensesByTypeId(@PathVariable int id) {
+    List<Procedure> getExpensesByTypeId(@PathVariable int id) {
         try {
-            return expenseService.getExpensesByTypeId(id);
+            return expenseService.getProceduresByTypeId(id);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @GetMapping("/expenses/typeId={typeId}/{startDate}/{endDate}")
-    List<Expense> getExpensesByDateAndTypeId(@PathVariable int typeId,
-                                             @PathVariable Date startDate,
-                                             @PathVariable Date endDate) {
+    @GetMapping("/expenses/expense-typeId={typeId}/{startDate}/{endDate}")
+    List<Procedure> getExpensesByDateAndTypeId(@PathVariable int typeId,
+                                               @PathVariable Date startDate,
+                                               @PathVariable Date endDate) {
         try {
             return expenseService.getExpensesByDate(typeId, startDate, endDate);
         } catch (AccessDeniedException e) {
@@ -76,18 +86,40 @@ public class ExpensesController {
         return null;
     }
 
+    @GetMapping("/expenses/income-typeId={typeId}/{startDate}/{endDate}")
+    List<Procedure> getIncomesByDateAndTypeId(@PathVariable int typeId,
+                                               @PathVariable Date startDate,
+                                               @PathVariable Date endDate) {
+        try {
+            return expenseService.getIncomesByDate(typeId, startDate, endDate);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/expenses/types")
-    List<ExpenseType> getTypes() {
-        return iExpenseTypeDAO.getTypes();
+    List<ProcedureType> getTypes() {
+        return iProcedureTypeDAO.getTypes();
+    }
+
+    @GetMapping("/expenses/expense-types")
+    List<ProcedureType> getExpenseTypes() {
+        return iProcedureTypeDAO.getExpenseTypes();
+    }
+
+    @GetMapping("/expenses/income-types")
+    List<ProcedureType> getIncomeTypes() {
+        return iProcedureTypeDAO.getIncomeTypes();
     }
 
     @GetMapping("/expenses/typesId={id}")
-    ExpenseType getTypeById(@PathVariable int id) {
-        return iExpenseTypeDAO.getTypeById(id);
+    ProcedureType getTypeById(@PathVariable int id) {
+        return iProcedureTypeDAO.getTypeById(id);
     }
 
     @PostMapping(value = "/expenses/add-type", produces = MediaType.APPLICATION_JSON)
-    Map<String, Boolean> addType(@RequestBody ExpenseType type) {
+    Map<String, Boolean> addType(@RequestBody ProcedureType type) {
         try {
             return Collections.singletonMap("response", expenseService.updateType(type));
         } catch (AccessDeniedException e) {
@@ -97,7 +129,7 @@ public class ExpensesController {
     }
 
     @PutMapping(value = "/expenses/update-type", produces = MediaType.APPLICATION_JSON)
-    Map<String, Boolean> updateType(@RequestBody ExpenseType type) {
+    Map<String, Boolean> updateType(@RequestBody ProcedureType type) {
         try {
             return Collections.singletonMap("response", expenseService.updateType(type));
         } catch (AccessDeniedException e) {
@@ -107,8 +139,8 @@ public class ExpensesController {
     }
 
     @DeleteMapping("/expenses/delete-types")
-    List<ExpenseType> deleteTypes(@RequestBody List<Integer> ids) {
-        return iExpenseTypeDAO.deleteTypes(ids);
+    List<ProcedureType> deleteTypes(@RequestBody List<Integer> ids) {
+        return iProcedureTypeDAO.deleteTypes(ids);
     }
 
     @GetMapping("/expenses/profile")
@@ -167,23 +199,23 @@ public class ExpensesController {
     }
 
     @PostMapping(value = "/expenses/add", produces = MediaType.APPLICATION_JSON)
-    Map<String, Boolean> addExpense(@RequestBody Expense expense) {
-        return Collections.singletonMap("response", expenseService.addExpense(expense));
+    Map<String, Boolean> addExpense(@RequestBody Procedure procedure) {
+        return Collections.singletonMap("response", expenseService.addProcedure(procedure));
     }
 
     @PutMapping(value = "/expenses/update", produces = MediaType.APPLICATION_JSON)
-    Map<String, Boolean> updateExpense(@RequestBody Expense expense) {
-        return Collections.singletonMap("response", expenseService.updateExpense(expense));
+    Map<String, Boolean> updateExpense(@RequestBody Procedure procedure) {
+        return Collections.singletonMap("response", expenseService.updateProcedure(procedure));
     }
 
     @PutMapping("/expenses/archive")
-    List<Expense> archiveExpenses(@RequestBody List<Integer> ids) {
-        return expenseService.archiveExpenses(ids);
+    List<Procedure> archiveExpenses(@RequestBody List<Integer> ids) {
+        return expenseService.archiveProcedures(ids);
     }
 
     @DeleteMapping("/expenses/delete")
-    List<Expense> deleteExpenses(@RequestBody List<Integer> ids) {
-        return expenseService.deleteExpenses(ids);
+    List<Procedure> deleteExpenses(@RequestBody List<Integer> ids) {
+        return expenseService.deleteProcedures(ids);
     }
 
     @GetMapping("/expenses/dates-between")
@@ -197,12 +229,12 @@ public class ExpensesController {
     }
 
     @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
-    List<Expense> getSortedAndFilteredExpenses(@PathVariable int typeId,
-                                               @PathVariable Date startDate,
-                                               @PathVariable Date endDate,
-                                               @PathVariable int startIndex,
-                                               @PathVariable int quantity,
-                                               @PathVariable boolean isAscending) {
+    List<Procedure> getSortedAndFilteredExpenses(@PathVariable int typeId,
+                                                 @PathVariable Date startDate,
+                                                 @PathVariable Date endDate,
+                                                 @PathVariable int startIndex,
+                                                 @PathVariable int quantity,
+                                                 @PathVariable boolean isAscending) {
         try {
             return expenseService.getSortedAndFilteredExpenses(typeId, startDate, endDate, startIndex, quantity, isAscending);
         } catch (AccessDeniedException e) {

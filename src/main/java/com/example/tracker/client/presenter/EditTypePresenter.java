@@ -3,10 +3,9 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.event.type.TypeUpdatedEvent;
 import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,12 +18,13 @@ public class EditTypePresenter implements Presenter {
         HasClickHandlers getSaveButton();
         HasClickHandlers getCancelButton();
         HasValue<String> getName();
+        HasValue<String> getKind();
         Widget asWidget();
         void showDialog();
         void hideDialog();
     }
 
-    private ExpenseType type;
+    private ProcedureType type;
     private TypeWebService typeWebService;
     private HandlerManager eventBus;
     private Display display;
@@ -33,7 +33,7 @@ public class EditTypePresenter implements Presenter {
         this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
-        this.type = new ExpenseType();
+        this.type = new ProcedureType();
     }
 
     public EditTypePresenter(TypeWebService typeWebService, HandlerManager eventBus, Display display, int id) {
@@ -41,16 +41,17 @@ public class EditTypePresenter implements Presenter {
         this.eventBus = eventBus;
         this.display = display;
 
-        typeWebService.getTypeById(id, new MethodCallback<ExpenseType>() {
+        typeWebService.getTypeById(id, new MethodCallback<ProcedureType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error getting type").center();
             }
 
             @Override
-            public void onSuccess(Method method, ExpenseType response) {
+            public void onSuccess(Method method, ProcedureType response) {
                 type = response;
                 EditTypePresenter.this.display.getName().setValue(type.getName());
+                EditTypePresenter.this.display.getKind().setValue(Integer.toString(type.getKind()));
             }
         });
     }
@@ -60,21 +61,36 @@ public class EditTypePresenter implements Presenter {
         display.getCancelButton().addClickHandler(clickEvent -> display.hideDialog());
     }
 
+    private int validate(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            AlertWidget.alert("Error", "Incorrect Number Format").center();
+        }
+        return 0;
+    }
+
     private void doSave() {
-        type.setName(display.getName().getValue());
+        int validatedKind = validate(display.getKind().getValue());
+        if (validatedKind != 0) {
+            type.setName(display.getName().getValue());
+            type.setKind(validatedKind);
 
-        typeWebService.updateType(type, new MethodCallback<ExpenseType>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error updating type").center();
-            }
+            typeWebService.updateType(type, new MethodCallback<ProcedureType>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert("Error", "Error updating type").center();
+                }
 
-            @Override
-            public void onSuccess(Method method, ExpenseType response) {
-                eventBus.fireEvent(new TypeUpdatedEvent(response));
-                display.hideDialog();
-            }
-        });
+                @Override
+                public void onSuccess(Method method, ProcedureType response) {
+                    eventBus.fireEvent(new TypeUpdatedEvent(response));
+                    display.hideDialog();
+                }
+            });
+        } else {
+            AlertWidget.alert("Error", "Kind should be > or < than 0").center();
+        }
     }
 
     @Override

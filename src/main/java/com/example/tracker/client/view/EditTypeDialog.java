@@ -24,18 +24,22 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     Button cancelButton;
 
     TextBox name;
+    TextBox kind;
 
     public EditTypeDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
         dialogBox.setAutoHideEnabled(true);
         dialogBox.setGlassEnabled(true);
         name = new TextBox();
+        kind = new TextBox();
         initTable();
     }
 
     private void initTable() {
         table.setText(0, 0, "Name");
         table.setWidget(0, 1, name);
+        table.setText(1, 0, "Kind");
+        table.setWidget(1, 1, kind);
     }
 
     @Override
@@ -51,6 +55,11 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     @Override
     public HasValue<String> getName() {
         return name;
+    }
+
+    @Override
+    public HasValue<String> getKind() {
+        return kind;
     }
 
     @Override

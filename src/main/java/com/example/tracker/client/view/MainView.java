@@ -21,6 +21,8 @@ public class MainView extends Composite implements MainPresenter.Display {
     @UiField
     Button expensesButton;
     @UiField
+    Button incomesButton;
+    @UiField
     Button profileButton;
     @UiField
     Button calendarButton;
@@ -48,6 +50,11 @@ public class MainView extends Composite implements MainPresenter.Display {
     @Override
     public HasClickHandlers getExpensesButton() {
         return expensesButton;
+    }
+
+    @Override
+    public HasClickHandlers getIncomesButton() {
+        return incomesButton;
     }
 
     @Override

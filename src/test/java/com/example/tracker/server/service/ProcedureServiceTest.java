@@ -1,8 +1,8 @@
 package com.example.tracker.server.service;
 
-import com.example.tracker.server.dao.IExpenseDAO;
+import com.example.tracker.server.dao.IProcedureDAO;
 import com.example.tracker.server.dao.IUserDAO;
-import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.User;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
@@ -24,14 +23,14 @@ import java.util.NoSuchElementException;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExpenseServiceTest {
+public class ProcedureServiceTest {
 
     @Spy
     @InjectMocks
     private ExpenseService expenseService;
 
     @Mock
-    IExpenseDAO iExpenseDAO;
+    IProcedureDAO iProcedureDAO;
 
     @Mock
     IUserDAO iUserDAO;
@@ -53,8 +52,8 @@ public class ExpenseServiceTest {
 
     @Test(expected = NoSuchElementException.class)
     public void getExpenseByIdShouldThrowException() {
-        doReturn(Lists.emptyList()).when(iExpenseDAO).getAllExpenses();
-        expenseService.getExpenseById(1);
+        doReturn(Lists.emptyList()).when(iProcedureDAO).getAllExpenses();
+        expenseService.getProcedureById(1);
     }
 
     @Test
@@ -78,9 +77,9 @@ public class ExpenseServiceTest {
 
     @Test
     public void updateExpenseShouldAddExpenseIfNotFound() {
-        Expense expense = new Expense(100, 100, "Name", new Date(), 100, 0);
-        expenseService.updateExpense(expense);
-        verify(expenseService).addExpense(expense);
+        Procedure procedure = new Procedure(100, 100, -1, "Name", new Date(), 100, 0);
+        expenseService.updateProcedure(procedure);
+        verify(expenseService).addProcedure(procedure);
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -112,7 +111,7 @@ public class ExpenseServiceTest {
 
     @Test
     public void getDatesBetweenShouldNotReturnNull() {
-        doReturn(Lists.emptyList()).when(iExpenseDAO).getAllExpenses();
+        doReturn(Lists.emptyList()).when(iProcedureDAO).getAllExpenses();
         Assert.assertNotNull(expenseService.getDatesBetween());
     }
 

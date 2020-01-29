@@ -3,12 +3,11 @@ package com.example.tracker.client.view;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.presenter.ExpensePresenter;
-import com.example.tracker.client.services.ExpenseWebService;
-import com.example.tracker.shared.model.Expense;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.client.services.ProcedureWebService;
+import com.example.tracker.shared.model.Procedure;
+import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.NumberCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -26,8 +25,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.*;
 
-public class ExpenseView extends Composite implements ExpensePresenter.Display {
-    interface MainViewUiBinder extends UiBinder<HTMLPanel, ExpenseView> {
+public class ProcedureView extends Composite implements ExpensePresenter.Display {
+    interface MainViewUiBinder extends UiBinder<HTMLPanel, ProcedureView> {
     }
 
     @UiField
@@ -51,34 +50,34 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     @UiField
     Label total;
 
-    private CellTable<Expense> expenseTable;
-    private ExpenseWebService expenseWebService;
+    private CellTable<Procedure> procedureCellTable;
+    private ProcedureWebService procedureWebService;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
 
-    private MultiSelectionModel<Expense> selectionModel;
+    private MultiSelectionModel<Procedure> selectionModel;
 
-    public ExpenseView(ExpenseWebService expenseWebService) {
+    public ProcedureView(ProcedureWebService procedureWebService) {
         initWidget(ourUiBinder.createAndBindUi(this));
         startDate.setVisible(false);
         endDate.setVisible(false);
-        this.expenseWebService = expenseWebService;
+        this.procedureWebService = procedureWebService;
     }
 
     @Override
-    public void setData(List<Expense> data, List<ExpenseType> types) {
+    public void setData(List<Procedure> data, List<ProcedureType> types) {
         tablePanel.clear();
-        expenseTable = new CellTable<>();
-        expenseTable.setVisible(true);
+        procedureCellTable = new CellTable<>();
+        procedureCellTable.setVisible(true);
         selectionModel = new MultiSelectionModel<>();
-        expenseTable.setSelectionModel(selectionModel);
+        procedureCellTable.setSelectionModel(selectionModel);
 
         CheckboxCell checkboxCell = new CheckboxCell();
 
-        Column<Expense, Boolean> checkColumn = new Column<Expense, Boolean>(checkboxCell) {
+        Column<Procedure, Boolean> checkColumn = new Column<Procedure, Boolean>(checkboxCell) {
             @Override
-            public Boolean getValue(Expense expense) {
-                return selectionModel.isSelected(expense);
+            public Boolean getValue(Procedure procedure) {
+                return selectionModel.isSelected(procedure);
             }
         };
 
@@ -91,49 +90,49 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         };
 
         checkAllHeader.setUpdater(value -> {
-            for (Expense expense : data) {
-                selectionModel.setSelected(expense, value);
+            for (Procedure procedure : data) {
+                selectionModel.setSelected(procedure, value);
             }
         });
-        expenseTable.addColumn(checkColumn, checkAllHeader);
+        procedureCellTable.addColumn(checkColumn, checkAllHeader);
 
-        Column<Expense, Number> idColumn = new Column<Expense, Number>(new NumberCell()) {
+        Column<Procedure, Number> idColumn = new Column<Procedure, Number>(new NumberCell()) {
             @Override
-            public Number getValue(Expense expense) {
-                return expense.getId();
+            public Number getValue(Procedure procedure) {
+                return procedure.getId();
             }
         };
-        expenseTable.addColumn(idColumn, "ID");
+        procedureCellTable.addColumn(idColumn, "ID");
 
-        TextColumn<Expense> typeColumn = new TextColumn<Expense>() {
+        TextColumn<Procedure> typeColumn = new TextColumn<Procedure>() {
             @Override
-            public String getValue(Expense expense) {
-                for (ExpenseType type : types) {
-                    if (type.getId() == expense.getTypeId()) {
+            public String getValue(Procedure procedure) {
+                for (ProcedureType type : types) {
+                    if (type.getId() == procedure.getTypeId()) {
                         return type.getName();
                     }
                 }
                 return "undefined";
             }
         };
-        expenseTable.addColumn(typeColumn, "Type");
+        procedureCellTable.addColumn(typeColumn, "Type");
 
-        TextColumn<Expense> nameColumn = new TextColumn<Expense>() {
+        TextColumn<Procedure> nameColumn = new TextColumn<Procedure>() {
             @Override
-            public String getValue(Expense expense) {
-                return expense.getName();
+            public String getValue(Procedure procedure) {
+                return procedure.getName();
             }
         };
-        expenseTable.addColumn(nameColumn, "Name");
+        procedureCellTable.addColumn(nameColumn, "Name");
 
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("d MMMM yyyy, EEEE");
-        TextColumn<Expense> dateColumn = new TextColumn<Expense>() {
+        TextColumn<Procedure> dateColumn = new TextColumn<Procedure>() {
             @Override
-            public String getValue(Expense expense) {
-                return dateTimeFormat.format(expense.getDate());
+            public String getValue(Procedure procedure) {
+                return dateTimeFormat.format(procedure.getDate());
             }
         };
-        expenseTable.addColumn(dateColumn, "Date");
+        procedureCellTable.addColumn(dateColumn, "Date");
         /*
         DateCell dateCell = new DateCell();
         Column<Expense, Date> dateColumn = new Column<Expense, Date>(dateCell) {
@@ -145,80 +144,80 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
         expenseTable.addColumn(dateColumn, "Date");
 */
 
-        Column<Expense, Number> priceColumn = new Column<Expense, Number>(new NumberCell()) {
+        Column<Procedure, Number> priceColumn = new Column<Procedure, Number>(new NumberCell()) {
             @Override
-            public Number getValue(Expense expense) {
-                return expense.getPrice();
+            public Number getValue(Procedure procedure) {
+                return procedure.getPrice();
             }
         };
         priceColumn.setSortable(true);
-        expenseTable.addColumn(priceColumn, "Price");
+        procedureCellTable.addColumn(priceColumn, "Price");
 
         if (ExpensesGWTController.isAdmin) {
-            TextColumn<Expense> isArchivedColumn = new TextColumn<Expense>() {
+            TextColumn<Procedure> isArchivedColumn = new TextColumn<Procedure>() {
                 @Override
-                public String getValue(Expense expense) {
-                    return expense.getIsArchived() == 1 ? "yes" : "no";
+                public String getValue(Procedure procedure) {
+                    return procedure.getIsArchived() == 1 ? "yes" : "no";
                 }
             };
-            expenseTable.addColumn(isArchivedColumn, "Is Archived");
+            procedureCellTable.addColumn(isArchivedColumn, "Is Archived");
         }
 
-        expenseTable.setPageSize(10);
-        expenseTable.setRowData(0, data);
+        procedureCellTable.setPageSize(10);
+        procedureCellTable.setRowData(0, data);
         SimplePager pager = new SimplePager();
-        pager.setDisplay(expenseTable);
+        pager.setDisplay(procedureCellTable);
 
-        expenseTable.getColumnSortList().push(new ColumnSortList.ColumnSortInfo(priceColumn, false));
+        procedureCellTable.getColumnSortList().push(new ColumnSortList.ColumnSortInfo(priceColumn, false));
 
-        AsyncDataProvider<Expense> provider = new AsyncDataProvider<Expense>() {
+        AsyncDataProvider<Procedure> provider = new AsyncDataProvider<Procedure>() {
             @Override
-            protected void onRangeChanged(HasData<Expense> display)
+            protected void onRangeChanged(HasData<Procedure> display)
             {
                 final Range range = display.getVisibleRange();
-                final ColumnSortList sortList = expenseTable.getColumnSortList();
+                final ColumnSortList sortList = procedureCellTable.getColumnSortList();
 
                 int start = range.getStart();
                 int length = range.getLength();
                 if (startDate.getValue() == null && endDate.getValue() == null) {
                     Date nullDate = new Date(0);
-                    expenseWebService.getSortedAndFilteredExpenses(Integer.parseInt(typesListBox.getSelectedValue()),
+                    procedureWebService.getSortedAndFilteredProdecures(Integer.parseInt(typesListBox.getSelectedValue()),
                             nullDate, nullDate, start, length, sortList.get(0).isAscending(),
-                            new MethodCallback<List<Expense>>() {
+                            new MethodCallback<List<Procedure>>() {
                                 @Override
                                 public void onFailure(Method method, Throwable throwable) {
                                     AlertWidget.alert("Error", "Error sorting expenses").center();
                                 }
 
                                 @Override
-                                public void onSuccess(Method method, List<Expense> response) {
+                                public void onSuccess(Method method, List<Procedure> response) {
                                     updateRowData(start, response);
                                 }
                             });
                 } else {
-                    expenseWebService.getSortedAndFilteredExpenses(Integer.parseInt(typesListBox.getSelectedValue()),
+                    procedureWebService.getSortedAndFilteredProdecures(Integer.parseInt(typesListBox.getSelectedValue()),
                             startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
-                            new MethodCallback<List<Expense>>() {
+                            new MethodCallback<List<Procedure>>() {
                                 @Override
                                 public void onFailure(Method method, Throwable throwable) {
-                                    AlertWidget.alert("Error", "Error sorting expenses").center();
+                                    AlertWidget.alert("Error", "Error sorting procedures").center();
                                 }
 
                                 @Override
-                                public void onSuccess(Method method, List<Expense> response) {
+                                public void onSuccess(Method method, List<Procedure> response) {
                                     updateRowData(start, response);
                                 }
                             });
                 }
             }
         };
-        provider.addDataDisplay(expenseTable);
+        provider.addDataDisplay(procedureCellTable);
         provider.updateRowCount(data.size(), true);
-        ColumnSortEvent.AsyncHandler columnSortHandler = new ColumnSortEvent.AsyncHandler(expenseTable);
-        expenseTable.addColumnSortHandler(columnSortHandler);
+        ColumnSortEvent.AsyncHandler columnSortHandler = new ColumnSortEvent.AsyncHandler(procedureCellTable);
+        procedureCellTable.addColumnSortHandler(columnSortHandler);
 
 
-        tablePanel.add(expenseTable);
+        tablePanel.add(procedureCellTable);
         tablePanel.add(pager);
     }
 
@@ -241,8 +240,8 @@ public class ExpenseView extends Composite implements ExpensePresenter.Display {
     public List<Integer> getSelectedIds() {
         List<Integer> selectedRows = new ArrayList<>();
 
-        for (Expense expense : selectionModel.getSelectedSet()) {
-            selectedRows.add(expense.getId());
+        for (Procedure procedure : selectionModel.getSelectedSet()) {
+            selectedRows.add(procedure.getId());
         }
 
         return selectedRows;

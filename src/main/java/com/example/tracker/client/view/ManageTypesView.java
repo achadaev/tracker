@@ -1,10 +1,9 @@
 package com.example.tracker.client.view;
 
 import com.example.tracker.client.presenter.ManageTypesPresenter;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.NumberCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -34,9 +33,9 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
     @UiField
     Button deleteButton;
 
-    private CellTable<ExpenseType> typeTable;
+    private CellTable<ProcedureType> typeTable;
 
-    private MultiSelectionModel<ExpenseType> selectionModel;
+    private MultiSelectionModel<ProcedureType> selectionModel;
 
     private static ManageTypesViewUiBinder ourUiBinder = GWT.create(ManageTypesViewUiBinder.class);
 
@@ -63,7 +62,7 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
     public List<Integer> getSelectedIds() {
         List<Integer> selectedRows = new ArrayList<>();
 
-        for (ExpenseType type : selectionModel.getSelectedSet()) {
+        for (ProcedureType type : selectionModel.getSelectedSet()) {
             selectedRows.add(type.getId());
         }
 
@@ -71,7 +70,7 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
     }
 
     @Override
-    public void setData(List<ExpenseType> typeList) {
+    public void setData(List<ProcedureType> typeList) {
         typeTable = new CellTable<>();
         typeTable.setVisible(true);
         selectionModel = new MultiSelectionModel<>();
@@ -80,9 +79,9 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
 
         CheckboxCell checkboxCell = new CheckboxCell();
 
-        Column<ExpenseType, Boolean> checkColumn = new Column<ExpenseType, Boolean>(checkboxCell) {
+        Column<ProcedureType, Boolean> checkColumn = new Column<ProcedureType, Boolean>(checkboxCell) {
             @Override
-            public Boolean getValue(ExpenseType type) {
+            public Boolean getValue(ProcedureType type) {
                 return selectionModel.isSelected(type);
             }
         };
@@ -96,23 +95,37 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
         };
 
         checkAllHeader.setUpdater(value -> {
-            for (ExpenseType type: typeList) {
+            for (ProcedureType type: typeList) {
                 selectionModel.setSelected(type, value);
             }
         });
         typeTable.addColumn(checkColumn, checkAllHeader);
 
-        Column<ExpenseType, Number> idColumn = new Column<ExpenseType, Number>(new NumberCell()) {
+        Column<ProcedureType, Number> idColumn = new Column<ProcedureType, Number>(new NumberCell()) {
             @Override
-            public Number getValue(ExpenseType type) {
+            public Number getValue(ProcedureType type) {
                 return type.getId();
             }
         };
         typeTable.addColumn(idColumn, "ID");
 
-        TextColumn<ExpenseType> typeColumn = new TextColumn<ExpenseType>() {
+        TextColumn<ProcedureType> kindColumn = new TextColumn<ProcedureType>() {
             @Override
-            public String getValue(ExpenseType type) {
+            public String getValue(ProcedureType type) {
+                if (type.getKind() < 0) {
+                    return "Expense";
+                } else if (type.getKind() > 0) {
+                    return "Income";
+                } else {
+                    return "Undefined";
+                }
+            }
+        };
+        typeTable.addColumn(kindColumn, "Kind");
+
+        TextColumn<ProcedureType> typeColumn = new TextColumn<ProcedureType>() {
+            @Override
+            public String getValue(ProcedureType type) {
                 return type.getName();
             }
         };
@@ -123,15 +136,15 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
         SimplePager pager = new SimplePager();
         pager.setDisplay(typeTable);
 
-        AsyncDataProvider<ExpenseType> provider = new AsyncDataProvider<ExpenseType>()
+        AsyncDataProvider<ProcedureType> provider = new AsyncDataProvider<ProcedureType>()
         {
             @Override
-            protected void onRangeChanged(HasData<ExpenseType> display)
+            protected void onRangeChanged(HasData<ProcedureType> display)
             {
                 int start = display.getVisibleRange().getStart();
                 int end = start + display.getVisibleRange().getLength();
                 end = Math.min(end, typeList.size());
-                List<ExpenseType> sub = typeList.subList(start, end);
+                List<ProcedureType> sub = typeList.subList(start, end);
                 updateRowData(start, sub);
             }
         };

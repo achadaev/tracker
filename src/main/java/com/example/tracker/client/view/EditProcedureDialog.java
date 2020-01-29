@@ -9,8 +9,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class EditExpenseDialog extends DialogBox implements EditExpensePresenter.Display {
-    interface EditExpenseDialogUiBinder extends UiBinder<HTMLPanel, EditExpenseDialog> {
+public class EditProcedureDialog extends DialogBox implements EditExpensePresenter.Display {
+    interface EditExpenseDialogUiBinder extends UiBinder<HTMLPanel, EditProcedureDialog> {
     }
 
     private static EditExpenseDialogUiBinder ourUiBinder = GWT.create(EditExpenseDialogUiBinder.class);
@@ -32,7 +32,7 @@ public class EditExpenseDialog extends DialogBox implements EditExpensePresenter
     @UiField
     Button cancelButton;
 
-    public EditExpenseDialog() {
+    public EditProcedureDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
         dialogBox.setAutoHideEnabled(true);
         dialogBox.setGlassEnabled(true);
@@ -93,6 +93,6 @@ public class EditExpenseDialog extends DialogBox implements EditExpensePresenter
     @Override
     public void hideDialog() {
         dialogBox.hide();
-        Window.Location.replace(GWT.getHostPageBaseURL() + "#list");
+        Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
     }
 }

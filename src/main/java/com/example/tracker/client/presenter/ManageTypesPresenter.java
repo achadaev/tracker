@@ -4,10 +4,9 @@ import com.example.tracker.client.event.type.AddTypeEvent;
 import com.example.tracker.client.event.type.EditTypeEvent;
 import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
@@ -17,14 +16,14 @@ import java.util.List;
 
 public class ManageTypesPresenter implements Presenter {
 
-    private List<ExpenseType> typeList;
+    private List<ProcedureType> typeList;
 
     public interface Display {
         HasClickHandlers getAddButton();
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         List<Integer> getSelectedIds();
-        void setData(List<ExpenseType> typeList);
+        void setData(List<ProcedureType> typeList);
         Widget asWidget();
     }
 
@@ -57,14 +56,14 @@ public class ManageTypesPresenter implements Presenter {
     private void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
 
-        typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ExpenseType>>() {
+        typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error deleting types").center();
             }
 
             @Override
-            public void onSuccess(Method method, List<ExpenseType> response) {
+            public void onSuccess(Method method, List<ProcedureType> response) {
                 typeList = response;
                 display.setData(typeList);
             }
@@ -72,14 +71,14 @@ public class ManageTypesPresenter implements Presenter {
     }
 
     private void initTable() {
-        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+        typeWebService.getTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting all users").center();
+                AlertWidget.alert("Error", "Error getting all types").center();
             }
 
             @Override
-            public void onSuccess(Method method, List<ExpenseType> response) {
+            public void onSuccess(Method method, List<ProcedureType> response) {
                 typeList = response;
                 display.setData(typeList);
             }

@@ -3,10 +3,9 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.message.AlertWidget;
-import com.example.tracker.client.services.ExpenseWebService;
+import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.*;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,17 +24,17 @@ public class HomePresenter implements Presenter {
         Label getMonthLabel();
         Label getWeekLabel();
         Label getMoreLabel();
-        void initPieChart(List<Expense> expenseList);
+        void initPieChart(List<Procedure> procedureList);
         void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
         Widget asWidget();
     }
 
-    private ExpenseWebService expenseWebService;
+    private ProcedureWebService procedureWebService;
     private HandlerManager eventBus;
     private Display display;
 
-    public HomePresenter(ExpenseWebService expenseWebService, HandlerManager eventBus, Display view) {
-        this.expenseWebService = expenseWebService;
+    public HomePresenter(ProcedureWebService procedureWebService, HandlerManager eventBus, Display view) {
+        this.procedureWebService = procedureWebService;
         this.eventBus = eventBus;
         this.display = view;
     }
@@ -46,26 +45,26 @@ public class HomePresenter implements Presenter {
 
     private void initPieChart() {
         if (ExpensesGWTController.isAdmin) {
-            expenseWebService.getAllExpenses(new MethodCallback<List<Expense>>() {
+            procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
                     AlertWidget.alert("Error", "Error getting expenses").center();
                 }
 
                 @Override
-                public void onSuccess(Method method, List<Expense> response) {
+                public void onSuccess(Method method, List<Procedure> response) {
                     display.initPieChart(response);
                 }
             });
         } else {
-            expenseWebService.getUsersExpenses(new MethodCallback<List<Expense>>() {
+            procedureWebService.getUsersExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
                     AlertWidget.alert("Error", "Error getting expenses").center();
                 }
 
                 @Override
-                public void onSuccess(Method method, List<Expense> response) {
+                public void onSuccess(Method method, List<Procedure> response) {
                     display.initPieChart(response);
                 }
             });
@@ -73,7 +72,7 @@ public class HomePresenter implements Presenter {
     }
 
     private void initAreaChart(List<SimpleDate> dates) {
-        expenseWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
+        procedureWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error getting expenses between").center();
@@ -92,7 +91,7 @@ public class HomePresenter implements Presenter {
         container.clear();
         container.add(display.asWidget());
         display.getGreetingLabel().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
-        expenseWebService.getReview(new MethodCallback<ReviewInfo>() {
+        procedureWebService.getReview(new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error getting review").center();
@@ -109,7 +108,7 @@ public class HomePresenter implements Presenter {
 
         initPieChart();
 
-        expenseWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
+        procedureWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", throwable.getMessage()).center();

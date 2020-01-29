@@ -1,18 +1,18 @@
 package com.example.tracker.client.event.expense;
 
-import com.example.tracker.shared.model.Expense;
+import com.example.tracker.shared.model.Procedure;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class ExpenseUpdatedEvent extends GwtEvent<ExpenseUpdatedEventHandler> {
     public static Type<ExpenseUpdatedEventHandler> TYPE = new Type<>();
-    private Expense updatedExpense;
+    private Procedure updatedProcedure;
 
-    public ExpenseUpdatedEvent(Expense updatedExpense) {
-        this.updatedExpense = updatedExpense;
+    public ExpenseUpdatedEvent(Procedure updatedProcedure) {
+        this.updatedProcedure = updatedProcedure;
     }
 
-    public Expense getUpdatedExpense() {
-        return updatedExpense;
+    public Procedure getUpdatedProcedure() {
+        return updatedProcedure;
     }
 
     @Override

@@ -2,21 +2,24 @@ package com.example.tracker.client;
 
 import com.example.tracker.client.event.*;
 import com.example.tracker.client.event.expense.*;
+import com.example.tracker.client.event.incomes.AddIncomeEvent;
+import com.example.tracker.client.event.incomes.EditIncomeEvent;
+import com.example.tracker.client.event.incomes.IncomeUpdatedEvent;
+import com.example.tracker.client.event.incomes.ShowIncomesEvent;
 import com.example.tracker.client.event.type.*;
 import com.example.tracker.client.event.user.*;
 import com.example.tracker.client.message.AlertWidget;
 import com.example.tracker.client.presenter.*;
 import com.example.tracker.client.services.TypeWebService;
-import com.example.tracker.client.services.ExpenseWebService;
+import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.*;
-import com.example.tracker.shared.model.ExpenseType;
+import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.fusesource.restygwt.client.Method;
@@ -27,31 +30,44 @@ import java.util.List;
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
 
     private static User user;
-    private static List<ExpenseType> types;
+    private static List<ProcedureType> expenseTypes;
+    private static List<ProcedureType> incomeTypes;
     public static boolean isAdmin;
 
     private HandlerManager eventBus;
-    private ExpenseWebService expenseWebService;
+    private ProcedureWebService procedureWebService;
     private TypeWebService typeWebService;
     private UserWebService userWebService;
     private HasWidgets container;
 
-    public ExpensesGWTController(ExpenseWebService expenseWebService, TypeWebService typeWebService,
+    public ExpensesGWTController(ProcedureWebService procedureWebService, TypeWebService typeWebService,
                                  UserWebService userWebService, HandlerManager eventBus) {
         this.eventBus = eventBus;
         this.userWebService = userWebService;
-        this.expenseWebService = expenseWebService;
+        this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
 
-        typeWebService.getTypes(new MethodCallback<List<ExpenseType>>() {
+        typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error getting types").center();
             }
 
             @Override
-            public void onSuccess(Method method, List<ExpenseType> response) {
-                types = response;
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                expenseTypes = response;
+            }
+        });
+
+        typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert("Error", "Error getting types").center();
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                incomeTypes = response;
             }
         });
 
@@ -79,15 +95,23 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
         eventBus.addHandler(ShowExpensesEvent.TYPE, event -> doShowExpenses());
 
+        eventBus.addHandler(ShowIncomesEvent.TYPE, event -> doShowIncomes());
+
         eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
 
         //TODO ShowCalendarEvent
 
         eventBus.addHandler(AddExpenseEvent.TYPE, event -> doAddNewExpense());
 
+        eventBus.addHandler(AddIncomeEvent.TYPE, event -> doAddNewIncome());
+
         eventBus.addHandler(EditExpenseEvent.TYPE, event -> doEditExpense(event.getId()));
 
+        eventBus.addHandler(EditIncomeEvent.TYPE, event -> doEditIncome(event.getId()));
+
         eventBus.addHandler(ExpenseUpdatedEvent.TYPE, event -> doExpenseUpdated());
+
+        eventBus.addHandler(IncomeUpdatedEvent.TYPE, event -> doIncomeUpdated());
 
         eventBus.addHandler(ShowManageProfilesEvent.TYPE, event -> doShowManageProfiles());
 
@@ -107,7 +131,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doAddNewExpense() {
-        History.newItem("add");
+        History.newItem("add-expense");
+    }
+
+    private void doAddNewIncome() {
+        History.newItem("add-income");
     }
 
     private void doAddNewUser() {
@@ -119,9 +147,16 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doEditExpense(int id) {
-        History.newItem("edit", false);
-        Presenter presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                new EditExpenseDialog(), id);
+        History.newItem("edit-expense", false);
+        Presenter presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
+                new EditProcedureDialog(), id);
+        presenter.go(container);
+    }
+
+    private void doEditIncome(int id) {
+        History.newItem("edit-income", false);
+        Presenter presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
+                new EditProcedureDialog(), id);
         presenter.go(container);
     }
 
@@ -138,7 +173,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doExpenseUpdated() {
-        History.newItem("list");
+        History.newItem("expense-list");
+    }
+
+    private void doIncomeUpdated() {
+        History.newItem("income-list");
     }
 
     private void doUserUpdated() {
@@ -158,11 +197,15 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doShowExpenses() {
-        History.newItem("list");
+        History.newItem("expense-list");
     }
 
     private void doShowProfile() {
         History.newItem("profile");
+    }
+
+    private void doShowIncomes() {
+        History.newItem("income-list");
     }
 
     private void doShowManageProfiles() {
@@ -194,14 +237,21 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             Presenter presenter = null;
 
             if (token.equals("home")) {
-                presenter = new HomePresenter(expenseWebService, eventBus, new HomeView());
+                presenter = new HomePresenter(procedureWebService, eventBus, new HomeView());
             }
-            else if (token.equals("list")) {
-                presenter = new ExpensePresenter(expenseWebService, typeWebService, eventBus, new ExpenseView(expenseWebService));
+            else if (token.equals("expense-list")) {
+                presenter = new ExpensePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService));
             }
-            else if (token.equals("add")) {
-                presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                                new EditExpenseDialog());
+            else if (token.equals("income-list")) {
+                presenter = new IncomePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService));
+            }
+            else if (token.equals("add-expense")) {
+                presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
+                                new EditProcedureDialog());
+            }
+            else if (token.equals("add-income")) {
+                presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
+                                new EditProcedureDialog());
             }
             else if (token.equals("add-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
@@ -212,9 +262,13 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             else if (token.equals("profile")) {
                 presenter = new ProfilePresenter(userWebService, eventBus, new ProfileView());
             }
-            else if (token.equals("edit")) {
-                presenter = new EditExpensePresenter(expenseWebService, typeWebService, eventBus,
-                                new EditExpenseDialog());
+            else if (token.equals("edit-expense")) {
+                presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
+                                new EditProcedureDialog());
+            }
+            else if (token.equals("edit-income")) {
+                presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
+                                new EditProcedureDialog());
             }
             else if (token.equals("edit-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
@@ -228,7 +282,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             else if (token.equals("manage-types")) {
                 presenter = new ManageTypesPresenter(typeWebService, eventBus, new ManageTypesView());
             }
-
             if (presenter != null) {
                 presenter.go(container);
             }
@@ -239,8 +292,12 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         return user;
     }
 
-    public static List<ExpenseType> getTypes() {
-        return types;
+    public static List<ProcedureType> getExpenseTypes() {
+        return expenseTypes;
+    }
+
+    public static List<ProcedureType> getIncomeTypes() {
+        return incomeTypes;
     }
 
 }

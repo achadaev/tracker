@@ -3,6 +3,7 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
 import com.example.tracker.client.event.ShowHomeEvent;
 import com.example.tracker.client.event.ShowProfileEvent;
+import com.example.tracker.client.event.incomes.ShowIncomesEvent;
 import com.example.tracker.client.view.MenuBarView;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
@@ -14,6 +15,7 @@ public class MainPresenter implements Presenter {
         HorizontalPanel getMenuPanel();
         HasClickHandlers getHomeButton();
         HasClickHandlers getExpensesButton();
+        HasClickHandlers getIncomesButton();
         HasClickHandlers getProfileButton();
         HasClickHandlers getCalendarButton();
         HTMLPanel getProfileBarPanel();
@@ -40,6 +42,8 @@ public class MainPresenter implements Presenter {
         display.getHomeButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowHomeEvent()));
 
         display.getExpensesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
+
+        display.getIncomesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowIncomesEvent()));
 
         display.getProfileButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowProfileEvent()));
 

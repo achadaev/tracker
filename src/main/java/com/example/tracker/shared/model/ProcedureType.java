@@ -1,15 +1,17 @@
 package com.example.tracker.shared.model;
 
-public class ExpenseType {
+public class ProcedureType {
     private int id;
+    private int kind;
     private String name;
 
-    public ExpenseType(int id, String name) {
+    public ProcedureType(int id, int kind, String name) {
         this.id = id;
+        this.kind = kind;
         this.name = name;
     }
 
-    public ExpenseType() {
+    public ProcedureType() {
     }
 
     public int getId() {
@@ -18,6 +20,14 @@ public class ExpenseType {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getKind() {
+        return kind;
+    }
+
+    public void setKind(int kind) {
+        this.kind = kind;
     }
 
     public String getName() {
