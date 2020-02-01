@@ -1,5 +1,6 @@
 package com.example.tracker.client.view;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.EditUserPresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -16,13 +17,14 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     @UiField
     Button saveButton;
 
-    Label login;
-    TextBox name;
-    TextBox surname;
-    TextBox email;
-    PasswordTextBox password;
-    Label role;
-    Label regDate;
+    private Label login;
+    private TextBox name;
+    private TextBox surname;
+    private TextBox email;
+    private Button changePasswordButton;
+    private Label role;
+    private ListBox roleListBox;
+    private Label regDate;
 
     private static EditUserViewUiBinder ourUiBinder = GWT.create(EditUserViewUiBinder.class);
 
@@ -32,8 +34,12 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         name = new TextBox();
         surname = new TextBox();
         email = new TextBox();
-        password = new PasswordTextBox();
-        role = new Label();
+        changePasswordButton = new Button("Change");
+        if (ExpensesGWTController.isAdmin) {
+            roleListBox = new ListBox();
+        } else {
+            role = new Label();
+        }
         regDate = new Label();
         initTable();
     }
@@ -51,8 +57,12 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         table.setWidget(1, 1, name);
         table.setWidget(2, 1, surname);
         table.setWidget(3, 1, email);
-        table.setWidget(4, 1, password);
-        table.setWidget(5, 1, role);
+        table.setWidget(4, 1, changePasswordButton);
+        if (ExpensesGWTController.isAdmin) {
+            table.setWidget(5, 1, roleListBox);
+        } else {
+            table.setWidget(5, 1, role);
+        }
         table.setWidget(6, 1, regDate);
     }
 
@@ -82,13 +92,18 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     @Override
-    public HasValue<String> getPassword() {
-        return password;
+    public HasClickHandlers getChangePasswordButton() {
+        return changePasswordButton;
     }
 
     @Override
     public Label getRole() {
         return role;
+    }
+
+    @Override
+    public ListBox getRoleListBox() {
+        return roleListBox;
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.incomes.AddIncomeEvent;
 import com.example.tracker.client.event.incomes.EditIncomeEvent;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.Procedure;
@@ -56,8 +56,15 @@ public class IncomePresenter extends ExpensePresenter {
             }
         });
 
-        display.getDeleteButton().addClickHandler(clickEvent -> deleteSelectedIds());
+        display.getDeleteButton().addClickHandler(clickEvent -> {
+            List<Integer> selectedIds = display.getSelectedIds();
 
+            if (selectedIds.size() >= 1) {
+                confirmDeleting();
+            } else {
+                AlertWidget.alert("Error", "Select at least one row").center();
+            }
+        });
         display.getFilerButton().addClickHandler(clickEvent -> filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue())));
 
         display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {

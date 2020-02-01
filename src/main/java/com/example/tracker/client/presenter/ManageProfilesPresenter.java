@@ -1,15 +1,14 @@
 package com.example.tracker.client.presenter;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.user.AddUserEvent;
 import com.example.tracker.client.event.user.EditUserEvent;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.ConfirmWidget;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
@@ -17,7 +16,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
-public class ManageProfilesPresenter implements Presenter {
+public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirmation {
 
     private List<User> userList;
 
@@ -40,6 +39,16 @@ public class ManageProfilesPresenter implements Presenter {
         this.display = display;
     }
 
+    private void confirmDeleting() {
+        ConfirmWidget confirmWidget = new ConfirmWidget(this);
+        confirmWidget.confirm("Confirmation", "Do you actually want to delete these fields?").center();
+    }
+
+    @Override
+    public void onConfirm() {
+        deleteSelectedIds();
+    }
+
     public void bind() {
         display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddUserEvent()));
 
@@ -53,7 +62,15 @@ public class ManageProfilesPresenter implements Presenter {
             }
         });
 
-        display.getDeleteButton().addClickHandler(clickEvent -> deleteSelectedIds());
+        display.getDeleteButton().addClickHandler(clickEvent -> {
+            List<Integer> selectedIds = display.getSelectedIds();
+            if (selectedIds.contains(ExpensesGWTController.getUser().getId()))
+            {
+                AlertWidget.alert("Error", "Unable to delete your own account").center();
+            } else {
+                confirmDeleting();
+            }
+        });
     }
 
     private void deleteSelectedIds() {

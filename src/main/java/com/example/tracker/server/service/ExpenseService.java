@@ -96,26 +96,6 @@ public class ExpenseService {
         }
     }
 
-    public List<Procedure> getExpensesByTypeId(int id) {
-        List<Procedure> result = new ArrayList<>();
-        for (Procedure procedure : iProcedureDao.getExpensesByTypeId(getCurrentUser().getId(), id)) {
-            if (procedure.getKind() < 0) {
-                result.add(procedure);
-            }
-        }
-        return result;
-    }
-
-    public List<Procedure> getIncomesByTypeId(int id) {
-        List<Procedure> result = new ArrayList<>();
-        for (Procedure procedure : iProcedureDao.getIncomesByTypeId(getCurrentUser().getId(), id)) {
-            if (procedure.getKind() > 0) {
-                result.add(procedure);
-            }
-        }
-        return result;
-    }
-
     public List<Procedure> getExpensesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
         if (isAdmin()) {
             List<Procedure> result = new ArrayList<>();

@@ -63,7 +63,7 @@ public class ProcedureServiceTest {
 
     @Test
     public void getExpensesByTypeIdShouldNotReturnNull() throws AccessDeniedException {
-        Assert.assertNotNull(expenseService.getExpensesByTypeId(1));
+        Assert.assertNotNull(expenseService.getProceduresByTypeId(1));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;

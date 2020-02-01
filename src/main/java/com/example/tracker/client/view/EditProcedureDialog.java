@@ -32,10 +32,13 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     @UiField
     Button cancelButton;
 
-    public EditProcedureDialog() {
+    int procedureKind;
+
+    public EditProcedureDialog(int procedureKind) {
         setWidget(ourUiBinder.createAndBindUi(this));
-        dialogBox.setAutoHideEnabled(true);
         dialogBox.setGlassEnabled(true);
+        dialogBox.setText("Edit procedure");
+        this.procedureKind = procedureKind;
         initTable();
     }
 
@@ -93,6 +96,12 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     @Override
     public void hideDialog() {
         dialogBox.hide();
-        Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
+        if (procedureKind == 1) {
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#income-list");
+        } else if (procedureKind == -1) {
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
+        } else {
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#home");
+        }
     }
 }

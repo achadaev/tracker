@@ -24,14 +24,16 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     Button cancelButton;
 
     TextBox name;
-    TextBox kind;
+    RadioButton expenseRadio;
+    RadioButton incomeRadio;
 
     public EditTypeDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
-        dialogBox.setAutoHideEnabled(true);
         dialogBox.setGlassEnabled(true);
+        dialogBox.setText("Edit Type");
         name = new TextBox();
-        kind = new TextBox();
+        expenseRadio = new RadioButton("kind", "Expense");
+        incomeRadio = new RadioButton("kind", "Income");
         initTable();
     }
 
@@ -39,7 +41,8 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
         table.setText(0, 0, "Name");
         table.setWidget(0, 1, name);
         table.setText(1, 0, "Kind");
-        table.setWidget(1, 1, kind);
+        table.setWidget(1, 1, expenseRadio);
+        table.setWidget(2, 1, incomeRadio);
     }
 
     @Override
@@ -58,8 +61,13 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     }
 
     @Override
-    public HasValue<String> getKind() {
-        return kind;
+    public RadioButton getExpenseRadio() {
+        return expenseRadio;
+    }
+
+    @Override
+    public RadioButton getIncomeRadio() {
+        return incomeRadio;
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.*;
 public class MainPresenter implements Presenter {
 
     public interface Display {
-        HorizontalPanel getMenuPanel();
+        HorizontalPanel getMainPanel();
         HasClickHandlers getHomeButton();
         HasClickHandlers getExpensesButton();
         HasClickHandlers getIncomesButton();
@@ -56,7 +56,11 @@ public class MainPresenter implements Presenter {
     public void go(HasWidgets container) {
     }
 
-    public HorizontalPanel getPanel() {
+    public HorizontalPanel getContentPanel() {
         return display.getContentPanel();
+    }
+
+    public HorizontalPanel getMainPanel() {
+        return display.getMainPanel();
     }
 }

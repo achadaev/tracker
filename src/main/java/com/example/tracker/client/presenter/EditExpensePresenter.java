@@ -1,7 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;

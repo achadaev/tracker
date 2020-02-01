@@ -8,7 +8,7 @@ import com.example.tracker.client.event.incomes.IncomeUpdatedEvent;
 import com.example.tracker.client.event.incomes.ShowIncomesEvent;
 import com.example.tracker.client.event.type.*;
 import com.example.tracker.client.event.user.*;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.presenter.*;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
@@ -149,14 +149,14 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     private void doEditExpense(int id) {
         History.newItem("edit-expense", false);
         Presenter presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
-                new EditProcedureDialog(), id);
+                new EditProcedureDialog(-1), id);
         presenter.go(container);
     }
 
     private void doEditIncome(int id) {
         History.newItem("edit-income", false);
         Presenter presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
-                new EditProcedureDialog(), id);
+                new EditProcedureDialog(1), id);
         presenter.go(container);
     }
 
@@ -220,7 +220,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         MainView mainView = new MainView();
         MainPresenter mainPresenter = new MainPresenter(eventBus, mainView);
 
-        this.container = mainPresenter.getPanel();
+        this.container = mainPresenter.getContentPanel();
         container.add(mainView);
 
         if ("".equals(History.getToken())) {
@@ -247,11 +247,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
             else if (token.equals("add-expense")) {
                 presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
-                                new EditProcedureDialog());
+                                new EditProcedureDialog(-1));
             }
             else if (token.equals("add-income")) {
                 presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
-                                new EditProcedureDialog());
+                                new EditProcedureDialog(1));
             }
             else if (token.equals("add-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
@@ -264,11 +264,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
             else if (token.equals("edit-expense")) {
                 presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
-                                new EditProcedureDialog());
+                                new EditProcedureDialog(-1));
             }
             else if (token.equals("edit-income")) {
                 presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
-                                new EditProcedureDialog());
+                                new EditProcedureDialog(1));
             }
             else if (token.equals("edit-user")) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());

@@ -38,7 +38,7 @@ public class MainView extends Composite implements MainPresenter.Display {
     }
 
     @Override
-    public HorizontalPanel getMenuPanel() {
+    public HorizontalPanel getMainPanel() {
         return menuPanel;
     }
 

@@ -3,7 +3,8 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.AddExpenseEvent;
 import com.example.tracker.client.event.expense.EditExpenseEvent;
-import com.example.tracker.client.message.AlertWidget;
+import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.ConfirmWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
@@ -17,7 +18,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
-public class ExpensePresenter implements Presenter {
+public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     private List<Procedure> procedureList;
 
@@ -80,7 +81,15 @@ public class ExpensePresenter implements Presenter {
             }
         });
 
-        display.getDeleteButton().addClickHandler(clickEvent -> deleteSelectedIds());
+        display.getDeleteButton().addClickHandler(clickEvent -> {
+            List<Integer> selectedIds = display.getSelectedIds();
+
+            if (selectedIds.size() >= 1) {
+                confirmDeleting();
+            } else {
+                AlertWidget.alert("Error", "Select at least one row").center();
+            }
+        });
 
         display.getFilerButton().addClickHandler(clickEvent -> filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue())));
 
@@ -94,7 +103,17 @@ public class ExpensePresenter implements Presenter {
             }
         });
 
-        initTypesListBox(this.display.getTypesListBox());
+        initTypesListBox(display.getTypesListBox());
+    }
+
+    protected void confirmDeleting() {
+        ConfirmWidget confirmWidget = new ConfirmWidget(this);
+        confirmWidget.confirm("Confirmation", "Do you actually want to delete these fields?").center();
+    }
+
+    @Override
+    public void onConfirm() {
+        deleteSelectedIds();
     }
 
     protected void deleteSelectedIds() {

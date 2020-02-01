@@ -1,4 +1,4 @@
-package com.example.tracker.client.message;
+package com.example.tracker.client.widget;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
