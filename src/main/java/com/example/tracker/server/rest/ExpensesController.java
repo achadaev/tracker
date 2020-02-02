@@ -178,6 +178,16 @@ public class ExpensesController {
         return null;
     }
 
+    @PutMapping(value = "expenses/update-pass", produces = MediaType.APPLICATION_JSON)
+    Map<String, Boolean> updatePassword(@RequestBody User user) {
+        try {
+            return Collections.singletonMap("response", expenseService.updatePassword(user));
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/expenses/all-profiles")
     List<User> getAllUsers() {
         try {

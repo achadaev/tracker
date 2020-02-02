@@ -1,6 +1,7 @@
 package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
+import com.example.tracker.client.event.expense.ShowFilteredExpensesEvent;
 import com.example.tracker.client.presenter.HomePresenter;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
@@ -8,6 +9,7 @@ import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.SimpleDate;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,6 +24,13 @@ import java.util.List;
 
 public class HomeView extends Composite implements HomePresenter.Display {
     interface HomeViewUiBinder extends UiBinder<HTMLPanel, HomeView> {
+    }
+
+    private static HomeViewUiBinder ourUiBinder = GWT.create(HomeViewUiBinder.class);
+
+    public HomeView(HandlerManager eventBus) {
+        initWidget(ourUiBinder.createAndBindUi(this));
+        this.eventBus = eventBus;
     }
 
     @UiField
@@ -39,6 +48,8 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @UiField
     Label moreLabel;
 
+    private HandlerManager eventBus;
+
     private PieChart pieChart;
     private AreaChart areaChart;
 
@@ -54,9 +65,12 @@ public class HomeView extends Composite implements HomePresenter.Display {
                 @Override
                 public void onSelect(SelectEvent selectEvent) {
                     JsArray<Selection> selection = pieChart.getSelection();
-                    String type = dataTable.getValueString (selection.get(0).getRow(), 0);
-                    double price = dataTable.getValueNumber (selection.get(0).getRow(), 1);
-                    GWT.log(String.valueOf(price));
+                    String type = dataTable.getValueString(selection.get(0).getRow(), 0);
+                    for (ProcedureType procedureType : ExpensesGWTController.getExpenseTypes()) {
+                        if (type.equals(procedureType.getName())) {
+                            eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId()));
+                        }
+                    }
                 }
             });
             chartPanel.add(pieChart);
@@ -128,12 +142,6 @@ public class HomeView extends Composite implements HomePresenter.Display {
             }
         }
         return total;
-    }
-
-    private static HomeViewUiBinder ourUiBinder = GWT.create(HomeViewUiBinder.class);
-
-    public HomeView() {
-        initWidget(ourUiBinder.createAndBindUi(this));
     }
 
     @Override

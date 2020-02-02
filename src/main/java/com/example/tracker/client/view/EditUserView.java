@@ -17,24 +17,32 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     @UiField
     Button saveButton;
 
-    private Label login;
+    private TextBox login;
     private TextBox name;
     private TextBox surname;
     private TextBox email;
+    private PasswordTextBox password;
     private Button changePasswordButton;
     private Label role;
     private ListBox roleListBox;
     private Label regDate;
 
+    private boolean isNewUser;
+
     private static EditUserViewUiBinder ourUiBinder = GWT.create(EditUserViewUiBinder.class);
 
-    public EditUserView() {
+    public EditUserView(boolean isNewUser) {
         initWidget(ourUiBinder.createAndBindUi(this));
-        login = new Label();
+        this.isNewUser = isNewUser;
+        login = new TextBox();
         name = new TextBox();
         surname = new TextBox();
         email = new TextBox();
-        changePasswordButton = new Button("Change");
+        if (isNewUser) {
+            password = new PasswordTextBox();
+        } else {
+            changePasswordButton = new Button("Change");
+        }
         if (ExpensesGWTController.isAdmin) {
             roleListBox = new ListBox();
         } else {
@@ -57,7 +65,11 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         table.setWidget(1, 1, name);
         table.setWidget(2, 1, surname);
         table.setWidget(3, 1, email);
-        table.setWidget(4, 1, changePasswordButton);
+        if (isNewUser) {
+            table.setWidget(4, 1, password);
+        } else {
+            table.setWidget(4, 1, changePasswordButton);
+        }
         if (ExpensesGWTController.isAdmin) {
             table.setWidget(5, 1, roleListBox);
         } else {
@@ -72,7 +84,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     @Override
-    public Label getLogin() {
+    public TextBox getLogin() {
         return login;
     }
 
@@ -89,6 +101,11 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     @Override
     public HasValue<String> getEmail() {
         return email;
+    }
+
+    @Override
+    public HasValue<String> getPassword() {
+        return password;
     }
 
     @Override

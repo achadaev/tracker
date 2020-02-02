@@ -203,6 +203,21 @@ public class ExpenseService {
         }
     }
 
+    public Boolean updatePassword(User user) throws AccessDeniedException {
+        if (isAdmin()) {
+            for (User temp : getAllUsers()) {
+                if (temp.getId() == user.getId()) {
+                    return iUserDao.updatePassword(user);
+                }
+            }
+            return false;
+        } else if (user.getId() == getCurrentUser().getId()) {
+            return iUserDao.updatePassword(user);
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
     public List<User> getAllUsers() throws AccessDeniedException {
         if (isAdmin()) {
             return iUserDao.getAllUsers();

@@ -36,6 +36,12 @@ public interface UserWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void updateUser(User user, MethodCallback<User> callback);
 
+    @PUT
+    @Path("/update-pass")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void updatePassword(User user, MethodCallback<User> callback);
+
     @DELETE
     @Path("/delete-profiles")
     @Consumes(MediaType.APPLICATION_JSON)

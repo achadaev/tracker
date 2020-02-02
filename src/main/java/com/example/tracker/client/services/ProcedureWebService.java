@@ -96,7 +96,7 @@ public interface ProcedureWebService extends RestService {
     @GET
     @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getSortedAndFilteredProdecures(@PathParam("typeId") int typeId,
+    void getSortedAndFilteredProcedures(@PathParam("typeId") int typeId,
                                         @PathParam("startDate") Date startDate,
                                         @PathParam("endDate") Date endDate,
                                         @PathParam("startIndex") int startIndex,

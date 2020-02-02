@@ -62,7 +62,13 @@ public class IUserDAOImpl implements IUserDAO {
         String query = "INSERT INTO user (login, name, surname, email, pass, role, reg_date) VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
-            setUserFields(preparedStatement, user);
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setString(3, user.getSurname());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setString(5, passwordEncoder.encode(user.getPassword()));
+            preparedStatement.setString(6, user.getRole());
+            preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
             return preparedStatement.execute();
         });
         return false;
@@ -75,26 +81,33 @@ public class IUserDAOImpl implements IUserDAO {
                 "name = ?, " +
                 "surname = ?, " +
                 "email = ?, " +
-                "pass = ?, " +
                 "role = ?, " +
                 "reg_date = ? " +
                 "WHERE id = ?";
         jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
-            setUserFields(preparedStatement, user);
-            preparedStatement.setInt(8, user.getId());
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setString(3, user.getSurname());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.setString(5, user.getRole());
+            preparedStatement.setString(6, dateFormat.format(user.getRegDate()));
+            preparedStatement.setInt(7, user.getId());
             return preparedStatement.execute();
         });
         return false;
     }
 
-    private void setUserFields(PreparedStatement preparedStatement, User user) throws SQLException {
-        preparedStatement.setString(1, user.getLogin());
-        preparedStatement.setString(2, user.getName());
-        preparedStatement.setString(3, user.getSurname());
-        preparedStatement.setString(4, user.getEmail());
-        preparedStatement.setString(5, passwordEncoder.encode(user.getPassword()));
-        preparedStatement.setString(6, user.getRole());
-        preparedStatement.setString(7, dateFormat.format(user.getRegDate()));
+    @Override
+    public Boolean updatePassword(User user) {
+        String query = "UPDATE user " +
+                "SET pass = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setString(1, passwordEncoder.encode(user.getPassword()));
+            preparedStatement.setInt(2, user.getId());
+            return preparedStatement.execute();
+        });
+        return false;
     }
 
     private Boolean deleteUser(int id) {

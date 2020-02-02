@@ -3,12 +3,14 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.AddExpenseEvent;
 import com.example.tracker.client.event.expense.EditExpenseEvent;
+import com.example.tracker.client.view.HomeView;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.widget.ConfirmWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.*;
@@ -41,7 +43,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
     protected TypeWebService typeWebService;
     protected HandlerManager eventBus;
     protected Display display;
-
+    private int typeId = 0;
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
                             HandlerManager eventBus, Display view) {
@@ -49,6 +51,15 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = view;
+    }
+
+    public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
+                            HandlerManager eventBus, Display view, int typeId) {
+        this.procedureWebService = procedureWebService;
+        this.typeWebService = typeWebService;
+        this.eventBus = eventBus;
+        this.display = view;
+        this.typeId = typeId;
     }
 
     protected void initTypesListBox(ListBox listBox) {
@@ -218,6 +229,11 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         bind();
         container.clear();
         container.add(display.asWidget());
-        setProcedureTableData();
+
+        if (typeId != 0) {
+            filterProcedures(typeId);
+        } else {
+            setProcedureTableData();
+        }
     }
 }

@@ -95,6 +95,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
         eventBus.addHandler(ShowExpensesEvent.TYPE, event -> doShowExpenses());
 
+        eventBus.addHandler(ShowFilteredExpensesEvent.TYPE, event -> doShowFilteredExpenses(event.getTypeId()));
+
         eventBus.addHandler(ShowIncomesEvent.TYPE, event -> doShowIncomes());
 
         eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
@@ -162,7 +164,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doEditUser(int id) {
         History.newItem("edit-user", false);
-        Presenter presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(), id);
+        Presenter presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false), id);
         presenter.go(container);
     }
 
@@ -198,6 +200,12 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doShowExpenses() {
         History.newItem("expense-list");
+    }
+
+    private void doShowFilteredExpenses(int typeId) {
+        History.newItem("expense-filter", false);
+        Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService, typeId), typeId);
+        presenter.go(container);
     }
 
     private void doShowProfile() {
@@ -237,7 +245,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             Presenter presenter = null;
 
             if (token.equals("home")) {
-                presenter = new HomePresenter(procedureWebService, eventBus, new HomeView());
+                presenter = new HomePresenter(procedureWebService, eventBus, new HomeView(eventBus));
             }
             else if (token.equals("expense-list")) {
                 presenter = new ExpensePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService));
@@ -254,7 +262,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                                 new EditProcedureDialog(1));
             }
             else if (token.equals("add-user")) {
-                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
+                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(true));
             }
             else if (token.equals("add-type")) {
                 presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
@@ -271,7 +279,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                                 new EditProcedureDialog(1));
             }
             else if (token.equals("edit-user")) {
-                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView());
+                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false));
             }
             else if (token.equals("edit-type")) {
                 presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());

@@ -57,11 +57,21 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
 
     private MultiSelectionModel<Procedure> selectionModel;
 
+    private int typeId = 0;
+
     public ProcedureView(ProcedureWebService procedureWebService) {
         initWidget(ourUiBinder.createAndBindUi(this));
         startDate.setVisible(false);
         endDate.setVisible(false);
         this.procedureWebService = procedureWebService;
+    }
+
+    public ProcedureView(ProcedureWebService procedureWebService, int typeId) {
+        initWidget(ourUiBinder.createAndBindUi(this));
+        startDate.setVisible(false);
+        endDate.setVisible(false);
+        this.procedureWebService = procedureWebService;
+        this.typeId = typeId;
     }
 
     @Override
@@ -133,16 +143,6 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
             }
         };
         procedureCellTable.addColumn(dateColumn, "Date");
-        /*
-        DateCell dateCell = new DateCell();
-        Column<Expense, Date> dateColumn = new Column<Expense, Date>(dateCell) {
-            @Override
-            public Date getValue(Expense expense) {
-                return expense.getDate();
-            }
-        };
-        expenseTable.addColumn(dateColumn, "Date");
-*/
 
         Column<Procedure, Number> priceColumn = new Column<Procedure, Number>(new NumberCell()) {
             @Override
@@ -179,23 +179,40 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
 
                 int start = range.getStart();
                 int length = range.getLength();
+
+
                 if (startDate.getValue() == null && endDate.getValue() == null) {
                     Date nullDate = new Date(0);
-                    procedureWebService.getSortedAndFilteredProdecures(Integer.parseInt(typesListBox.getSelectedValue()),
-                            nullDate, nullDate, start, length, sortList.get(0).isAscending(),
-                            new MethodCallback<List<Procedure>>() {
-                                @Override
-                                public void onFailure(Method method, Throwable throwable) {
-                                    AlertWidget.alert("Error", "Error sorting expenses").center();
-                                }
+                    if (typeId != 0) {
+                        procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
+                                sortList.get(0).isAscending(), new MethodCallback<List<Procedure>>() {
+                                    @Override
+                                    public void onFailure(Method method, Throwable throwable) {
+                                        AlertWidget.alert("Error", "Error sorting procedures").center();
+                                    }
 
-                                @Override
-                                public void onSuccess(Method method, List<Procedure> response) {
-                                    updateRowData(start, response);
-                                }
-                            });
+                                    @Override
+                                    public void onSuccess(Method method, List<Procedure> response) {
+                                        updateRowData(start, response);
+                                    }
+                                });
+                    } else {
+                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()),
+                                nullDate, nullDate, start, length, sortList.get(0).isAscending(),
+                                new MethodCallback<List<Procedure>>() {
+                                    @Override
+                                    public void onFailure(Method method, Throwable throwable) {
+                                        AlertWidget.alert("Error", "Error sorting expenses").center();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Method method, List<Procedure> response) {
+                                        updateRowData(start, response);
+                                    }
+                                });
+                    }
                 } else {
-                    procedureWebService.getSortedAndFilteredProdecures(Integer.parseInt(typesListBox.getSelectedValue()),
+                    procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()),
                             startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
                             new MethodCallback<List<Procedure>>() {
                                 @Override
@@ -209,6 +226,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                 }
                             });
                 }
+
+
             }
         };
         provider.addDataDisplay(procedureCellTable);

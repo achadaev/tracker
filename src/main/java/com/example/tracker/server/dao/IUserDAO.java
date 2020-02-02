@@ -15,5 +15,7 @@ public interface IUserDAO {
 
     Boolean updateUser(User user);
 
+    Boolean updatePassword(User user);
+
     List<User> deleteUsers(List<Integer> ids);
 }
