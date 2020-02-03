@@ -17,6 +17,7 @@ public class ProcedureMapper implements RowMapper<Procedure> {
             procedure.setId(resultSet.getInt("id"));
             procedure.setTypeId(resultSet.getInt("type_id"));
             procedure.setKind(resultSet.getInt("kind"));
+            procedure.setUsername(resultSet.getString("username"));
             procedure.setName(resultSet.getString("name"));
             procedure.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(resultSet.getString("date")));
             procedure.setPrice(resultSet.getDouble("price"));

@@ -6,15 +6,17 @@ public class Procedure {
     private int id;
     private int typeId;
     private int kind;
+    private String username;
     private String name;
     private Date date;
     private double price;
     private int isArchived;
 
-    public Procedure(int id, int typeId, int kind, String name, Date date, double price, int isArchived) {
+    public Procedure(int id, int typeId, int kind, String username, String name, Date date, double price, int isArchived) {
         this.id = id;
         this.typeId = typeId;
         this.kind = kind;
+        this.username = username;
         this.name = name;
         this.date = date;
         this.price = price;
@@ -46,6 +48,14 @@ public class Procedure {
 
     public void setKind(int kind) {
         this.kind = kind;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -82,13 +92,15 @@ public class Procedure {
 
     @Override
     public String toString() {
-        return "Expense{" +
+        return "Procedure{" +
                 "id=" + id +
                 ", typeId=" + typeId +
                 ", kind=" + kind +
+                ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", date=" + date +
                 ", price=" + price +
+                ", isArchived=" + isArchived +
                 '}';
     }
 }

@@ -32,24 +32,24 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getAllExpenses() {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind < 0";
         return jdbcTemplate.query(query, new ProcedureMapper());
     }
 
     @Override
     public List<Procedure> getAllIncomes() {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind > 0";
         return jdbcTemplate.query(query, new ProcedureMapper());
     }
 
     @Override
     public List<Procedure> getUsersExpenses(int userId) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind < 0 AND user_proc.user_id = ? AND proc.is_archived = 0";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
                 .setInt(1, userId), new ProcedureMapper());
@@ -57,8 +57,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getUsersIncomes(int userId) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind > 0 AND user_proc.user_id = ? AND proc.is_archived = 0";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
                 .setInt(1, userId), new ProcedureMapper());
@@ -95,8 +95,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public Procedure getProcedureById(int userId, int id) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE proc.id = ? AND user_id = ?";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, id);
@@ -106,8 +106,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getProceduresByTypeId(int userId, int typeId) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE user_proc.user_id = ? AND type_id = ?";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, userId);
@@ -116,31 +116,9 @@ public class IProcedureDAOImpl implements IProcedureDAO {
     }
 
     @Override
-    public List<Procedure> getExpensesByTypeId(int userId, int typeId) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
-                "WHERE kind < 0 AND user_proc.user_id = ? AND type_id = ?";
-        return jdbcTemplate.query(query, preparedStatement -> {
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, typeId);
-        }, new ProcedureMapper());
-    }
-
-    @Override
-    public List<Procedure> getIncomesByTypeId(int userId, int typeId) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
-                "WHERE kind > 0 AND user_proc.user_id = ? AND type_id = ?";
-        return jdbcTemplate.query(query, preparedStatement -> {
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, typeId);
-        }, new ProcedureMapper());
-    }
-
-    @Override
     public List<Procedure> getExpensesByDate(int userId, Date startDate, Date endDate) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind < 0 AND user_proc.user_id = ? AND (proc.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, userId);
@@ -151,8 +129,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getIncomesByDate(int userId, Date startDate, Date endDate) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind > 0 AND user_proc.user_id = ? AND (proc.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, userId);
@@ -163,8 +141,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getExpensesByDateAndTypeId(int userId, int typeId, Date startDate, Date endDate) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind < 0 AND user_proc.user_id = ? AND type_id = ? AND (proc.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, userId);
@@ -176,8 +154,8 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     @Override
     public List<Procedure> getIncomesByDateAndTypeId(int userId, int typeId, Date startDate, Date endDate) {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
-                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind > 0 AND user_proc.user_id = ? AND type_id = ? AND (proc.date BETWEEN ? AND ?)";
         return jdbcTemplate.query(query, preparedStatement -> {
             preparedStatement.setInt(1, userId);
@@ -203,9 +181,9 @@ public class IProcedureDAOImpl implements IProcedureDAO {
     }
 
     private int getLastProcedureId() {
-        String query = "SELECT proc.id, proc.type_id, proc.kind, proc.name, proc.date, proc.price, proc.is_archived " +
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'null' AS username, proc.name, proc.date, proc.price, proc.is_archived " +
                 "FROM proc " +
-                "WHERE id = (SELECT MAX(id) FROM proc)";
+                "WHERE proc.id = (SELECT MAX(id) FROM proc)";
         return jdbcTemplate.query(query, new ProcedureMapper()).get(0).getId();
     }
 

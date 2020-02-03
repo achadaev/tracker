@@ -1,13 +1,16 @@
 package com.example.tracker.client.presenter;
 
+import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.ListBox;
@@ -19,6 +22,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import java.util.List;
 
 public class EditExpensePresenter implements Presenter {
+
     public interface Display {
         HasClickHandlers getSaveButton();
         HasClickHandlers getCancelButton();
@@ -64,10 +68,14 @@ public class EditExpensePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, Procedure response) {
                 procedure = response;
-                EditExpensePresenter.this.display.getTypeId().setItemSelected(procedure.getTypeId() - 1, true);
-                EditExpensePresenter.this.display.getName().setValue(procedure.getName());
-                EditExpensePresenter.this.display.getDate().setValue(procedure.getDate());
-                EditExpensePresenter.this.display.getPrice().setValue(Double.toString(procedure.getPrice()));
+                for (int i = 0; i < display.getTypeId().getItemCount(); i++) {
+                    if (procedure.getTypeId() == Integer.parseInt(display.getTypeId().getValue(i))) {
+                        display.getTypeId().setItemSelected(i, true);
+                    }
+                }
+                display.getName().setValue(procedure.getName());
+                display.getDate().setValue(procedure.getDate());
+                display.getPrice().setValue(Double.toString(procedure.getPrice()));
             }
         });
     }
@@ -128,6 +136,7 @@ public class EditExpensePresenter implements Presenter {
                 public void onSuccess(Method method, Procedure response) {
                     eventBus.fireEvent(new ExpenseUpdatedEvent(response));
                     display.hideDialog();
+                    Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
                 }
             });
         } else {

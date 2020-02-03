@@ -204,7 +204,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doShowFilteredExpenses(int typeId) {
         History.newItem("expense-filter", false);
-        Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService, typeId), typeId);
+        Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
+                new ProcedureView(procedureWebService, typeId), typeId);
         presenter.go(container);
     }
 
@@ -248,10 +249,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                 presenter = new HomePresenter(procedureWebService, eventBus, new HomeView(eventBus));
             }
             else if (token.equals("expense-list")) {
-                presenter = new ExpensePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService));
+                presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
+                        new ProcedureView(procedureWebService));
             }
             else if (token.equals("income-list")) {
-                presenter = new IncomePresenter(procedureWebService, typeWebService, eventBus, new ProcedureView(procedureWebService));
+                presenter = new IncomePresenter(procedureWebService, typeWebService, userWebService, eventBus, new ProcedureView(procedureWebService));
             }
             else if (token.equals("add-expense")) {
                 presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,

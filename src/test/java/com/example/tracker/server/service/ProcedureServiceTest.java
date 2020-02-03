@@ -77,7 +77,7 @@ public class ProcedureServiceTest {
 
     @Test
     public void updateExpenseShouldAddExpenseIfNotFound() {
-        Procedure procedure = new Procedure(100, 100, -1, "Name", new Date(), 100, 0);
+        Procedure procedure = new Procedure(100, 100, -1, null, "Name", new Date(), 100, 0);
         expenseService.updateProcedure(procedure);
         verify(expenseService).addProcedure(procedure);
     }

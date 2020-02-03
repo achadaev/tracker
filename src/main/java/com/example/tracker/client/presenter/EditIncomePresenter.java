@@ -1,6 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
+import com.example.tracker.client.event.incomes.IncomeUpdatedEvent;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
@@ -57,12 +58,12 @@ public class EditIncomePresenter extends EditExpensePresenter {
             procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert("Error", "Error updating expense").center();
+                    AlertWidget.alert("Error", "Error updating income").center();
                 }
 
                 @Override
                 public void onSuccess(Method method, Procedure response) {
-                    eventBus.fireEvent(new ExpenseUpdatedEvent(response));
+                    eventBus.fireEvent(new IncomeUpdatedEvent(response));
                     display.hideDialog();
                     Window.Location.replace(GWT.getHostPageBaseURL() + "#income-list");
                 }

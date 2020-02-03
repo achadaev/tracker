@@ -49,16 +49,36 @@ public interface ProcedureWebService extends RestService {
     void getProceduresByTypeId(@PathParam("id") int id, MethodCallback<List<Procedure>> callback);
 
     @GET
+    @Path("/typeId={id}/user={userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getProceduresByTypeId(@PathParam("id") int id, @PathParam("userId") int userId,
+                               MethodCallback<List<Procedure>> callback);
+
+    @GET
     @Path("/expense-typeId={typeId}/{startDate}/{endDate}")
     @Produces(MediaType.APPLICATION_JSON)
     void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
                            @PathParam("endDate") Date endDate, MethodCallback<List<Procedure>> callback);
 
     @GET
+    @Path("/expense-typeId={typeId}/{startDate}/{endDate}/user={userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
+                           @PathParam("endDate") Date endDate, @PathParam("userId") int userId,
+                           MethodCallback<List<Procedure>> callback);
+
+    @GET
     @Path("/income-typeId={typeId}/{startDate}/{endDate}")
     @Produces(MediaType.APPLICATION_JSON)
     void getIncomesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
                            @PathParam("endDate") Date endDate, MethodCallback<List<Procedure>> callback);
+
+    @GET
+    @Path("/income-typeId={typeId}/{startDate}/{endDate}/user={userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getIncomesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
+                           @PathParam("endDate") Date endDate, @PathParam("userId") int userId,
+                          MethodCallback<List<Procedure>> callback);
 
     @POST
     @Path("/add")
@@ -102,6 +122,18 @@ public interface ProcedureWebService extends RestService {
                                         @PathParam("startIndex") int startIndex,
                                         @PathParam("quantity") int quantity,
                                         @PathParam("isAscending") boolean isAscending,
+                                        MethodCallback<List<Procedure>> callback);
+
+    @GET
+    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}/user={userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getSortedAndFilteredProcedures(@PathParam("typeId") int typeId,
+                                        @PathParam("startDate") Date startDate,
+                                        @PathParam("endDate") Date endDate,
+                                        @PathParam("startIndex") int startIndex,
+                                        @PathParam("quantity") int quantity,
+                                        @PathParam("isAscending") boolean isAscending,
+                                        @PathParam("userId") int userId,
                                         MethodCallback<List<Procedure>> callback);
 
 }

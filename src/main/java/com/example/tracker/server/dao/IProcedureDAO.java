@@ -22,10 +22,6 @@ public interface IProcedureDAO {
 
     List<Procedure> getProceduresByTypeId(int userId, int typeId);
 
-    List<Procedure> getExpensesByTypeId(int userId, int typeId);
-
-    List<Procedure> getIncomesByTypeId(int userId, int typeId);
-
     List<Procedure> getExpensesByDate(int userId, Date startDate, Date endDate);
 
     List<Procedure> getIncomesByDate(int userId, Date startDate, Date endDate);

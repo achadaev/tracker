@@ -60,12 +60,12 @@ public class ExpensesController {
 
     @GetMapping("/expenses/id={id}")
     Procedure getExpenseById(@PathVariable int id) {
-        Procedure result = expenseService.getProcedureById(id);
-        return result.getKind() < 0 ? result : null;
+        return expenseService.getProcedureById(id);
+        //return result.getKind() < 0 ? result : null;
     }
 
     @GetMapping("/expenses/typeId={id}")
-    List<Procedure> getExpensesByTypeId(@PathVariable int id) {
+    List<Procedure> getProceduresByTypeId(@PathVariable int id) {
         try {
             return expenseService.getProceduresByTypeId(id);
         } catch (AccessDeniedException e) {
@@ -74,10 +74,20 @@ public class ExpensesController {
         return null;
     }
 
+    @GetMapping("/expenses/typeId={id}/user={userId}")
+    List<Procedure> getProceduresByTypeId(@PathVariable int id, @PathVariable int userId) {
+        try {
+            return expenseService.getProceduresByTypeId(id, userId);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/expenses/expense-typeId={typeId}/{startDate}/{endDate}")
     List<Procedure> getExpensesByDateAndTypeId(@PathVariable int typeId,
-                                               @PathVariable Date startDate,
-                                               @PathVariable Date endDate) {
+                                                 @PathVariable Date startDate,
+                                                 @PathVariable Date endDate) {
         try {
             return expenseService.getExpensesByDate(typeId, startDate, endDate);
         } catch (AccessDeniedException e) {
@@ -86,12 +96,38 @@ public class ExpensesController {
         return null;
     }
 
+    @GetMapping("/expenses/expense-typeId={typeId}/{startDate}/{endDate}/user={userId}")
+    List<Procedure> getExpensesByDateAndTypeId(@PathVariable int typeId,
+                                                 @PathVariable Date startDate,
+                                                 @PathVariable Date endDate,
+                                                 @PathVariable int userId) {
+        try {
+            return expenseService.getExpensesByDate(typeId, startDate, endDate, userId);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/expenses/income-typeId={typeId}/{startDate}/{endDate}")
     List<Procedure> getIncomesByDateAndTypeId(@PathVariable int typeId,
-                                               @PathVariable Date startDate,
-                                               @PathVariable Date endDate) {
+                                              @PathVariable Date startDate,
+                                              @PathVariable Date endDate) {
         try {
             return expenseService.getIncomesByDate(typeId, startDate, endDate);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @GetMapping("/expenses/income-typeId={typeId}/{startDate}/{endDate}/user={userId}")
+    List<Procedure> getIncomesByDateAndTypeId(@PathVariable int typeId,
+                                              @PathVariable Date startDate,
+                                              @PathVariable Date endDate,
+                                              @PathVariable int userId) {
+        try {
+            return expenseService.getIncomesByDate(typeId, startDate, endDate, userId);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
@@ -252,4 +288,21 @@ public class ExpensesController {
         }
         return new ArrayList<>();
     }
+
+    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}/user={userId}")
+    List<Procedure> getSortedAndFilteredExpenses(@PathVariable int typeId,
+                                                 @PathVariable Date startDate,
+                                                 @PathVariable Date endDate,
+                                                 @PathVariable int startIndex,
+                                                 @PathVariable int quantity,
+                                                 @PathVariable boolean isAscending,
+                                                 @PathVariable int userId) {
+        try {
+            return expenseService.getSortedAndFilteredExpenses(typeId, startDate, endDate, startIndex, quantity, isAscending, userId);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
 }

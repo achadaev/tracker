@@ -3,6 +3,7 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.AddExpenseEvent;
 import com.example.tracker.client.event.expense.EditExpenseEvent;
+import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.HomeView;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.widget.ConfirmWidget;
@@ -10,6 +11,7 @@ import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
+import com.example.tracker.shared.model.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
@@ -28,6 +30,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         HasClickHandlers getAddButton();
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
+        ListBox getUsersListBox();
         ListBox getTypesListBox();
         CheckBox getDateCheckBox();
         DatePicker getStartDate();
@@ -41,22 +44,25 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     protected ProcedureWebService procedureWebService;
     protected TypeWebService typeWebService;
+    protected UserWebService userWebService;
     protected HandlerManager eventBus;
     protected Display display;
     private int typeId = 0;
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
-                            HandlerManager eventBus, Display view) {
+                            UserWebService userWebService, HandlerManager eventBus, Display view) {
         this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
+        this.userWebService = userWebService;
         this.eventBus = eventBus;
         this.display = view;
     }
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
-                            HandlerManager eventBus, Display view, int typeId) {
+                            UserWebService userWebService, HandlerManager eventBus, Display view, int typeId) {
         this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
+        this.userWebService = userWebService;
         this.eventBus = eventBus;
         this.display = view;
         this.typeId = typeId;
@@ -79,7 +85,28 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         });
     }
 
+    protected void initUsersListBox(ListBox listBox) {
+        userWebService.getAllUsers(new MethodCallback<List<User>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert("Error", "Error getting users list").center();
+            }
+
+            @Override
+            public void onSuccess(Method method, List<User> users) {
+                listBox.addItem("All Users", "0");
+                for (User user : users) {
+                    listBox.addItem(user.getLogin(), Integer.toString(user.getId()));
+                }
+                listBox.setItemSelected(0, true);
+            }
+        });
+    }
+
     public void bind() {
+        initTypesListBox(display.getTypesListBox());
+        initUsersListBox(display.getUsersListBox());
+
         display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddExpenseEvent()));
 
         display.getEditButton().addClickHandler(clickEvent -> {
@@ -102,7 +129,14 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             }
         });
 
-        display.getFilerButton().addClickHandler(clickEvent -> filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue())));
+        display.getFilerButton().addClickHandler(clickEvent -> {
+            if (ExpensesGWTController.isAdmin) {
+                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
+                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
+            } else {
+                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+            }
+        });
 
         display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
             if (display.getDateCheckBox().getValue()) {
@@ -113,8 +147,6 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                 display.getEndDate().setVisible(false);
             }
         });
-
-        initTypesListBox(display.getTypesListBox());
     }
 
     protected void confirmDeleting() {
@@ -153,10 +185,10 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         label.setText(Double.toString(total));
     }
 
-    protected void filterProcedures(int id) {
+    protected void filterProcedures(int typeId) {
         if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
-                procedureWebService.getExpensesByDate(id, display.getStartDate().getValue(), display.getEndDate().getValue(),
+                procedureWebService.getExpensesByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
@@ -174,7 +206,44 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                 AlertWidget.alert("Error", "Select dates").center();
             }
         } else {
-            procedureWebService.getProceduresByTypeId(id, new MethodCallback<List<Procedure>>() {
+            procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert("Error", "Error filtering expenses").center();
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Procedure> response) {
+                    procedureList = response;
+                    display.setData(procedureList, ExpensesGWTController.getExpenseTypes());
+                    updateTotal(display.getTotalLabel());
+                }
+            });
+        }
+    }
+
+    protected void filterProcedures(int typeId, int userId) {
+        if (display.getDateCheckBox().getValue()) {
+            if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
+                procedureWebService.getExpensesByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
+                        userId, new MethodCallback<List<Procedure>>() {
+                            @Override
+                            public void onFailure(Method method, Throwable throwable) {
+                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
+                            }
+
+                            @Override
+                            public void onSuccess(Method method, List<Procedure> response) {
+                                procedureList = response;
+                                display.setData(procedureList, ExpensesGWTController.getExpenseTypes());
+                                updateTotal(display.getTotalLabel());
+                            }
+                        });
+            } else {
+                AlertWidget.alert("Error", "Select dates").center();
+            }
+        } else {
+            procedureWebService.getProceduresByTypeId(typeId, userId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
                     AlertWidget.alert("Error", "Error filtering expenses").center();
@@ -221,6 +290,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                     updateTotal(display.getTotalLabel());
                 }
             });
+            display.getUsersListBox().setVisible(false);
         }
     }
 
