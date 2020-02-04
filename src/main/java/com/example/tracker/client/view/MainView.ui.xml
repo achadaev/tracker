@@ -7,7 +7,6 @@
                 <g:Button ui:field="expensesButton" text="Expenses"/>
                 <g:Button ui:field="incomesButton" text="Incomes"/>
                 <g:Button ui:field="profileButton" text="Profile"/>
-                <g:Button ui:field="calendarButton" text="Calendar"/>
             </g:HorizontalPanel>
             <g:cell horizontalAlignment="ALIGN_RIGHT">
                 <g:HTMLPanel ui:field="profileBarPanel">

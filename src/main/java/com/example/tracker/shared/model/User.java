@@ -1,6 +1,5 @@
 package com.example.tracker.shared.model;
 
-
 import java.util.Date;
 
 public class User {
@@ -12,6 +11,7 @@ public class User {
     private String password;
     private String role;
     private Date regDate;
+    private int isActive;
 
     public int getId() {
         return id;
@@ -65,14 +65,26 @@ public class User {
 
     public void setRegDate(Date regDate) { this.regDate = regDate; }
 
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", login='" + login + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", regDate=" + regDate +
                 ", role='" + role + '\'' +
+                ", regDate=" + regDate +
+                ", isActive=" + isActive +
                 '}';
     }
 }

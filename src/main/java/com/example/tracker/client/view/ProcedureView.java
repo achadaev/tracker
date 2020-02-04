@@ -114,7 +114,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
         };
         procedureCellTable.addColumn(idColumn, "ID");
 
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             TextColumn<Procedure> usernameColumn = new TextColumn<Procedure>() {
                 @Override
                 public String getValue(Procedure procedure) {
@@ -163,11 +163,11 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
         priceColumn.setSortable(true);
         procedureCellTable.addColumn(priceColumn, "Price");
 
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             TextColumn<Procedure> isArchivedColumn = new TextColumn<Procedure>() {
                 @Override
                 public String getValue(Procedure procedure) {
-                    return procedure.getIsArchived() == 1 ? "yes" : "no";
+                    return procedure.getIsArchived() == 1 ? "Yes" : "No";
                 }
             };
             procedureCellTable.addColumn(isArchivedColumn, "Is Archived");
@@ -189,7 +189,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 int start = range.getStart();
                 int length = range.getLength();
 
-                if (ExpensesGWTController.isAdmin) {
+                if (ExpensesGWTController.isAdmin()) {
                     if (startDate.getValue() == null && endDate.getValue() == null) {
                         Date nullDate = new Date(0);
                         if (typeId != 0) {
@@ -207,6 +207,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                         }
                                     });
                         } else {
+                            GWT.log("sortlist: " + sortList.get(0).getColumn().toString());
                             procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()), nullDate, nullDate, start,
                                     length, sortList.get(0).isAscending(), Integer.parseInt(usersListBox.getSelectedValue()),
                                     new MethodCallback<List<Procedure>>() {

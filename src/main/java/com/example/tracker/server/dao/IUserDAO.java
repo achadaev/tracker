@@ -17,5 +17,7 @@ public interface IUserDAO {
 
     Boolean updatePassword(User user);
 
+    List<User> archiveUsers(List<Integer> ids);
+
     List<User> deleteUsers(List<Integer> ids);
 }

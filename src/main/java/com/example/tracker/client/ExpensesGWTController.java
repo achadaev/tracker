@@ -16,23 +16,26 @@ import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.view.*;
 import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.User;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
+import static com.example.tracker.client.constant.HistoryItems.*;
 
 public class ExpensesGWTController implements Presenter, ValueChangeHandler<String> {
 
     private static User user;
     private static List<ProcedureType> expenseTypes;
     private static List<ProcedureType> incomeTypes;
-    public static boolean isAdmin;
+    private static boolean isAdmin;
 
     private HandlerManager eventBus;
     private ProcedureWebService procedureWebService;
@@ -101,8 +104,6 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
         eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
 
-        //TODO ShowCalendarEvent
-
         eventBus.addHandler(AddExpenseEvent.TYPE, event -> doAddNewExpense());
 
         eventBus.addHandler(AddIncomeEvent.TYPE, event -> doAddNewIncome());
@@ -133,107 +134,107 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doAddNewExpense() {
-        History.newItem("add-expense");
+        History.newItem(ADD_EXPENSE);
     }
 
     private void doAddNewIncome() {
-        History.newItem("add-income");
+        History.newItem(ADD_INCOME);
     }
 
     private void doAddNewUser() {
-        History.newItem("add-user");
+        History.newItem(ADD_USER);
     }
 
     private void doAddNewType() {
-        History.newItem("add-type");
+        History.newItem(ADD_TYPE);
     }
 
     private void doEditExpense(int id) {
-        History.newItem("edit-expense", false);
+        History.newItem(EDIT_EXPENSE, false);
         Presenter presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
                 new EditProcedureDialog(-1), id);
         presenter.go(container);
     }
 
     private void doEditIncome(int id) {
-        History.newItem("edit-income", false);
+        History.newItem(EDIT_INCOME, false);
         Presenter presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
                 new EditProcedureDialog(1), id);
         presenter.go(container);
     }
 
     private void doEditUser(int id) {
-        History.newItem("edit-user", false);
+        History.newItem(EDIT_USER, false);
         Presenter presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false), id);
         presenter.go(container);
     }
 
     private void doEditType(int id) {
-        History.newItem("edit-type", false);
+        History.newItem(EDIT_TYPE, false);
         Presenter presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog(), id);
         presenter.go(container);
     }
 
     private void doExpenseUpdated() {
-        History.newItem("expense-list");
+        History.newItem(EXPENSE_LIST);
     }
 
     private void doIncomeUpdated() {
-        History.newItem("income-list");
+        History.newItem(INCOME_LIST);
     }
 
     private void doUserUpdated() {
-        if (isAdmin) {
-            History.newItem("manage-profiles");
+        if (isAdmin()) {
+            History.newItem(MANAGE_PROFILES);
         } else {
-            History.newItem("profile");
+            History.newItem(PROFILE);
         }
     }
 
     private void doTypeUpdated() {
-        History.newItem("manage-types");
+        History.newItem(MANAGE_TYPES);
     }
 
     private void doShowHome() {
-        History.newItem("home");
+        History.newItem(HOME);
     }
 
     private void doShowExpenses() {
-        History.newItem("expense-list");
+        History.newItem(EXPENSE_LIST);
     }
 
     private void doShowFilteredExpenses(int typeId) {
-        History.newItem("expense-filter", false);
+        History.newItem(FILTER_EXPENSE, false);
         Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
                 new ProcedureView(procedureWebService, typeId), typeId);
         presenter.go(container);
     }
 
     private void doShowProfile() {
-        History.newItem("profile");
+        History.newItem(PROFILE);
     }
 
     private void doShowIncomes() {
-        History.newItem("income-list");
+        History.newItem(INCOME_LIST);
     }
 
     private void doShowManageProfiles() {
-        History.newItem("manage-profiles");
+        History.newItem(MANAGE_PROFILES);
     }
 
     private void doShowManageTypes() {
-        History.newItem("manage-types");
+        History.newItem(MANAGE_TYPES);
     }
 
     public void go(HasWidgets container) {
         MainView mainView = new MainView();
-        MainPresenter mainPresenter = new MainPresenter(eventBus, mainView);
+        MainPresenter mainPresenter = new MainPresenter(userWebService, eventBus, mainView);
 
         this.container = mainPresenter.getContentPanel();
         container.add(mainView);
 
         if ("".equals(History.getToken())) {
-            History.newItem("home");
+            History.newItem(HOME);
         } else {
             History.fireCurrentHistoryState();
         }
@@ -245,52 +246,72 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         if (token != null) {
             Presenter presenter = null;
 
-            if (token.equals("home")) {
+            if (token.equals(HOME)) {
                 presenter = new HomePresenter(procedureWebService, eventBus, new HomeView(eventBus));
             }
-            else if (token.equals("expense-list")) {
+            else if (token.equals(EXPENSE_LIST)) {
                 presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
                         new ProcedureView(procedureWebService));
             }
-            else if (token.equals("income-list")) {
+            else if (token.equals(INCOME_LIST)) {
                 presenter = new IncomePresenter(procedureWebService, typeWebService, userWebService, eventBus, new ProcedureView(procedureWebService));
             }
-            else if (token.equals("add-expense")) {
+            else if (token.equals(ADD_EXPENSE)) {
                 presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
                                 new EditProcedureDialog(-1));
             }
-            else if (token.equals("add-income")) {
+            else if (token.equals(ADD_INCOME)) {
                 presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
                                 new EditProcedureDialog(1));
             }
-            else if (token.equals("add-user")) {
-                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(true));
+            else if (token.equals(ADD_USER)) {
+                if (isAdmin()) {
+                    presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(true));
+                } else {
+                    AlertWidget.alert("Error", "Access denied").center();
+                }
             }
-            else if (token.equals("add-type")) {
-                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
+            else if (token.equals(ADD_TYPE)) {
+                if (isAdmin()) {
+                    presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
+                } else {
+                    AlertWidget.alert("Error", "Access denied").center();
+                }
             }
-            else if (token.equals("profile")) {
+            else if (token.equals(PROFILE)) {
                 presenter = new ProfilePresenter(userWebService, eventBus, new ProfileView());
             }
-            else if (token.equals("edit-expense")) {
+            else if (token.equals(EDIT_EXPENSE)) {
                 presenter = new EditExpensePresenter(procedureWebService, typeWebService, eventBus,
                                 new EditProcedureDialog(-1));
             }
-            else if (token.equals("edit-income")) {
+            else if (token.equals(EDIT_INCOME)) {
                 presenter = new EditIncomePresenter(procedureWebService, typeWebService, eventBus,
                                 new EditProcedureDialog(1));
             }
-            else if (token.equals("edit-user")) {
+            else if (token.equals(EDIT_USER)) {
                 presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false));
             }
-            else if (token.equals("edit-type")) {
-                presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
+            else if (token.equals(EDIT_TYPE)) {
+                if (isAdmin()) {
+                    presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
+                } else {
+                    AlertWidget.alert("Error", "Access denied").center();
+                }
             }
-            else if (token.equals("manage-profiles")) {
-                presenter = new ManageProfilesPresenter(userWebService, eventBus, new ManageProfilesView());
+            else if (token.equals(MANAGE_PROFILES)) {
+                if (isAdmin()) {
+                    presenter = new ManageProfilesPresenter(userWebService, eventBus, new ManageProfilesView());
+                } else {
+                    AlertWidget.alert("Error", "Access denied").center();
+                }
             }
-            else if (token.equals("manage-types")) {
-                presenter = new ManageTypesPresenter(typeWebService, eventBus, new ManageTypesView());
+            else if (token.equals(MANAGE_TYPES)) {
+                if (isAdmin()) {
+                    presenter = new ManageTypesPresenter(typeWebService, eventBus, new ManageTypesView());
+                } else {
+                    AlertWidget.alert("Error", "Access denied").center();
+                }
             }
             if (presenter != null) {
                 presenter.go(container);
@@ -302,6 +323,10 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         return user;
     }
 
+    public static boolean isAdmin() {
+        return isAdmin;
+    }
+
     public static List<ProcedureType> getExpenseTypes() {
         return expenseTypes;
     }
@@ -310,4 +335,17 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         return incomeTypes;
     }
 
+    public static void logout(UserWebService userWebService) {
+        userWebService.logout(new MethodCallback<String>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert("Error", "Error logging out").center();
+            }
+
+            @Override
+            public void onSuccess(Method method, String s) {
+                Window.Location.replace(GWT.getHostPageBaseURL() + "login");
+            }
+        });
+    }
 }

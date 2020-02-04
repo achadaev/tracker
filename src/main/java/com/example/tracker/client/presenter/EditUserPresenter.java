@@ -75,7 +75,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
                 display.getName().setValue(user.getName());
                 display.getSurname().setValue(user.getSurname());
                 display.getEmail().setValue(user.getEmail());
-                if (ExpensesGWTController.isAdmin) {
+                if (ExpensesGWTController.isAdmin()) {
                     display.getRoleListBox().setItemSelected(roles.indexOf(user.getRole()), true);
                 } else {
                     display.getRole().setText(user.getRole());
@@ -101,7 +101,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
             });
         }
 
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             initRolesListBox(display.getRoleListBox());
         }
     }
@@ -139,14 +139,14 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
 
     private void doSave() {
         if (!display.getLogin().getValue().equals(user.getLogin())
-            && !ExpensesGWTController.isAdmin) {
+            && !ExpensesGWTController.isAdmin()) {
             isLoginChanged = true;
         }
         user.setLogin(display.getLogin().getValue());
         user.setName(display.getName().getValue());
         user.setSurname(display.getSurname().getValue());
         user.setEmail(display.getEmail().getValue());
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             user.setRole(display.getRoleListBox().getSelectedItemText());
         } else {
             user.setRole(display.getRole().getText());
@@ -167,7 +167,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
             @Override
             public void onSuccess(Method method, User response) {
                 if (isLoginChanged) {
-                    Cookies.removeCookie("JSESSIONID");
+                    ExpensesGWTController.logout(userWebService);
                     Window.Location.replace(GWT.getHostPageBaseURL() + "login");
                 } else {
                     eventBus.fireEvent(new UserUpdatedEvent(response));

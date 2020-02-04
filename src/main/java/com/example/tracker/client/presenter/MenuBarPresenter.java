@@ -3,10 +3,8 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.ShowManageProfilesEvent;
 import com.example.tracker.client.event.ShowManageTypesEvent;
-import com.google.gwt.core.client.GWT;
+import com.example.tracker.client.services.UserWebService;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -21,10 +19,12 @@ public class MenuBarPresenter implements Presenter {
         Widget asWidget();
     }
 
+    UserWebService userWebService;
     HandlerManager eventBus;
     private Display display;
 
-    public MenuBarPresenter(HandlerManager eventBus, Display display) {
+    public MenuBarPresenter(UserWebService userWebService, HandlerManager eventBus, Display display) {
+        this.userWebService = userWebService;
         this.eventBus = eventBus;
         this.display = display;
         bind();
@@ -32,11 +32,12 @@ public class MenuBarPresenter implements Presenter {
 
     private void bind() {
         display.getLogoutButton().addClickHandler(clickEvent -> {
-            Cookies.removeCookie("JSESSIONID");
-            Window.Location.replace(GWT.getHostPageBaseURL() + "login");
+            ExpensesGWTController.logout(userWebService);
         });
 
-        display.getManageProfilesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowManageProfilesEvent()));
+        display.getManageProfilesButton().addClickHandler(clickEvent -> {
+            eventBus.fireEvent(new ShowManageProfilesEvent());
+        });
 
         display.getManageTypesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowManageTypesEvent()));
     }

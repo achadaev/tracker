@@ -131,6 +131,14 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
         };
         userTable.addColumn(dateColumn, "Registration Date");
 
+        TextColumn<User> isActiveColumn = new TextColumn<User>() {
+            @Override
+            public String getValue(User user) {
+                return (user.getIsActive() == 1) ? "Yes" : "No";
+            }
+        };
+        userTable.addColumn(isActiveColumn, "Is Active");
+
         userTable.setPageSize(10);
         userTable.setRowData(0, userList);
         SimplePager pager = new SimplePager();

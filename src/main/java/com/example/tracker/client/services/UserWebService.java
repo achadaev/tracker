@@ -10,6 +10,11 @@ import java.util.List;
 
 public interface UserWebService extends RestService {
     @GET
+    @Path("/logout")
+    @Produces(MediaType.APPLICATION_JSON)
+    void logout(MethodCallback<String> callback);
+
+    @GET
     @Path("/profile")
     @Produces(MediaType.APPLICATION_JSON)
     void getUser(MethodCallback<User> callback);
@@ -42,8 +47,8 @@ public interface UserWebService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     void updatePassword(User user, MethodCallback<User> callback);
 
-    @DELETE
-    @Path("/delete-profiles")
+    @PUT
+    @Path("/archive-profiles")
     @Consumes(MediaType.APPLICATION_JSON)
-    void deleteUsers(List<Integer> ids, MethodCallback<List<User>> callback);
+    void archiveUsers(List<Integer> ids, MethodCallback<List<User>> callback);
 }

@@ -33,7 +33,7 @@ public class IUserDAOImpl implements IUserDAO {
 
     @Override
     public User getUserByName(String name) {
-        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date  " +
+        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date, user.is_active " +
                 "FROM user WHERE user.login = ?";
 
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
@@ -42,7 +42,7 @@ public class IUserDAOImpl implements IUserDAO {
 
     @Override
     public User getUserById(int id) {
-        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date  " +
+        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date, user.is_active " +
                 "FROM user " +
                 "WHERE id = ?";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
@@ -51,7 +51,7 @@ public class IUserDAOImpl implements IUserDAO {
 
     @Override
     public List<User> getAllUsers() {
-        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date  " +
+        String query = "SELECT user.id, user.login, user.name, user.surname, user.email, user.pass, user.role, user.reg_date, user.is_active " +
                 "FROM user";
 
         return jdbcTemplate.query(query, new UserMapper());
@@ -108,6 +108,25 @@ public class IUserDAOImpl implements IUserDAO {
             return preparedStatement.execute();
         });
         return false;
+    }
+
+    private Boolean archiveUser(int id) {
+        String query = "UPDATE user " +
+                "SET is_active = 0 " +
+                "WHERE id = ?";
+        jdbcTemplate.execute(query, (PreparedStatementCallback<Boolean>) preparedStatement -> {
+            preparedStatement.setInt(1, id);
+            return preparedStatement.execute();
+        });
+        return true;
+    }
+
+    @Override
+    public List<User> archiveUsers(List<Integer> ids) {
+        for (int i = 0; i < ids.size(); i++) {
+            archiveUser(ids.get(i));
+        }
+        return getAllUsers();
     }
 
     private Boolean deleteUser(int id) {

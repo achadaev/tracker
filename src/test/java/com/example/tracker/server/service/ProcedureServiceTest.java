@@ -27,7 +27,7 @@ public class ProcedureServiceTest {
 
     @Spy
     @InjectMocks
-    private ExpenseService expenseService;
+    private ProcedureService procedureService;
 
     @Mock
     IProcedureDAO iProcedureDAO;
@@ -42,28 +42,28 @@ public class ProcedureServiceTest {
         user = new User();
         user.setId(1);
         user.setRole("admin");
-        doReturn(user).when(expenseService).getCurrentUser();
+        doReturn(user).when(procedureService).getCurrentUser();
     }
 
     @Test
     public void getUsersExpensesShouldNotReturnNull() {
-        Assert.assertNotNull(expenseService.getUsersExpenses());
+        Assert.assertNotNull(procedureService.getUsersExpenses());
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getExpenseByIdShouldThrowException() {
         doReturn(Lists.emptyList()).when(iProcedureDAO).getAllExpenses();
-        expenseService.getProcedureById(1);
+        procedureService.getProcedureById(1);
     }
 
     @Test
     public void getReviewShouldNotReturnNull() throws AccessDeniedException {
-        Assert.assertNotNull(expenseService.getReview());
+        Assert.assertNotNull(procedureService.getReview());
     }
 
     @Test
     public void getExpensesByTypeIdShouldNotReturnNull() throws AccessDeniedException {
-        Assert.assertNotNull(expenseService.getProceduresByTypeId(1));
+        Assert.assertNotNull(procedureService.getProceduresByTypeId(1));
     }
 
     @Test
@@ -72,32 +72,32 @@ public class ProcedureServiceTest {
         Date start = new Date();
         Date end = start;
 
-        Assert.assertNotNull(expenseService.getExpensesByDate(10 ,start, end));
+        Assert.assertNotNull(procedureService.getProceduresByDate(10 ,start, end));
     }
 
     @Test
     public void updateExpenseShouldAddExpenseIfNotFound() {
         Procedure procedure = new Procedure(100, 100, -1, null, "Name", new Date(), 100, 0);
-        expenseService.updateProcedure(procedure);
-        verify(expenseService).addProcedure(procedure);
+        procedureService.updateProcedure(procedure);
+        verify(procedureService).addProcedure(procedure);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void getUserByIdShouldThrowException() throws AccessDeniedException {
         user.setRole("user");
-        expenseService.getUserById(2);
+        procedureService.getUserById(2);
     }
 
     @Test(expected = AccessDeniedException.class)
     public void updateUserShouldThrowException() throws AccessDeniedException {
         user.setRole("user");
-        expenseService.updateUser(new User());
+        procedureService.updateUser(new User());
     }
 
     @Test(expected = AccessDeniedException.class)
     public void getAllUsersShouldThrowException() throws AccessDeniedException {
         user.setRole("user");
-        expenseService.getAllUsers();
+        procedureService.getAllUsers();
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -106,19 +106,19 @@ public class ProcedureServiceTest {
         List<Integer> ids = new ArrayList<>();
         ids.add(1);
         ids.add(2);
-        expenseService.deleteUsers(ids);
+        procedureService.deleteUsers(ids);
     }
 
     @Test
     public void getDatesBetweenShouldNotReturnNull() {
         doReturn(Lists.emptyList()).when(iProcedureDAO).getAllExpenses();
-        Assert.assertNotNull(expenseService.getDatesBetween());
+        Assert.assertNotNull(procedureService.getDatesBetween());
     }
 
     @Test
     public void getExpensesBetweenShouldNotReturnNull() {
-        doReturn(Lists.emptyList()).when(expenseService).getDatesBetween();
-        Assert.assertNotNull(expenseService.getExpensesBetween());
+        doReturn(Lists.emptyList()).when(procedureService).getDatesBetween();
+        Assert.assertNotNull(procedureService.getExpensesBetween());
     }
 
 }

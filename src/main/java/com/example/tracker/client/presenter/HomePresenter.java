@@ -44,7 +44,7 @@ public class HomePresenter implements Presenter {
     }
 
     private void initPieChart() {
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {

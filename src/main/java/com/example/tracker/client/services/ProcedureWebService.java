@@ -57,28 +57,15 @@ public interface ProcedureWebService extends RestService {
     @GET
     @Path("/expense-typeId={typeId}/{startDate}/{endDate}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
-                           @PathParam("endDate") Date endDate, MethodCallback<List<Procedure>> callback);
+    void getProceduresByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
+                             @PathParam("endDate") Date endDate, MethodCallback<List<Procedure>> callback);
 
     @GET
     @Path("/expense-typeId={typeId}/{startDate}/{endDate}/user={userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getExpensesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
-                           @PathParam("endDate") Date endDate, @PathParam("userId") int userId,
-                           MethodCallback<List<Procedure>> callback);
-
-    @GET
-    @Path("/income-typeId={typeId}/{startDate}/{endDate}")
-    @Produces(MediaType.APPLICATION_JSON)
-    void getIncomesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
-                           @PathParam("endDate") Date endDate, MethodCallback<List<Procedure>> callback);
-
-    @GET
-    @Path("/income-typeId={typeId}/{startDate}/{endDate}/user={userId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    void getIncomesByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
-                           @PathParam("endDate") Date endDate, @PathParam("userId") int userId,
-                          MethodCallback<List<Procedure>> callback);
+    void getProceduresByDate(@PathParam("typeId") int typeId, @PathParam("startDate") Date startDate,
+                             @PathParam("endDate") Date endDate, @PathParam("userId") int userId,
+                             MethodCallback<List<Procedure>> callback);
 
     @POST
     @Path("/add")
@@ -97,11 +84,6 @@ public interface ProcedureWebService extends RestService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     void archiveProcedure(List<Integer> ids, MethodCallback<List<Procedure>> callback);
-
-    @DELETE
-    @Path("/delete")
-    @Consumes(MediaType.APPLICATION_JSON)
-    void deleteProcedure(List<Integer> ids, MethodCallback<List<Procedure>> callback);
 
     @GET
     @Path("/dates-between")

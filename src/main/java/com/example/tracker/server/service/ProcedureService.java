@@ -10,11 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
 @Component
-public class ExpenseService {
+public class ProcedureService {
     @Autowired
     private IUserDAO iUserDao;
 
@@ -24,7 +25,7 @@ public class ExpenseService {
     @Autowired
     private IProcedureTypeDAO iProcedureTypeDAO;
 
-    private final static Logger LOG = LoggerFactory.getLogger(ExpenseService.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ProcedureService.class);
 
     public User getCurrentUser() {
         String login = UtilsService.getCurrentUsername();
@@ -46,6 +47,7 @@ public class ExpenseService {
     public Procedure getProcedureById(int id) {
         if (isAdmin()) {
             List<Procedure> procedureList = iProcedureDao.getAllExpenses();
+            procedureList.addAll(iProcedureDao.getAllIncomes());
             for (Procedure procedure : procedureList) {
                 if (procedure.getId() == id) {
                     return procedure;
@@ -126,74 +128,46 @@ public class ExpenseService {
         }
     }
 
-    public List<Procedure> getExpensesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
+    public List<Procedure> getProceduresByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
+        List<Procedure> result = new ArrayList<>();
+
         if (isAdmin()) {
-            List<Procedure> result = new ArrayList<>();
             if (typeId == -100) {
                 for (User user : getAllUsers()) {
                     result.addAll(iProcedureDao.getExpensesByDate(user.getId(), startDate, endDate));
                 }
                 return result;
-            } else {
-                for (User user : getAllUsers()) {
-                    result.addAll(iProcedureDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
-                }
-                return result;
-            }
-        } else {
-            List<Procedure> result = new ArrayList<>();
-            List<Procedure> procedures;
-            if (typeId == -100) {
-                procedures = iProcedureDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
-            } else {
-                procedures = iProcedureDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
-            }
-            for (Procedure procedure : procedures) {
-                if (procedure.getIsArchived() == 0) {
-                    result.add(procedure);
-                }
-            }
-            return result;
-        }
-    }
-
-    public List<Procedure> getExpensesByDate(int typeId, Date startDate, Date endDate, int userId) throws AccessDeniedException {
-        if (isAdmin()) {
-            if (userId == 0) {
-                return getExpensesByDate(typeId, startDate, endDate);
-            } else {
-                if (typeId == -100) {
-                    return iProcedureDao.getExpensesByDate(userId, startDate, endDate);
-                } else {
-                    return iProcedureDao.getExpensesByDateAndTypeId(userId, typeId, startDate, endDate);
-                }
-            }
-        } else {
-            throw new AccessDeniedException("Access denied");
-        }
-    }
-
-    public List<Procedure> getIncomesByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
-        if (isAdmin()) {
-            List<Procedure> result = new ArrayList<>();
-            if (typeId == 100) {
+            } else if (typeId == 100) {
                 for (User user : getAllUsers()) {
                     result.addAll(iProcedureDao.getIncomesByDate(user.getId(), startDate, endDate));
                 }
                 return result;
             } else {
-                for (User user : getAllUsers()) {
-                    result.addAll(iProcedureDao.getIncomesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
+                if (type.getKind() < 0) {
+                    for (User user : getAllUsers()) {
+                        result.addAll(iProcedureDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                    }
+                } else {
+                    for (User user : getAllUsers()) {
+                        result.addAll(iProcedureDao.getIncomesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                    }
                 }
                 return result;
             }
         } else {
-            List<Procedure> result = new ArrayList<>();
             List<Procedure> procedures;
-            if (typeId == 100) {
+            if (typeId == -100) {
+                procedures = iProcedureDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+            } else if (typeId == 100) {
                 procedures = iProcedureDao.getIncomesByDate(getCurrentUser().getId(), startDate, endDate);
             } else {
-                procedures = iProcedureDao.getIncomesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
+                if (type.getKind() < 0) {
+                    procedures = iProcedureDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                } else {
+                    procedures = iProcedureDao.getIncomesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                }
             }
             for (Procedure procedure : procedures) {
                 if (procedure.getIsArchived() == 0) {
@@ -204,15 +178,22 @@ public class ExpenseService {
         }
     }
 
-    public List<Procedure> getIncomesByDate(int typeId, Date startDate, Date endDate, int userId) throws AccessDeniedException {
+    public List<Procedure> getProceduresByDate(int typeId, Date startDate, Date endDate, int userId) throws AccessDeniedException {
         if (isAdmin()) {
             if (userId == 0) {
-                return getIncomesByDate(typeId, startDate, endDate);
+                return getProceduresByDate(typeId, startDate, endDate);
             } else {
-                if (typeId == 100) {
+                if (typeId == -100) {
+                    return iProcedureDao.getExpensesByDate(userId, startDate, endDate);
+                } else if (typeId == 100) {
                     return iProcedureDao.getIncomesByDate(userId, startDate, endDate);
                 } else {
-                    return iProcedureDao.getIncomesByDateAndTypeId(userId, typeId, startDate, endDate);
+                    ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
+                    if (type.getKind() < 0) {
+                        return iProcedureDao.getExpensesByDateAndTypeId(userId, typeId, startDate, endDate);
+                    } else {
+                        return iProcedureDao.getIncomesByDateAndTypeId(userId, typeId, startDate, endDate);
+                    }
                 }
             }
         } else {
@@ -312,6 +293,15 @@ public class ExpenseService {
         }
     }
 
+    public List<User> archiveUsers(List<Integer> ids) throws AccessDeniedException {
+        if (isAdmin()) {
+            iUserDao.archiveUsers(ids);
+            return iUserDao.getAllUsers();
+        } else {
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
     public List<User> deleteUsers(List<Integer> ids) throws AccessDeniedException {
         if (isAdmin()) {
             return iUserDao.deleteUsers(ids);
@@ -378,7 +368,7 @@ public class ExpenseService {
 
                 for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
                     try {
-                        monthlyExpenses.add(getMonthlyExpenses(type.getId(), getExpensesByDate(type.getId(), firstDay, lastDay)));
+                        monthlyExpenses.add(getMonthlyExpenses(type.getId(), getProceduresByDate(type.getId(), firstDay, lastDay)));
                     } catch (AccessDeniedException e) {
                         e.printStackTrace();
                     }
@@ -418,14 +408,14 @@ public class ExpenseService {
         return monthly;
     }
 
-    public List<Procedure> getSortedAndFilteredExpenses(int typeId, Date startDate, Date endDate, int startIndex,
-                                                        int quantity, boolean isAscending) throws AccessDeniedException {
+    public List<Procedure> getSortedAndFilteredProcedures(int typeId, Date startDate, Date endDate, int startIndex,
+                                                          int quantity, boolean isAscending) throws AccessDeniedException {
         List<Procedure> result;
         Date nullDate = new Date(0);
         if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
             result = getProceduresByTypeId(typeId);
         } else {
-            result = getExpensesByDate(typeId, startDate, endDate);
+            result = getProceduresByDate(typeId, startDate, endDate);
         }
         result.sort(Comparator.comparingDouble(Procedure::getPrice));
         if (isAscending) {
@@ -435,17 +425,17 @@ public class ExpenseService {
         return result.subList(startIndex, endIndex);
     }
 
-    public List<Procedure> getSortedAndFilteredExpenses(int typeId, Date startDate, Date endDate, int startIndex,
-                                                        int quantity, boolean isAscending, int userId) throws AccessDeniedException {
+    public List<Procedure> getSortedAndFilteredProcedures(int typeId, Date startDate, Date endDate, int startIndex,
+                                                          int quantity, boolean isAscending, int userId) throws AccessDeniedException {
         if (userId == 0) {
-            return getSortedAndFilteredExpenses(typeId, startDate, endDate, startIndex, quantity, isAscending);
+            return getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity, isAscending);
         } else {
             List<Procedure> result;
             Date nullDate = new Date(0);
             if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
                 result = getProceduresByTypeId(typeId, userId);
             } else {
-                result = getExpensesByDate(typeId, startDate, endDate, userId);
+                result = getProceduresByDate(typeId, startDate, endDate, userId);
             }
             result.sort(Comparator.comparingDouble(Procedure::getPrice));
             if (isAscending) {

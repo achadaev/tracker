@@ -27,7 +27,7 @@ public class MenuBarView extends Composite implements MenuBarPresenter.Display {
 
     public MenuBarView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        if (!ExpensesGWTController.isAdmin) {
+        if (!ExpensesGWTController.isAdmin()) {
             manageProfilesButton.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
             manageTypesButton.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
         }

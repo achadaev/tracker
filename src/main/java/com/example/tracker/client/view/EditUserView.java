@@ -43,7 +43,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         } else {
             changePasswordButton = new Button("Change");
         }
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             roleListBox = new ListBox();
         } else {
             role = new Label();
@@ -70,7 +70,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         } else {
             table.setWidget(4, 1, changePasswordButton);
         }
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             table.setWidget(5, 1, roleListBox);
         } else {
             table.setWidget(5, 1, role);

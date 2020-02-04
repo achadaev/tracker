@@ -37,7 +37,11 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     public EditProcedureDialog(int procedureKind) {
         setWidget(ourUiBinder.createAndBindUi(this));
         dialogBox.setGlassEnabled(true);
-        dialogBox.setText("Edit procedure");
+        if (procedureKind < 0) {
+            dialogBox.setText("Edit expense");
+        } else {
+            dialogBox.setText("Edit income");
+        }
         this.procedureKind = procedureKind;
         initTable();
     }

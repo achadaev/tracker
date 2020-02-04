@@ -25,8 +25,6 @@ public class MainView extends Composite implements MainPresenter.Display {
     @UiField
     Button profileButton;
     @UiField
-    Button calendarButton;
-    @UiField
     HTMLPanel profileBarPanel;
     @UiField
     HorizontalPanel contentPanel;
@@ -60,11 +58,6 @@ public class MainView extends Composite implements MainPresenter.Display {
     @Override
     public HasClickHandlers getProfileButton() {
         return profileButton;
-    }
-
-    @Override
-    public HasClickHandlers getCalendarButton() {
-        return calendarButton;
     }
 
     @Override

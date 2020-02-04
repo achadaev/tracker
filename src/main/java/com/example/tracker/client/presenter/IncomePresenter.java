@@ -9,7 +9,6 @@ import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
-import com.example.tracker.shared.model.User;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -48,7 +47,9 @@ public class IncomePresenter extends ExpensePresenter {
     @Override
     public void bind() {
         initTypesListBox(display.getTypesListBox());
-        initUsersListBox(display.getUsersListBox());
+        if (ExpensesGWTController.isAdmin()) {
+            initUsersListBox(display.getUsersListBox());
+        }
 
         display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddIncomeEvent()));
 
@@ -72,13 +73,28 @@ public class IncomePresenter extends ExpensePresenter {
             }
         });
         display.getFilerButton().addClickHandler(clickEvent -> {
-            if (ExpensesGWTController.isAdmin) {
+            if (ExpensesGWTController.isAdmin()) {
                 filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
                         Integer.parseInt(display.getUsersListBox().getSelectedValue()));
             } else {
                 filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
             }
         });
+
+        display.getTypesListBox().addChangeHandler(changeEvent -> {
+            if (ExpensesGWTController.isAdmin()) {
+                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
+                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
+            } else {
+                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+            }
+        });
+
+        if (ExpensesGWTController.isAdmin()) {
+            display.getUsersListBox().addChangeHandler(changeEvent ->
+                    filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
+                            Integer.parseInt(display.getUsersListBox().getSelectedValue())));
+        }
 
         display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
             if (display.getDateCheckBox().getValue()) {
@@ -95,7 +111,7 @@ public class IncomePresenter extends ExpensePresenter {
     protected void filterProcedures(int typeId) {
         if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
-                procedureWebService.getIncomesByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
+                procedureWebService.getProceduresByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
@@ -132,7 +148,7 @@ public class IncomePresenter extends ExpensePresenter {
     protected void filterProcedures(int typeId, int userId) {
         if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
-                procedureWebService.getIncomesByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
+                procedureWebService.getProceduresByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         userId, new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
@@ -168,7 +184,7 @@ public class IncomePresenter extends ExpensePresenter {
 
     @Override
     protected void setProcedureTableData() {
-        if (ExpensesGWTController.isAdmin) {
+        if (ExpensesGWTController.isAdmin()) {
             procedureWebService.getAllIncomes(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
@@ -198,7 +214,6 @@ public class IncomePresenter extends ExpensePresenter {
                     updateTotal(display.getTotalLabel());
                 }
             });
-            display.getUsersListBox().setVisible(false);
         }
     }
 

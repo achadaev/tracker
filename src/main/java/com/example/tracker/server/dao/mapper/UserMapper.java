@@ -23,6 +23,7 @@ public class UserMapper implements RowMapper<User> {
             user.setPassword(resultSet.getString("pass"));
             user.setRole(resultSet.getString("role"));
             user.setRegDate(new SimpleDateFormat("yyyy-MM-dd").parse(resultSet.getString("reg_date")));
+            user.setIsActive(resultSet.getInt("is_active"));
 
             return user;
         } catch (ParseException e) {

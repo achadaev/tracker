@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = iUserDAO.getUserByName(username);
-        if (user != null) {
+        if (user != null && user.getIsActive() == 1) {
             String password = user.getPassword();
             logger.info("Username: " + user.getLogin());
             logger.info("Password: " + password);

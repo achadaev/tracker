@@ -76,7 +76,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
     private void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
 
-        userWebService.deleteUsers(selectedIds, new MethodCallback<List<User>>() {
+        userWebService.archiveUsers(selectedIds, new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 AlertWidget.alert("Error", "Error deleting users").center();

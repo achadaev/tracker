@@ -118,27 +118,28 @@ public class EditExpensePresenter implements Presenter {
     protected void doSave() {
         if (!"".equals(display.getName().getValue())
                 && display.getDate().getValue() != null
-                && toDouble(display.getPrice().getValue()) != 0.0) {
+                && !"".equals(display.getPrice().getValue())) {
+            if (toDouble(display.getPrice().getValue()) != 0.0) {
+                procedure.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
+                procedure.setKind(-1);
+                procedure.setName(display.getName().getValue());
+                procedure.setDate(display.getDate().getValue());
+                procedure.setPrice(Double.parseDouble(display.getPrice().getValue()));
 
-            procedure.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
-            procedure.setKind(-1);
-            procedure.setName(display.getName().getValue());
-            procedure.setDate(display.getDate().getValue());
-            procedure.setPrice(Double.parseDouble(display.getPrice().getValue()));
+                procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
+                    @Override
+                    public void onFailure(Method method, Throwable exception) {
+                        AlertWidget.alert("Error", "Error updating expense").center();
+                    }
 
-            procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
-                @Override
-                public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert("Error", "Error updating expense").center();
-                }
-
-                @Override
-                public void onSuccess(Method method, Procedure response) {
-                    eventBus.fireEvent(new ExpenseUpdatedEvent(response));
-                    display.hideDialog();
-                    Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
-                }
-            });
+                    @Override
+                    public void onSuccess(Method method, Procedure response) {
+                        eventBus.fireEvent(new ExpenseUpdatedEvent(response));
+                        display.hideDialog();
+                        Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
+                    }
+                });
+            }
         } else {
             AlertWidget.alert("Error", "Fill all fields").center();
         }
