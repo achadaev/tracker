@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.example.tracker.server.constant.DBConstants.DATE_PATTERN;
+import static com.example.tracker.server.constant.ExceptionMessages.USER_NOT_FOUND_MESSAGE;
+
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
@@ -30,17 +33,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             String password = user.getPassword();
             logger.info("Username: " + user.getLogin());
             logger.info("Password: " + password);
-            logger.info("Registration date: " + new SimpleDateFormat("yyyy-MM-dd").format(user.getRegDate()));
+            logger.info("Registration date: " + new SimpleDateFormat(DATE_PATTERN).format(user.getRegDate()));
 
             Collection<GrantedAuthority> authorities= new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            if ("admin".equals(user.getRole())) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            } else {
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            }
             org.springframework.security.core.userdetails.User securedUser
                     = new org.springframework.security.core.userdetails.User(
                         username, password, true, true,
                     true, true, authorities);
             return securedUser;
         } else {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException(USER_NOT_FOUND_MESSAGE);
         }
     }
 }

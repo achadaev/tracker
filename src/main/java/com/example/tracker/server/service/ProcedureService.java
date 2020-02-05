@@ -10,9 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
+
+import static com.example.tracker.server.constant.ExceptionMessages.ACCESS_DENIED_MESSAGE;
+import static com.example.tracker.server.constant.ExceptionMessages.NO_SUCH_PROCEDURE_MESSAGE;
 
 @Component
 public class ProcedureService {
@@ -53,13 +55,13 @@ public class ProcedureService {
                     return procedure;
                 }
             }
-            throw new NoSuchElementException("No such Procedure");
+            throw new NoSuchElementException(NO_SUCH_PROCEDURE_MESSAGE);
         } else {
             Procedure procedure = iProcedureDao.getProcedureById(getCurrentUser().getId(), id);
             if (procedure.getIsArchived() == 0) {
                 return procedure;
             } else {
-                throw new NoSuchElementException("No such Procedure");
+                throw new NoSuchElementException(NO_SUCH_PROCEDURE_MESSAGE);
             }
         }
     }
@@ -124,7 +126,7 @@ public class ProcedureService {
                 }
             }
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -197,7 +199,7 @@ public class ProcedureService {
                 }
             }
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -251,7 +253,7 @@ public class ProcedureService {
         if (isAdmin() || id == getCurrentUser().getId()) {
             return iUserDao.getUserById(id);
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -266,7 +268,7 @@ public class ProcedureService {
         } else if (user.getId() == getCurrentUser().getId()) {
             return iUserDao.updateUser(user);
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -281,7 +283,7 @@ public class ProcedureService {
         } else if (user.getId() == getCurrentUser().getId()) {
             return iUserDao.updatePassword(user);
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -289,7 +291,7 @@ public class ProcedureService {
         if (isAdmin()) {
             return iUserDao.getAllUsers();
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -298,7 +300,7 @@ public class ProcedureService {
             iUserDao.archiveUsers(ids);
             return iUserDao.getAllUsers();
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -306,7 +308,7 @@ public class ProcedureService {
         if (isAdmin()) {
             return iUserDao.deleteUsers(ids);
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 
@@ -319,7 +321,7 @@ public class ProcedureService {
             }
             return iProcedureTypeDAO.addType(type);
         } else {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(ACCESS_DENIED_MESSAGE);
         }
     }
 

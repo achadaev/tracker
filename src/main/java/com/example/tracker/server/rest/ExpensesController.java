@@ -32,12 +32,12 @@ public class ExpensesController {
     @Autowired
     ProcedureService procedureService;
 
-    @GetMapping("expenses/logout")
+    @GetMapping("/expenses/logout")
     public void logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("JSESSIONID", null);
         cookie.setMaxAge(0);
         cookie.setSecure(false);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setPath("/tracker_war_exploded");
         response.addCookie(cookie);
     }

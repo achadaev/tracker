@@ -1,16 +1,13 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.ListBox;
@@ -20,6 +17,8 @@ import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
+
+import static com.example.tracker.client.constant.WidgetConstants.*;
 
 public class EditExpensePresenter implements Presenter {
 
@@ -62,7 +61,7 @@ public class EditExpensePresenter implements Presenter {
         procedureWebService.getProcedureById(id, new MethodCallback<Procedure>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert("Error", "Error getting procedure").center();
+                AlertWidget.alert(ERR, GETTING_PROCEDURE_ERR).center();
             }
 
             @Override
@@ -84,7 +83,7 @@ public class EditExpensePresenter implements Presenter {
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", throwable.getMessage()).center();
+                AlertWidget.alert(ERR, throwable.getMessage()).center();
             }
 
             @Override
@@ -110,7 +109,7 @@ public class EditExpensePresenter implements Presenter {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            AlertWidget.alert("Error", "Input correct price").center();
+            AlertWidget.alert(ERR, INCORRECT_PRICE_ERR).center();
         }
         return 0.0;
     }
@@ -129,19 +128,18 @@ public class EditExpensePresenter implements Presenter {
                 procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                     @Override
                     public void onFailure(Method method, Throwable exception) {
-                        AlertWidget.alert("Error", "Error updating expense").center();
+                        AlertWidget.alert(ERR, UPDATING_EXPENSE_ERR).center();
                     }
 
                     @Override
                     public void onSuccess(Method method, Procedure response) {
                         eventBus.fireEvent(new ExpenseUpdatedEvent(response));
                         display.hideDialog();
-                        Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
                     }
                 });
             }
         } else {
-            AlertWidget.alert("Error", "Fill all fields").center();
+            AlertWidget.alert(ERR, EMPTY_FIELDS_ERR).center();
         }
     }
 }

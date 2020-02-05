@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import static com.example.tracker.server.constant.DBConstants.*;
+
 public class UserMapper implements RowMapper<User> {
 
     @Override
@@ -15,15 +17,15 @@ public class UserMapper implements RowMapper<User> {
         try {
             User user = new User();
 
-            user.setId(resultSet.getInt("id"));
-            user.setLogin(resultSet.getString("login"));
-            user.setName(resultSet.getString("name"));
-            user.setSurname(resultSet.getString("surname"));
-            user.setEmail(resultSet.getString("email"));
-            user.setPassword(resultSet.getString("pass"));
-            user.setRole(resultSet.getString("role"));
-            user.setRegDate(new SimpleDateFormat("yyyy-MM-dd").parse(resultSet.getString("reg_date")));
-            user.setIsActive(resultSet.getInt("is_active"));
+            user.setId(resultSet.getInt(ID_COLUMN));
+            user.setLogin(resultSet.getString(LOGIN_COLUMN));
+            user.setName(resultSet.getString(NAME_COLUMN));
+            user.setSurname(resultSet.getString(SURNAME_COLUMN));
+            user.setEmail(resultSet.getString(EMAIL_COLUMN));
+            user.setPassword(resultSet.getString(PASSWORD_COLUMN));
+            user.setRole(resultSet.getString(ROLE_COLUMN));
+            user.setRegDate(new SimpleDateFormat(DATE_PATTERN).parse(resultSet.getString(REGISTRATION_DATE_COLUMN)));
+            user.setIsActive(resultSet.getInt(IS_ACTIVE_COLUMN));
 
             return user;
         } catch (ParseException e) {

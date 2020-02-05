@@ -10,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.Method;
@@ -19,6 +18,9 @@ import org.fusesource.restygwt.client.MethodCallback;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.example.tracker.client.constant.WidgetConstants.*;
+import static com.example.tracker.client.constant.PathConstants.LOGIN_PATH;
 
 public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
     public interface Display {
@@ -65,7 +67,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         userWebService.getUserById(id, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting user by id").center();
+                AlertWidget.alert(ERR, GETTING_USER_ERR).center();
             }
 
             @Override
@@ -97,7 +99,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         if (display.getChangePasswordButton() != null) {
             display.getChangePasswordButton().addClickHandler(clickEvent -> {
                 PassChangeWidget passChangeWidget = new PassChangeWidget(this);
-                passChangeWidget.change("Set new password").center();
+                passChangeWidget.change(SET_PASSWORD_LABEL).center();
             });
         }
 
@@ -107,7 +109,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
     }
 
     private boolean isPasswordValid(String password) {
-        String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{5,}";
+        String pattern = PASSWORD_PATTERN;
         return password.matches(pattern);
     }
 
@@ -118,8 +120,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
             user.setPassword(passBox.getValue());
             changePassword();
         } else {
-            AlertWidget.alert("Error", "Password must contain al least 1 upper case letter, " +
-                    "1 lower case letter, 1 digit and length >= 5").center();
+            AlertWidget.alert(ERR, INCORRECT_PASSWORD_PATTERN_ERR).center();
         }
     }
 
@@ -127,7 +128,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         userWebService.updatePassword(user, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error changing password").center();
+                AlertWidget.alert(ERR, CHANGING_PASSWORD_ERR).center();
             }
 
             @Override
@@ -161,14 +162,14 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         userWebService.updateUser(user, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error updating user").center();
+                AlertWidget.alert(ERR, UPDATING_USER_ERR).center();
             }
 
             @Override
             public void onSuccess(Method method, User response) {
                 if (isLoginChanged) {
                     ExpensesGWTController.logout(userWebService);
-                    Window.Location.replace(GWT.getHostPageBaseURL() + "login");
+                    Window.Location.replace(GWT.getHostPageBaseURL() + LOGIN_PATH);
                 } else {
                     eventBus.fireEvent(new UserUpdatedEvent(response));
                 }

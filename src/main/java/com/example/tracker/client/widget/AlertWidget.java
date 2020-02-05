@@ -6,11 +6,13 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import static com.example.tracker.client.constant.WidgetConstants.CLOSE_BUTTON;
+
 public class AlertWidget {
     public static DialogBox alert(String header, String content) {
         DialogBox dialogBox = new DialogBox();
         VerticalPanel panel = new VerticalPanel();
-        Button closeButton = new Button("Close", (ClickHandler) event -> dialogBox.hide());
+        Button closeButton = new Button(CLOSE_BUTTON, (ClickHandler) event -> dialogBox.hide());
 
         dialogBox.setGlassEnabled(true);
         dialogBox.setText(header);

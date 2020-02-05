@@ -8,6 +8,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 
+import static com.example.tracker.client.constant.TableConstants.*;
+import static com.example.tracker.client.constant.WidgetConstants.CHANGE_BUTTON;
+
 public class EditUserView extends Composite implements EditUserPresenter.Display {
     interface EditUserViewUiBinder extends UiBinder<HTMLPanel, EditUserView> {
     }
@@ -41,7 +44,7 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
         if (isNewUser) {
             password = new PasswordTextBox();
         } else {
-            changePasswordButton = new Button("Change");
+            changePasswordButton = new Button(CHANGE_BUTTON);
         }
         if (ExpensesGWTController.isAdmin()) {
             roleListBox = new ListBox();
@@ -53,13 +56,13 @@ public class EditUserView extends Composite implements EditUserPresenter.Display
     }
 
     private void initTable() {
-        table.setText(0, 0, "Login");
-        table.setText(1, 0, "Name");
-        table.setText(2, 0, "Surname");
-        table.setText(3, 0, "Email");
-        table.setText(4, 0, "Password");
-        table.setText(5, 0, "Role");
-        table.setText(6, 0, "Registration Date");
+        table.setText(0, 0, USERNAME_COLUMN);
+        table.setText(1, 0, NAME_COLUMN);
+        table.setText(2, 0, SURNAME_COLUMN);
+        table.setText(3, 0, EMAIL_COLUMN);
+        table.setText(4, 0, PASSWORD_COLUMN);
+        table.setText(5, 0, ROLE_COLUMN);
+        table.setText(6, 0, REGISTRATION_DATE_COLUMN);
 
         table.setWidget(0, 1, login);
         table.setWidget(1, 1, name);

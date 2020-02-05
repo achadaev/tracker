@@ -12,6 +12,9 @@ import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import static com.example.tracker.client.constant.WidgetConstants.ERR;
+import static com.example.tracker.client.constant.WidgetConstants.GETTING_USER_ERR;
+
 public class ProfilePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getEditProfileButton();
@@ -39,7 +42,7 @@ public class ProfilePresenter implements Presenter {
         userWebService.getUser(new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert("Error", "Error getting user").center();
+                AlertWidget.alert(ERR, GETTING_USER_ERR).center();
             }
 
             @Override

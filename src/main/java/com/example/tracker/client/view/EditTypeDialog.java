@@ -1,5 +1,6 @@
 package com.example.tracker.client.view;
 
+import com.example.tracker.client.constant.DialogConstants;
 import com.example.tracker.client.presenter.EditTypePresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -7,6 +8,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+
+import static com.example.tracker.client.constant.PathConstants.MANAGE_TYPES_PATH;
+import static com.example.tracker.client.constant.TableConstants.*;
 
 public class EditTypeDialog extends DialogBox implements EditTypePresenter.Display {
     interface EditTypeDialogUiBinder extends UiBinder<HTMLPanel, EditTypeDialog> {
@@ -30,17 +34,18 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     public EditTypeDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
         dialogBox.setGlassEnabled(true);
-        dialogBox.setText("Edit Type");
+        dialogBox.setText(DialogConstants.EDIT_TYPE_HEADER);
         name = new TextBox();
-        expenseRadio = new RadioButton("kind", "Expense");
-        incomeRadio = new RadioButton("kind", "Income");
+        expenseRadio = new RadioButton(KIND_COLUMN, EXPENSE_COLUMN);
+        incomeRadio = new RadioButton(KIND_COLUMN, INCOME_COLUMN);
         initTable();
     }
 
     private void initTable() {
-        table.setText(0, 0, "Name");
+        table.setText(0, 0, NAME_COLUMN);
+        table.setText(1, 0, KIND_COLUMN);
+
         table.setWidget(0, 1, name);
-        table.setText(1, 0, "Kind");
         table.setWidget(1, 1, expenseRadio);
         table.setWidget(2, 1, incomeRadio);
     }
@@ -78,6 +83,6 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     @Override
     public void hideDialog() {
         dialogBox.hide();
-        Window.Location.replace(GWT.getHostPageBaseURL() + "#manage-types");
+        Window.Location.replace(GWT.getHostPageBaseURL() + "#" + MANAGE_TYPES_PATH);
     }
 }

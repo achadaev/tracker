@@ -5,18 +5,16 @@ import com.example.tracker.shared.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import static com.example.tracker.server.constant.DBConstants.DATE_PATTERN;
 
 @Component
 public class IUserDAOImpl implements IUserDAO {
@@ -29,7 +27,7 @@ public class IUserDAOImpl implements IUserDAO {
 
     final static Logger logger = LoggerFactory.getLogger(IUserDAOImpl.class);
 
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
 
     @Override
     public User getUserByName(String name) {

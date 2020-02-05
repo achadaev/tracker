@@ -17,6 +17,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class IncomePresenter extends ExpensePresenter {
 
     private List<Procedure> procedureList;
@@ -31,7 +33,7 @@ public class IncomePresenter extends ExpensePresenter {
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", throwable.getMessage()).center();
+                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
             }
 
             @Override
@@ -59,7 +61,7 @@ public class IncomePresenter extends ExpensePresenter {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditIncomeEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert("Error", "Select one row").center();
+                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
             }
         });
 
@@ -69,7 +71,7 @@ public class IncomePresenter extends ExpensePresenter {
             if (selectedIds.size() >= 1) {
                 confirmDeleting();
             } else {
-                AlertWidget.alert("Error", "Select at least one row").center();
+                AlertWidget.alert(ERR, AT_LEAST_ONE_ROW_ERR).center();
             }
         });
         display.getFilerButton().addClickHandler(clickEvent -> {
@@ -115,7 +117,7 @@ public class IncomePresenter extends ExpensePresenter {
                         new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
+                                AlertWidget.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR).center();
                             }
 
                             @Override
@@ -126,13 +128,13 @@ public class IncomePresenter extends ExpensePresenter {
                             }
                         });
             } else {
-                AlertWidget.alert("Error", "Select dates").center();
+                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
             }
         } else {
             procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error filtering expenses").center();
+                    AlertWidget.alert(ERR, FILTERING_INCOMES_ERR).center();
                 }
 
                 @Override
@@ -152,7 +154,7 @@ public class IncomePresenter extends ExpensePresenter {
                         userId, new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
+                                AlertWidget.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR).center();
                             }
 
                             @Override
@@ -163,13 +165,13 @@ public class IncomePresenter extends ExpensePresenter {
                             }
                         });
             } else {
-                AlertWidget.alert("Error", "Select dates").center();
+                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
             }
         } else {
             procedureWebService.getProceduresByTypeId(typeId, userId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error filtering expenses").center();
+                    AlertWidget.alert(ERR, FILTERING_INCOMES_ERR).center();
                 }
 
                 @Override
@@ -188,7 +190,7 @@ public class IncomePresenter extends ExpensePresenter {
             procedureWebService.getAllIncomes(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error getting all incomes").center();
+                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
                 }
 
                 @Override
@@ -203,7 +205,7 @@ public class IncomePresenter extends ExpensePresenter {
             procedureWebService.getUsersIncomes(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert("Error", exception.getMessage()).center();
+                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
                 }
 
                 @Override

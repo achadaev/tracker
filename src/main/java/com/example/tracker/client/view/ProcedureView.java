@@ -25,6 +25,10 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.*;
 
+import static com.example.tracker.client.constant.TableConstants.*;
+import static com.example.tracker.client.constant.WidgetConstants.ERR;
+import static com.example.tracker.client.constant.WidgetConstants.SORTING_PROCEDURES_ERR;
+
 public class ProcedureView extends Composite implements ExpensePresenter.Display {
     interface MainViewUiBinder extends UiBinder<HTMLPanel, ProcedureView> {
     }
@@ -112,7 +116,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return procedure.getId();
             }
         };
-        procedureCellTable.addColumn(idColumn, "ID");
+        procedureCellTable.addColumn(idColumn, ID_COLUMN);
 
         if (ExpensesGWTController.isAdmin()) {
             TextColumn<Procedure> usernameColumn = new TextColumn<Procedure>() {
@@ -121,7 +125,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                     return procedure.getUsername();
                 }
             };
-            procedureCellTable.addColumn(usernameColumn, "Username");
+            procedureCellTable.addColumn(usernameColumn, USERNAME_COLUMN);
         }
 
         TextColumn<Procedure> typeColumn = new TextColumn<Procedure>() {
@@ -132,10 +136,10 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                         return type.getName();
                     }
                 }
-                return "undefined";
+                return UNDEFINED_VALUE;
             }
         };
-        procedureCellTable.addColumn(typeColumn, "Type");
+        procedureCellTable.addColumn(typeColumn, TYPE_COLUMN);
 
         TextColumn<Procedure> nameColumn = new TextColumn<Procedure>() {
             @Override
@@ -143,16 +147,16 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return procedure.getName();
             }
         };
-        procedureCellTable.addColumn(nameColumn, "Name");
+        procedureCellTable.addColumn(nameColumn, NAME_COLUMN);
 
-        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("d MMMM yyyy, EEEE");
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(TABLE_DATE_PATTERN);
         TextColumn<Procedure> dateColumn = new TextColumn<Procedure>() {
             @Override
             public String getValue(Procedure procedure) {
                 return dateTimeFormat.format(procedure.getDate());
             }
         };
-        procedureCellTable.addColumn(dateColumn, "Date");
+        procedureCellTable.addColumn(dateColumn, DATE_COLUMN);
 
         Column<Procedure, Number> priceColumn = new Column<Procedure, Number>(new NumberCell()) {
             @Override
@@ -161,16 +165,16 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
             }
         };
         priceColumn.setSortable(true);
-        procedureCellTable.addColumn(priceColumn, "Price");
+        procedureCellTable.addColumn(priceColumn, PRICE_COLUMN);
 
         if (ExpensesGWTController.isAdmin()) {
             TextColumn<Procedure> isArchivedColumn = new TextColumn<Procedure>() {
                 @Override
                 public String getValue(Procedure procedure) {
-                    return procedure.getIsArchived() == 1 ? "Yes" : "No";
+                    return procedure.getIsArchived() == 1 ? YES_VALUE : NO_VALUE;
                 }
             };
-            procedureCellTable.addColumn(isArchivedColumn, "Is Archived");
+            procedureCellTable.addColumn(isArchivedColumn, IS_ARCHIVED_COLUMN);
         }
 
         procedureCellTable.setPageSize(10);
@@ -198,7 +202,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert("Error", "Error sorting procedures").center();
+                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                         }
 
                                         @Override
@@ -213,7 +217,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert("Error", "Error sorting expenses").center();
+                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                         }
 
                                         @Override
@@ -228,7 +232,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                 Integer.parseInt(usersListBox.getSelectedValue()), new MethodCallback<List<Procedure>>() {
                                     @Override
                                     public void onFailure(Method method, Throwable throwable) {
-                                        AlertWidget.alert("Error", "Error sorting procedures").center();
+                                        AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                     }
 
                                     @Override
@@ -245,7 +249,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     sortList.get(0).isAscending(), new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert("Error", "Error sorting procedures").center();
+                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                         }
 
                                         @Override
@@ -259,7 +263,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert("Error", "Error sorting expenses").center();
+                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                         }
 
                                         @Override
@@ -274,7 +278,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                 new MethodCallback<List<Procedure>>() {
                                     @Override
                                     public void onFailure(Method method, Throwable throwable) {
-                                        AlertWidget.alert("Error", "Error sorting procedures").center();
+                                        AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
                                     }
 
                                     @Override
@@ -314,11 +318,9 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     @Override
     public List<Integer> getSelectedIds() {
         List<Integer> selectedRows = new ArrayList<>();
-
         for (Procedure procedure : selectionModel.getSelectedSet()) {
             selectedRows.add(procedure.getId());
         }
-
         return selectedRows;
     }
 

@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class EditTypePresenter implements Presenter {
 
     public interface Display {
@@ -44,7 +46,7 @@ public class EditTypePresenter implements Presenter {
         typeWebService.getTypeById(id, new MethodCallback<ProcedureType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting type").center();
+                AlertWidget.alert(ERR, GETTING_TYPE_ERR).center();
             }
 
             @Override
@@ -77,7 +79,7 @@ public class EditTypePresenter implements Presenter {
         typeWebService.updateType(type, new MethodCallback<ProcedureType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error updating type").center();
+                AlertWidget.alert(ERR, UPDATING_TYPE_ERR).center();
             }
 
             @Override

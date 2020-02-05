@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.tracker.server.constant.DBConstants.DATE_PATTERN;
+
 @Component
 public class IProcedureDAOImpl implements IProcedureDAO {
 
@@ -24,7 +26,7 @@ public class IProcedureDAOImpl implements IProcedureDAO {
 
     final static Logger logger = LoggerFactory.getLogger(IProcedureDAOImpl.class);
 
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
 
     public IProcedureDAOImpl() throws ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");

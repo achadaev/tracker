@@ -3,6 +3,8 @@ package com.example.tracker.client.widget;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class PassChangeWidget {
     private Changer changer;
 
@@ -22,19 +24,19 @@ public class PassChangeWidget {
         PasswordTextBox passBox = new PasswordTextBox();
         PasswordTextBox repeatPassBox = new PasswordTextBox();
 
-        Button confirmButton = new Button("Confirm", (ClickHandler) event -> {
+        Button confirmButton = new Button(CONFIRM_BUTTON, (ClickHandler) event -> {
             changer.onChange(passBox, repeatPassBox);
             dialogBox.hide();
         });
-        Button cancelButton = new Button("Cancel", (ClickHandler) event -> dialogBox.hide());
+        Button cancelButton = new Button(CANCEL_BUTTON, (ClickHandler) event -> dialogBox.hide());
 
         dialogBox.setGlassEnabled(true);
         dialogBox.setText(header);
 
         panel.setSpacing(10);
-        panel.add(new Label("Enter new password"));
+        panel.add(new Label(ENTER_PASSWORD_LABEL));
         panel.add(passBox);
-        panel.add(new Label("Repeat new password"));
+        panel.add(new Label(REPEAT_PASSWORD_LABEL));
         panel.add(repeatPassBox);
 
         buttonsPanel.setSpacing(7);

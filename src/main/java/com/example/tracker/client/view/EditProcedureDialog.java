@@ -1,5 +1,6 @@
 package com.example.tracker.client.view;
 
+import com.example.tracker.client.constant.DialogConstants;
 import com.example.tracker.client.presenter.EditExpensePresenter;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -8,6 +9,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
+
+import static com.example.tracker.client.constant.PathConstants.*;
+import static com.example.tracker.client.constant.TableConstants.*;
 
 public class EditProcedureDialog extends DialogBox implements EditExpensePresenter.Display {
     interface EditExpenseDialogUiBinder extends UiBinder<HTMLPanel, EditProcedureDialog> {
@@ -38,18 +42,18 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
         setWidget(ourUiBinder.createAndBindUi(this));
         dialogBox.setGlassEnabled(true);
         if (procedureKind < 0) {
-            dialogBox.setText("Edit expense");
+            dialogBox.setText(DialogConstants.EDIT_EXPENSE_HEADER);
         } else {
-            dialogBox.setText("Edit income");
+            dialogBox.setText(DialogConstants.EDIT_INCOME_HEADER);
         }
         this.procedureKind = procedureKind;
         initTable();
     }
 
     private void initTable() {
-        name.getElement().setPropertyString("placeholder", "Name");
-        date.getElement().setPropertyString("placeholder", "Date");
-        price.getElement().setPropertyString("placeholder", "Price");
+        name.getElement().setPropertyString(DialogConstants.PLACEHOLDER, NAME_COLUMN);
+        date.getElement().setPropertyString(DialogConstants.PLACEHOLDER, DATE_COLUMN);
+        price.getElement().setPropertyString(DialogConstants.PLACEHOLDER, PRICE_COLUMN);
 
         table.setWidget(0, 1, typeId);
         table.setWidget(1, 1, name);
@@ -101,11 +105,11 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     public void hideDialog() {
         dialogBox.hide();
         if (procedureKind == 1) {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#income-list");
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + INCOME_LIST_PATH);
         } else if (procedureKind == -1) {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#expense-list");
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + EXPENSE_LIST_PATH);
         } else {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#home");
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + HOME_PATH);
         }
     }
 }

@@ -16,6 +16,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirmation {
 
     private List<User> userList;
@@ -41,7 +43,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
 
     private void confirmDeleting() {
         ConfirmWidget confirmWidget = new ConfirmWidget(this);
-        confirmWidget.confirm("Confirmation", "Do you actually want to delete these fields?").center();
+        confirmWidget.confirm(CONFIRMATION, DELETING_FIELDS_LABEL).center();
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert("Error", "Select one row").center();
+                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
             }
         });
 
@@ -66,7 +68,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
             List<Integer> selectedIds = display.getSelectedIds();
             if (selectedIds.contains(ExpensesGWTController.getUser().getId()))
             {
-                AlertWidget.alert("Error", "Unable to delete your own account").center();
+                AlertWidget.alert(ERR, DELETING_OWN_ACCOUNT_ERR).center();
             } else {
                 confirmDeleting();
             }
@@ -79,7 +81,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
         userWebService.archiveUsers(selectedIds, new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error deleting users").center();
+                AlertWidget.alert(ERR, DELETING_USERS_ERR).center();
             }
 
             @Override
@@ -94,7 +96,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
         userWebService.getAllUsers(new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting all users").center();
+                AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
             }
 
             @Override

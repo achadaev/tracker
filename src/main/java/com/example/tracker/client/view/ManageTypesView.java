@@ -20,6 +20,8 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tracker.client.constant.TableConstants.*;
+
 public class ManageTypesView extends Composite implements ManageTypesPresenter.Display {
     interface ManageTypesViewUiBinder extends UiBinder<HTMLPanel, ManageTypesView> {
     }
@@ -107,21 +109,21 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
                 return type.getId();
             }
         };
-        typeTable.addColumn(idColumn, "ID");
+        typeTable.addColumn(idColumn, ID_COLUMN);
 
         TextColumn<ProcedureType> kindColumn = new TextColumn<ProcedureType>() {
             @Override
             public String getValue(ProcedureType type) {
                 if (type.getKind() < 0) {
-                    return "Expense";
+                    return EXPENSE_COLUMN;
                 } else if (type.getKind() > 0) {
-                    return "Income";
+                    return INCOME_COLUMN;
                 } else {
-                    return "Undefined";
+                    return UNDEFINED_VALUE;
                 }
             }
         };
-        typeTable.addColumn(kindColumn, "Kind");
+        typeTable.addColumn(kindColumn, KIND_COLUMN);
 
         TextColumn<ProcedureType> typeColumn = new TextColumn<ProcedureType>() {
             @Override
@@ -129,7 +131,7 @@ public class ManageTypesView extends Composite implements ManageTypesPresenter.D
                 return type.getName();
             }
         };
-        typeTable.addColumn(typeColumn, "Name");
+        typeTable.addColumn(typeColumn, NAME_COLUMN);
 
         typeTable.setPageSize(10);
         typeTable.setRowData(0, typeList);

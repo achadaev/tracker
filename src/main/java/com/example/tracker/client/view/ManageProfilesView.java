@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.tracker.client.constant.TableConstants.*;
+
 public class ManageProfilesView extends Composite implements ManageProfilesPresenter.Display {
     interface ManageViewUiBinder extends UiBinder<HTMLPanel, ManageProfilesView> {
     }
@@ -80,7 +82,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getId();
             }
         };
-        userTable.addColumn(idColumn, "ID");
+        userTable.addColumn(idColumn, ID_COLUMN);
 
         TextColumn<User> typeColumn = new TextColumn<User>() {
             @Override
@@ -88,7 +90,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getLogin();
             }
         };
-        userTable.addColumn(typeColumn, "Login");
+        userTable.addColumn(typeColumn, USERNAME_COLUMN);
 
         TextColumn<User> nameColumn = new TextColumn<User>() {
             @Override
@@ -96,7 +98,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getName();
             }
         };
-        userTable.addColumn(nameColumn, "Name");
+        userTable.addColumn(nameColumn, NAME_COLUMN);
 
         TextColumn<User> surnameColumn = new TextColumn<User>() {
             @Override
@@ -104,7 +106,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getSurname();
             }
         };
-        userTable.addColumn(surnameColumn, "Surname");
+        userTable.addColumn(surnameColumn, SURNAME_COLUMN);
 
         TextColumn<User> emailColumn = new TextColumn<User>() {
             @Override
@@ -112,7 +114,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getEmail();
             }
         };
-        userTable.addColumn(emailColumn, "Email");
+        userTable.addColumn(emailColumn, EMAIL_COLUMN);
 
         TextColumn<User> roleColumn = new TextColumn<User>() {
             @Override
@@ -120,7 +122,7 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getRole();
             }
         };
-        userTable.addColumn(roleColumn, "Role");
+        userTable.addColumn(roleColumn, ROLE_COLUMN);
 
         DateCell dateCell = new DateCell();
         Column<User, Date> dateColumn = new Column<User, Date>(dateCell) {
@@ -129,15 +131,15 @@ public class ManageProfilesView extends Composite implements ManageProfilesPrese
                 return user.getRegDate();
             }
         };
-        userTable.addColumn(dateColumn, "Registration Date");
+        userTable.addColumn(dateColumn, REGISTRATION_DATE_COLUMN);
 
         TextColumn<User> isActiveColumn = new TextColumn<User>() {
             @Override
             public String getValue(User user) {
-                return (user.getIsActive() == 1) ? "Yes" : "No";
+                return (user.getIsActive() == 1) ? YES_VALUE : NO_VALUE;
             }
         };
-        userTable.addColumn(isActiveColumn, "Is Active");
+        userTable.addColumn(isActiveColumn, IS_ACTIVE_COLUMN);
 
         userTable.setPageSize(10);
         userTable.setRowData(0, userList);

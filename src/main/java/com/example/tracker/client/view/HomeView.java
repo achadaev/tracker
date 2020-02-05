@@ -22,6 +22,8 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.TableConstants.*;
+
 public class HomeView extends Composite implements HomePresenter.Display {
     interface HomeViewUiBinder extends UiBinder<HTMLPanel, HomeView> {
     }
@@ -91,14 +93,14 @@ public class HomeView extends Composite implements HomePresenter.Display {
     private void drawAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses) {
         List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
         DataTable dataTable = DataTable.create();
-        dataTable.addColumn(ColumnType.STRING, "Date");
+        dataTable.addColumn(ColumnType.STRING, DATE_COLUMN);
 
         for (ProcedureType type : expenseTypes) {
             dataTable.addColumn(ColumnType.NUMBER, type.getName());
         }
 
         dataTable.addRows(dates.size());
-        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MMMM, yyyy");
+        DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(CHART_DATE_PATTERN);
         for (int i = 0; i < dates.size(); i++) {
             dataTable.setValue(i, 0, dateTimeFormat.format(dates.get(i).getDate()));
         }
@@ -110,14 +112,14 @@ public class HomeView extends Composite implements HomePresenter.Display {
         }
 
         areaChart.draw(dataTable);
-        areaChart.setHeight("500px");
-        areaChart.setWidth("700px");
+        areaChart.setHeight(AREA_CHART_HEIGHT);
+        areaChart.setWidth(AREA_CHART_WIDTH);
     }
 
     private void drawPieChart(List<Procedure> procedureList) {
         dataTable = DataTable.create();
-        dataTable.addColumn(ColumnType.STRING, "Type");
-        dataTable.addColumn(ColumnType.NUMBER, "Price");
+        dataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
+        dataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
 
         List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
         dataTable.addRows(expenseTypes.size());
@@ -130,8 +132,8 @@ public class HomeView extends Composite implements HomePresenter.Display {
         }
 
         pieChart.draw(dataTable);
-        pieChart.setWidth("400px");
-        pieChart.setHeight("400px");
+        pieChart.setWidth(PIE_CHART_HEIGHT);
+        pieChart.setHeight(PIE_CHART_WIDTH);
     }
 
     private double countByType(int typeId, List<Procedure> procedureList) {

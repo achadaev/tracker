@@ -14,6 +14,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class HomePresenter implements Presenter {
 
     private ReviewInfo reviewInfo;
@@ -48,7 +50,7 @@ public class HomePresenter implements Presenter {
             procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error getting expenses").center();
+                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
                 }
 
                 @Override
@@ -60,7 +62,7 @@ public class HomePresenter implements Presenter {
             procedureWebService.getUsersExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error getting expenses").center();
+                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
                 }
 
                 @Override
@@ -75,7 +77,7 @@ public class HomePresenter implements Presenter {
         procedureWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting expenses between").center();
+                AlertWidget.alert(ERR, GETTING_BETWEEN_EXPENSES_ERR).center();
             }
 
             @Override
@@ -94,7 +96,7 @@ public class HomePresenter implements Presenter {
         procedureWebService.getReview(new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting review").center();
+                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
             }
 
             @Override
@@ -111,7 +113,7 @@ public class HomePresenter implements Presenter {
         procedureWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", throwable.getMessage()).center();
+                AlertWidget.alert(ERR, GETTING_BETWEEN_DATES_ERR).center();
             }
 
             @Override

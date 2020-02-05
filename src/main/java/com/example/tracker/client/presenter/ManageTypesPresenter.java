@@ -15,6 +15,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmation {
 
     private List<ProcedureType> typeList;
@@ -40,7 +42,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
 
     private void confirmDeleting() {
         ConfirmWidget confirmWidget = new ConfirmWidget(this);
-        confirmWidget.confirm("Confirmation", "Do you actually want to delete these fields?").center();
+        confirmWidget.confirm(CONFIRMATION, DELETING_FIELDS_LABEL).center();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditTypeEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert("Error", "Select one row").center();
+                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
             }
         });
 
@@ -70,7 +72,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
         typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error deleting types").center();
+                AlertWidget.alert(ERR, DELETING_TYPES_ERR).center();
             }
 
             @Override
@@ -85,7 +87,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
         typeWebService.getTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting all types").center();
+                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
             }
 
             @Override

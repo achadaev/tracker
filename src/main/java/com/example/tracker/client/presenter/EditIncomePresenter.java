@@ -1,20 +1,19 @@
 package com.example.tracker.client.presenter;
 
-import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
 import com.example.tracker.client.event.incomes.IncomeUpdatedEvent;
 import com.example.tracker.client.widget.AlertWidget;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
+
+import static com.example.tracker.client.constant.WidgetConstants.*;
 
 public class EditIncomePresenter extends EditExpensePresenter {
 
@@ -31,7 +30,7 @@ public class EditIncomePresenter extends EditExpensePresenter {
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", throwable.getMessage()).center();
+                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
             }
 
             @Override
@@ -58,18 +57,17 @@ public class EditIncomePresenter extends EditExpensePresenter {
             procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert("Error", "Error updating income").center();
+                    AlertWidget.alert(ERR, UPDATING_INCOME_ERR).center();
                 }
 
                 @Override
                 public void onSuccess(Method method, Procedure response) {
                     eventBus.fireEvent(new IncomeUpdatedEvent(response));
                     display.hideDialog();
-                    Window.Location.replace(GWT.getHostPageBaseURL() + "#income-list");
                 }
             });
         } else {
-            AlertWidget.alert("Error", "Fill all fields").center();
+            AlertWidget.alert(ERR, EMPTY_FIELDS_ERR).center();
         }
     }
 }

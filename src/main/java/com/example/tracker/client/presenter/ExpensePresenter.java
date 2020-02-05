@@ -20,6 +20,8 @@ import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.List;
 
+import static com.example.tracker.client.constant.WidgetConstants.*;
+
 public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     private List<Procedure> procedureList;
@@ -70,7 +72,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", throwable.getMessage()).center();
+                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
             }
 
             @Override
@@ -87,7 +89,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         userWebService.getAllUsers(new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert("Error", "Error getting users list").center();
+                AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
             }
 
             @Override
@@ -115,7 +117,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditExpenseEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert("Error", "Select one row").center();
+                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
             }
         });
 
@@ -125,7 +127,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             if (selectedIds.size() >= 1) {
                 confirmDeleting();
             } else {
-                AlertWidget.alert("Error", "Select at least one row").center();
+                AlertWidget.alert(ERR, AT_LEAST_ONE_ROW_ERR).center();
             }
         });
 
@@ -166,7 +168,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     protected void confirmDeleting() {
         ConfirmWidget confirmWidget = new ConfirmWidget(this);
-        confirmWidget.confirm("Confirmation", "Do you actually want to delete these fields?").center();
+        confirmWidget.confirm(CONFIRMATION, DELETING_FIELDS_LABEL).center();
     }
 
     @Override
@@ -180,7 +182,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         procedureWebService.archiveProcedure(selectedIds, new MethodCallback<List<Procedure>>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert("Error", "Error deleting expenses").center();
+                AlertWidget.alert(ERR, DELETING_PROCEDURES_ERR).center();
             }
 
             @Override
@@ -207,7 +209,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                         new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
+                                AlertWidget.alert(ERR, FILTERING_EXPENSES_BY_DATE_ERR).center();
                             }
 
                             @Override
@@ -218,13 +220,13 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                             }
                         });
             } else {
-                AlertWidget.alert("Error", "Select dates").center();
+                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
             }
         } else {
             procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error filtering expenses").center();
+                    AlertWidget.alert(ERR, FILTERING_EXPENSES_ERR).center();
                 }
 
                 @Override
@@ -244,7 +246,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                         userId, new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert("Error", "Error filtering expenses by date").center();
+                                AlertWidget.alert(ERR, FILTERING_EXPENSES_BY_DATE_ERR).center();
                             }
 
                             @Override
@@ -255,13 +257,13 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                             }
                         });
             } else {
-                AlertWidget.alert("Error", "Select dates").center();
+                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
             }
         } else {
             procedureWebService.getProceduresByTypeId(typeId, userId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error filtering expenses").center();
+                    AlertWidget.alert(ERR, FILTERING_EXPENSES_ERR).center();
                 }
 
                 @Override
@@ -279,7 +281,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert("Error", "Error getting all expenses").center();
+                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
                 }
 
                 @Override
@@ -294,7 +296,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             procedureWebService.getUsersExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert("Error", exception.getMessage()).center();
+                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
                 }
 
                 @Override

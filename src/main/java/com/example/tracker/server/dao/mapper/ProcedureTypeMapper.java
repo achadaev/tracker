@@ -6,14 +6,16 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.example.tracker.server.constant.DBConstants.*;
+
 public class ProcedureTypeMapper implements RowMapper<ProcedureType> {
     @Override
     public ProcedureType mapRow(ResultSet resultSet, int i) throws SQLException {
         ProcedureType type = new ProcedureType();
 
-        type.setId(resultSet.getInt("id"));
-        type.setKind(resultSet.getInt("kind"));
-        type.setName(resultSet.getString("name"));
+        type.setId(resultSet.getInt(ID_COLUMN));
+        type.setKind(resultSet.getInt(KIND_COLUMN));
+        type.setName(resultSet.getString(NAME_COLUMN));
 
         return type;
     }
