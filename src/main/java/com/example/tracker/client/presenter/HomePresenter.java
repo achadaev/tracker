@@ -26,7 +26,7 @@ public class HomePresenter implements Presenter {
         Label getMonthLabel();
         Label getWeekLabel();
         Label getMoreLabel();
-        void initPieChart(List<Procedure> procedureList);
+        void initPieChart(List<Procedure> procedureList, boolean isExpense);
         void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
         Widget asWidget();
     }
@@ -45,7 +45,7 @@ public class HomePresenter implements Presenter {
         display.getMoreLabel().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
     }
 
-    private void initPieChart() {
+    private void initExpensePieChart() {
         if (ExpensesGWTController.isAdmin()) {
             procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
                 @Override
@@ -55,7 +55,7 @@ public class HomePresenter implements Presenter {
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response);
+                    display.initPieChart(response, true);
                 }
             });
         } else {
@@ -67,7 +67,35 @@ public class HomePresenter implements Presenter {
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response);
+                    display.initPieChart(response, true);
+                }
+            });
+        }
+    }
+
+    private void initIncomePieChart() {
+        if (ExpensesGWTController.isAdmin()) {
+            procedureWebService.getAllIncomes(new MethodCallback<List<Procedure>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Procedure> response) {
+                    display.initPieChart(response, false);
+                }
+            });
+        } else {
+            procedureWebService.getUsersIncomes(new MethodCallback<List<Procedure>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
+                }
+
+                @Override
+                public void onSuccess(Method method, List<Procedure> response) {
+                    display.initPieChart(response, false);
                 }
             });
         }
@@ -108,7 +136,8 @@ public class HomePresenter implements Presenter {
             }
         });
 
-        initPieChart();
+        initExpensePieChart();
+        initIncomePieChart();
 
         procedureWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override

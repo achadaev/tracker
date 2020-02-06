@@ -28,6 +28,11 @@ public class IncomePresenter extends ExpensePresenter {
         super(procedureWebService, typeWebService, userWebService, eventBus, view);
     }
 
+    public IncomePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService, UserWebService userWebService,
+                           HandlerManager eventBus, Display view, int typeId) {
+        super(procedureWebService, typeWebService, userWebService, eventBus, view, typeId);
+    }
+
     @Override
     protected void initTypesListBox(ListBox listBox) {
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {

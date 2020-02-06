@@ -2,10 +2,7 @@ package com.example.tracker.client;
 
 import com.example.tracker.client.event.*;
 import com.example.tracker.client.event.expense.*;
-import com.example.tracker.client.event.incomes.AddIncomeEvent;
-import com.example.tracker.client.event.incomes.EditIncomeEvent;
-import com.example.tracker.client.event.incomes.IncomeUpdatedEvent;
-import com.example.tracker.client.event.incomes.ShowIncomesEvent;
+import com.example.tracker.client.event.incomes.*;
 import com.example.tracker.client.event.type.*;
 import com.example.tracker.client.event.user.*;
 import com.example.tracker.client.widget.AlertWidget;
@@ -102,6 +99,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         eventBus.addHandler(ShowFilteredExpensesEvent.TYPE, event -> doShowFilteredExpenses(event.getTypeId()));
 
         eventBus.addHandler(ShowIncomesEvent.TYPE, event -> doShowIncomes());
+
+        eventBus.addHandler(ShowFilteredIncomesEvent.TYPE, event -> doShowFilteredIncomes(event.getTypeId()));
 
         eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
 
@@ -207,6 +206,13 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     private void doShowFilteredExpenses(int typeId) {
         History.newItem(FILTER_EXPENSE_PATH, false);
         Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
+                new ProcedureView(procedureWebService, typeId), typeId);
+        presenter.go(container);
+    }
+
+    private void doShowFilteredIncomes(int typeId) {
+        History.newItem(FILTER_INCOMES_PATH, false);
+        Presenter presenter = new IncomePresenter(procedureWebService, typeWebService, userWebService, eventBus,
                 new ProcedureView(procedureWebService, typeId), typeId);
         presenter.go(container);
     }

@@ -6,8 +6,11 @@
             <g:Label ui:field="amountLabel" text="Total expenses: "/>
             <g:Label ui:field="monthLabel" text="This month expenses: "/>
             <g:Label ui:field="weekLabel" text="This week expenses: "/>
-            <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="moreLabel"/>
+            <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="more-label"/>
         </g:HTMLPanel>
-        <g:HorizontalPanel ui:field="chartPanel"/>
+        <g:Label text="Expenses" styleName="procedure-label"/>
+        <g:HorizontalPanel ui:field="expenseChartPanel" styleName="chart-panel"/>
+        <g:Label text="Incomes" styleName="procedure-label"/>
+        <g:HorizontalPanel ui:field="incomeChartPanel" styleName="chart-panel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

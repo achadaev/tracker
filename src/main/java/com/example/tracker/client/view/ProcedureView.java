@@ -198,8 +198,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                         Date nullDate = new Date(0);
                         if (typeId != 0) {
                             procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
-                                    sortList.get(0).isAscending(), Integer.parseInt(usersListBox.getSelectedValue()),
-                                    new MethodCallback<List<Procedure>>() {
+                                    sortList.get(0).isAscending(), 0, new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
                                             AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();

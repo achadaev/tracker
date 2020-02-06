@@ -23,8 +23,8 @@ public class TableConstants {
     public static final String TABLE_DATE_PATTERN = "d MMMM yyyy, EEEE";
     public static final String CHART_DATE_PATTERN = "MMMM, yyyy";
     public static final String REGISTRATION_DATE_PATTERN = "dd-MM-yyyy hh:mm:ss";
-    public static final String AREA_CHART_HEIGHT = "500px";
-    public static final String AREA_CHART_WIDTH = "700px";
-    public static final String PIE_CHART_HEIGHT = "400px";
-    public static final String PIE_CHART_WIDTH = "400px";
+    public static final String AREA_CHART_HEIGHT = "250px";
+    public static final String AREA_CHART_WIDTH = "550px";
+    public static final String PIE_CHART_HEIGHT = "350px";
+    public static final String PIE_CHART_WIDTH = "350px";
 }

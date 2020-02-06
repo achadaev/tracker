@@ -15,6 +15,7 @@ public class PathConstants {
     public static final String EDIT_USER_PATH = "edit-user";
     public static final String EDIT_TYPE_PATH = "edit-type";
     public static final String FILTER_EXPENSE_PATH = "filter-expense";
+    public static final String FILTER_INCOMES_PATH = "filter-incomes";
     public static final String MANAGE_PROFILES_PATH = "manage-profiles";
     public static final String MANAGE_TYPES_PATH = "manage-types";
 }

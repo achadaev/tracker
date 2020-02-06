@@ -2,6 +2,7 @@ package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowFilteredExpensesEvent;
+import com.example.tracker.client.event.incomes.ShowFilteredIncomesEvent;
 import com.example.tracker.client.presenter.HomePresenter;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
@@ -40,7 +41,9 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @UiField
     HTMLPanel reviewPanel;
     @UiField
-    HorizontalPanel chartPanel;
+    HorizontalPanel expenseChartPanel;
+    @UiField
+    HorizontalPanel incomeChartPanel;
     @UiField
     Label amountLabel;
     @UiField
@@ -52,32 +55,91 @@ public class HomeView extends Composite implements HomePresenter.Display {
 
     private HandlerManager eventBus;
 
-    private PieChart pieChart;
+    private PieChart expensePieChart;
+    private PieChart incomePieChart;
     private AreaChart areaChart;
 
-    DataTable dataTable;
+    DataTable expenseDataTable;
+    DataTable incomeDataTable;
 
     @Override
-    public void initPieChart(List<Procedure> procedureList) {
+    public void initPieChart(List<Procedure> procedureList, boolean isExpense) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
-            pieChart = new PieChart();
-
-            pieChart.addSelectHandler(new SelectHandler() {
-                @Override
-                public void onSelect(SelectEvent selectEvent) {
-                    JsArray<Selection> selection = pieChart.getSelection();
-                    String type = dataTable.getValueString(selection.get(0).getRow(), 0);
-                    for (ProcedureType procedureType : ExpensesGWTController.getExpenseTypes()) {
-                        if (type.equals(procedureType.getName())) {
-                            eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId()));
+            if (isExpense) {
+                expensePieChart = new PieChart();
+                expensePieChart.addSelectHandler(new SelectHandler() {
+                    @Override
+                    public void onSelect(SelectEvent selectEvent) {
+                        JsArray<Selection> selection = expensePieChart.getSelection();
+                        String type = expenseDataTable.getValueString(selection.get(0).getRow(), 0);
+                        for (ProcedureType procedureType : ExpensesGWTController.getExpenseTypes()) {
+                            if (type.equals(procedureType.getName())) {
+                                eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId()));
+                            }
                         }
                     }
-                }
-            });
-            chartPanel.add(pieChart);
-            drawPieChart(procedureList);
+                });
+                expenseChartPanel.add(expensePieChart);
+                drawPieChart(procedureList, true);
+            } else {
+                incomePieChart = new PieChart();
+                incomePieChart.addSelectHandler(new SelectHandler() {
+                    @Override
+                    public void onSelect(SelectEvent selectEvent) {
+                        JsArray<Selection> selection = incomePieChart.getSelection();
+                        String type = incomeDataTable.getValueString(selection.get(0).getRow(), 0);
+                        for (ProcedureType procedureType : ExpensesGWTController.getIncomeTypes()) {
+                            if (type.equals(procedureType.getName())) {
+                                eventBus.fireEvent(new ShowFilteredIncomesEvent(procedureType.getId()));
+                            }
+                        }
+                    }
+                });
+                incomeChartPanel.add(incomePieChart);
+                drawPieChart(procedureList, false);
+            }
         });
+    }
+
+    private void drawPieChart(List<Procedure> procedureList, boolean isExpense) {
+        List<ProcedureType> types;
+        if (isExpense) {
+            expenseDataTable = DataTable.create();
+            expenseDataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
+            expenseDataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
+
+            types = ExpensesGWTController.getExpenseTypes();
+
+            initDataTable(procedureList, types, expenseDataTable);
+
+            expensePieChart.draw(expenseDataTable);
+            expensePieChart.setWidth(PIE_CHART_HEIGHT);
+            expensePieChart.setHeight(PIE_CHART_WIDTH);
+        } else {
+            incomeDataTable = DataTable.create();
+            incomeDataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
+            incomeDataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
+
+            types = ExpensesGWTController.getIncomeTypes();
+
+            initDataTable(procedureList, types, incomeDataTable);
+
+            incomePieChart.draw(incomeDataTable);
+            incomePieChart.setWidth(PIE_CHART_HEIGHT);
+            incomePieChart.setHeight(PIE_CHART_WIDTH);
+        }
+    }
+
+    private void initDataTable(List<Procedure> procedureList, List<ProcedureType> types, DataTable dataTable) {
+        dataTable.addRows(types.size());
+        int i = 0;
+        int j = 0;
+        for (ProcedureType type : types) {
+            dataTable.setValue(i, j, type.getName());
+            dataTable.setValue(i, j + 1, countByType(type.getId(), procedureList));
+            i++;
+        }
     }
 
     @Override
@@ -85,7 +147,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             areaChart = new AreaChart();
-            chartPanel.add(areaChart);
+            expenseChartPanel.add(areaChart);
             drawAreaChart(dates, expenses);
         });
     }
@@ -114,26 +176,6 @@ public class HomeView extends Composite implements HomePresenter.Display {
         areaChart.draw(dataTable);
         areaChart.setHeight(AREA_CHART_HEIGHT);
         areaChart.setWidth(AREA_CHART_WIDTH);
-    }
-
-    private void drawPieChart(List<Procedure> procedureList) {
-        dataTable = DataTable.create();
-        dataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
-        dataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
-
-        List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
-        dataTable.addRows(expenseTypes.size());
-        int i = 0;
-        int j = 0;
-        for (ProcedureType type : expenseTypes) {
-            dataTable.setValue(i, j, type.getName());
-            dataTable.setValue(i, j + 1, countByType(i + 1, procedureList));
-            i++;
-        }
-
-        pieChart.draw(dataTable);
-        pieChart.setWidth(PIE_CHART_HEIGHT);
-        pieChart.setHeight(PIE_CHART_WIDTH);
     }
 
     private double countByType(int typeId, List<Procedure> procedureList) {
