@@ -11,12 +11,15 @@ import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.User;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.List;
 
@@ -30,6 +33,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         HasClickHandlers getAddButton();
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
+        Select getTypeSelection();
         ListBox getUsersListBox();
         ListBox getTypesListBox();
         CheckBox getDateCheckBox();
@@ -85,6 +89,21 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         });
     }
 
+    protected void initTypeSelection(Select select) {
+        Option f = new Option();
+        f.setContent("First");
+        f.setValue("1");
+        Option s = new Option();
+        s.setContent("Second");
+        s.setValue("2");
+        Option t = new Option();
+        t.setContent("Third");
+        t.setValue("3");
+        select.add(f);
+        select.add(s);
+        select.add(t);
+    }
+
     protected void initUsersListBox(ListBox listBox) {
         userWebService.getAllUsers(new MethodCallback<List<User>>() {
             @Override
@@ -105,6 +124,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     public void bind() {
         initTypesListBox(display.getTypesListBox());
+        initTypeSelection(display.getTypeSelection());
         if (ExpensesGWTController.isAdmin()) {
             initUsersListBox(display.getUsersListBox());
         }
@@ -139,6 +159,16 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                 filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
             }
         });
+/*
+
+        display.getTypeSelection().addValueChangeHandler(valueChangeEvent -> {
+            AlertWidget.alert("Alert", "valueChangeEvent.getValue: " + valueChangeEvent.getValue());
+            AlertWidget.alert("Alert", "getTypeSelection().getValue: " + display.getTypeSelection().getValue());
+            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem: " + display.getTypeSelection().getSelectedItem());
+            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getValue: " + display.getTypeSelection().getSelectedItem().getValue());
+            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getContent: " + display.getTypeSelection().getSelectedItem().getContent());
+        });
+*/
 
         display.getTypesListBox().addChangeHandler(changeEvent -> {
             if (ExpensesGWTController.isAdmin()) {

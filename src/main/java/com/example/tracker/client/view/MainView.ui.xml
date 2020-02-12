@@ -1,17 +1,18 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
     <g:HTMLPanel>
-        <g:HorizontalPanel width="100%">
-            <g:HorizontalPanel ui:field="menuPanel" verticalAlignment="ALIGN_TOP">
-                <g:Button ui:field="homeButton" text="Home"/>
-                <g:Button ui:field="expensesButton" text="Expenses"/>
-                <g:Button ui:field="incomesButton" text="Incomes"/>
-                <g:Button ui:field="profileButton" text="Profile"/>
-            </g:HorizontalPanel>
-            <g:cell horizontalAlignment="ALIGN_RIGHT">
-                <g:HTMLPanel ui:field="profileBarPanel">
-                </g:HTMLPanel>
-            </g:cell>
+        <g:HorizontalPanel ui:field="menuPanel" width="100%">
+
+            <b:Navbar>
+                <b:NavbarNav ui:field="navigationBar" width="100%">
+                    <b:AnchorListItem ui:field="homeButton" icon="HOME" text="Home"/>
+                    <b:AnchorListItem ui:field="expensesButton" icon="CARET_DOWN" text="Expenses"/>
+                    <b:AnchorListItem ui:field="incomesButton" icon="CARET_UP" text="Incomes"/>
+                    <b:AnchorListItem ui:field="profileButton" icon="USER" text="Profile"/>
+                </b:NavbarNav>
+            </b:Navbar>
+
         </g:HorizontalPanel>
         <g:HorizontalPanel ui:field="contentPanel"/>
     </g:HTMLPanel>

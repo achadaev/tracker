@@ -5,27 +5,28 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.NavbarNav;
 
 public class MainView extends Composite implements MainPresenter.Display {
     interface MainViewUiBinder extends UiBinder<HTMLPanel, MainView> {
     }
 
     @UiField
+    NavbarNav navigationBar;
+    @UiField
+    AnchorListItem homeButton;
+    @UiField
+    AnchorListItem expensesButton;
+    @UiField
+    AnchorListItem incomesButton;
+    @UiField
+    AnchorListItem profileButton;
+    @UiField
     HorizontalPanel menuPanel;
-    @UiField
-    Button homeButton;
-    @UiField
-    Button expensesButton;
-    @UiField
-    Button incomesButton;
-    @UiField
-    Button profileButton;
-    @UiField
-    HTMLPanel profileBarPanel;
     @UiField
     HorizontalPanel contentPanel;
 
@@ -33,6 +34,11 @@ public class MainView extends Composite implements MainPresenter.Display {
 
     public MainView() {
         initWidget(ourUiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    public NavbarNav getNavigationBar() {
+        return navigationBar;
     }
 
     @Override
@@ -56,8 +62,8 @@ public class MainView extends Composite implements MainPresenter.Display {
     }
 
     @Override
-    public HTMLPanel getProfileBarPanel() {
-        return profileBarPanel;
+    public HorizontalPanel getMenuPanel() {
+        return menuPanel;
     }
 
     @Override

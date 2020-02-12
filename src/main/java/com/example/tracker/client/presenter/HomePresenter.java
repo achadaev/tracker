@@ -7,10 +7,11 @@ import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.*;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.client.ui.Anchor;
+import org.gwtbootstrap3.client.ui.Heading;
 
 import java.util.List;
 
@@ -21,11 +22,11 @@ public class HomePresenter implements Presenter {
     private ReviewInfo reviewInfo;
 
     public interface Display {
-        Label getGreetingLabel();
-        Label getAmountLabel();
-        Label getMonthLabel();
-        Label getWeekLabel();
-        Label getMoreLabel();
+        Heading getGreetingHeading();
+        Heading getAmountLabel();
+        Heading getMonthLabel();
+        Heading getWeekLabel();
+        Anchor getMoreAnchor();
         void initPieChart(List<Procedure> procedureList, boolean isExpense);
         void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
         Widget asWidget();
@@ -42,7 +43,7 @@ public class HomePresenter implements Presenter {
     }
 
     public void bind() {
-        display.getMoreLabel().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
+        display.getMoreAnchor().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
     }
 
     private void initExpensePieChart() {
@@ -120,7 +121,7 @@ public class HomePresenter implements Presenter {
         bind();
         container.clear();
         container.add(display.asWidget());
-        display.getGreetingLabel().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
+        display.getGreetingHeading().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
         procedureWebService.getReview(new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {

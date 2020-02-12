@@ -4,15 +4,24 @@
 
 <module rename-to='expenses'>
     <inherits name='com.google.gwt.user.User'/>
-    <inherits name="com.google.gwt.user.theme.clean.Clean"/>
     <inherits name="com.google.gwt.uibinder.UiBinder"/>
     <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name="org.fusesource.restygwt.RestyGWT"/>
     <inherits name="com.googlecode.gwt.charts.Charts"/>
+    <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+    <inherits name="org.gwtbootstrap3.extras.bootbox.Bootbox"/>
+    <inherits name="org.gwtbootstrap3.extras.select.Select"/>
 
     <entry-point class='com.example.tracker.client.ExpensesGWTApplication'/>
 
     <source path='client'/>
     <source path='shared'/>
+
+    <public path='resources'>
+        <include name='css/*.css'/>
+        <include name='js/*.js'/>
+    </public>
+
+    <stylesheet src='css/style.css'/>
 
 </module>

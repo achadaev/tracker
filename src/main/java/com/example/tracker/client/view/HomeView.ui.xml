@@ -1,16 +1,19 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
     <g:HTMLPanel>
-        <g:Label ui:field="greetingLabel"/>
-        <g:HTMLPanel ui:field="reviewPanel">
-            <g:Label ui:field="amountLabel" text="Total expenses: "/>
-            <g:Label ui:field="monthLabel" text="This month expenses: "/>
-            <g:Label ui:field="weekLabel" text="This week expenses: "/>
-            <g:Label ui:field="moreLabel" text="Show more..." addStyleNames="more-label"/>
-        </g:HTMLPanel>
-        <g:Label text="Expenses" styleName="procedure-label"/>
-        <g:HorizontalPanel ui:field="expenseChartPanel" styleName="chart-panel"/>
-        <g:Label text="Incomes" styleName="procedure-label"/>
-        <g:HorizontalPanel ui:field="incomeChartPanel" styleName="chart-panel"/>
+        <b:Jumbotron height="25em">
+            <b:Heading size="H1" ui:field="greetingHeading"/>
+            <b:html.Hr/>
+            <b:Heading size="H5" ui:field="amountLabel" text="Total expenses: "/>
+            <b:Heading size="H5" ui:field="monthLabel" text="This month expenses: "/>
+            <b:Heading size="H5" ui:field="weekLabel" text="This week expenses: "/>
+            <b:Anchor ui:field="moreAnchor" text="Show more..."/>
+        </b:Jumbotron>
+
+        <g:Label text="Expenses"/>
+        <g:HorizontalPanel ui:field="expenseChartPanel"/>
+        <g:Label text="Incomes"/>
+        <g:HorizontalPanel ui:field="incomeChartPanel"/>
     </g:HTMLPanel>
 </ui:UiBinder>

@@ -20,6 +20,8 @@ import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
+import org.gwtbootstrap3.client.ui.Anchor;
+import org.gwtbootstrap3.client.ui.Heading;
 
 import java.util.List;
 
@@ -37,21 +39,19 @@ public class HomeView extends Composite implements HomePresenter.Display {
     }
 
     @UiField
-    Label greetingLabel;
-    @UiField
-    HTMLPanel reviewPanel;
+    Heading greetingHeading;
     @UiField
     HorizontalPanel expenseChartPanel;
     @UiField
     HorizontalPanel incomeChartPanel;
     @UiField
-    Label amountLabel;
+    Heading amountLabel;
     @UiField
-    Label monthLabel;
+    Heading monthLabel;
     @UiField
-    Label weekLabel;
+    Heading weekLabel;
     @UiField
-    Label moreLabel;
+    Anchor moreAnchor;
 
     private HandlerManager eventBus;
 
@@ -189,28 +189,28 @@ public class HomeView extends Composite implements HomePresenter.Display {
     }
 
     @Override
-    public Label getGreetingLabel() {
-        return greetingLabel;
+    public Heading getGreetingHeading() {
+        return greetingHeading;
     }
 
     @Override
-    public Label getAmountLabel() {
+    public Heading getAmountLabel() {
         return amountLabel;
     }
 
     @Override
-    public Label getMonthLabel() {
+    public Heading getMonthLabel() {
         return monthLabel;
     }
 
     @Override
-    public Label getWeekLabel() {
+    public Heading getWeekLabel() {
         return weekLabel;
     }
 
     @Override
-    public Label getMoreLabel() {
-        return moreLabel;
+    public Anchor getMoreAnchor() {
+        return moreAnchor;
     }
 
     @Override

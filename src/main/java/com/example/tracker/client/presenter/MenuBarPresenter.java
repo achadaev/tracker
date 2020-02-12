@@ -5,17 +5,18 @@ import com.example.tracker.client.event.ShowManageProfilesEvent;
 import com.example.tracker.client.event.ShowManageTypesEvent;
 import com.example.tracker.client.services.UserWebService;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Strong;
 
 public class MenuBarPresenter implements Presenter {
     public interface Display {
-        Label getUsernameLabel();
-        Button getManageProfilesButton();
-        Button getManageTypesButton();
-        Button getLogoutButton();
+        AnchorListItem getManageProfilesButton();
+        AnchorListItem getManageTypesButton();
+        AnchorListItem getLogoutButton();
         Widget asWidget();
     }
 
@@ -35,16 +36,30 @@ public class MenuBarPresenter implements Presenter {
             ExpensesGWTController.logout(userWebService);
         });
 
-        display.getManageProfilesButton().addClickHandler(clickEvent -> {
-            eventBus.fireEvent(new ShowManageProfilesEvent());
-        });
+        display.getManageProfilesButton().addClickHandler(clickEvent ->
+                eventBus.fireEvent(new ShowManageProfilesEvent()));
 
         display.getManageTypesButton().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowManageTypesEvent()));
+    }
+
+    public AnchorListItem getManageTypesButton() {
+        return display.getManageTypesButton();
+    }
+
+    public AnchorListItem getManageProfilesButton() {
+        return display.getManageProfilesButton();
+    }
+
+    public AnchorListItem getLogoutButton() {
+        return display.getLogoutButton();
     }
 
     @Override
     public void go(HasWidgets container) {
         container.add(display.asWidget());
-        display.getUsernameLabel().setText(ExpensesGWTController.getUser().getLogin());
+        if (!ExpensesGWTController.isAdmin()) {
+            display.getManageTypesButton().removeFromParent();
+            display.getManageProfilesButton().removeFromParent();
+        }
     }
 }

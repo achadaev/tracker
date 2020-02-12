@@ -1,55 +1,52 @@
 package com.example.tracker.client.view;
 
-import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.presenter.MenuBarPresenter;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Pull;
 
 public class MenuBarView extends Composite implements MenuBarPresenter.Display {
     interface ProfileBarViewUiBinder extends UiBinder<HTMLPanel, MenuBarView> {
     }
 
-    @UiField
-    HorizontalPanel horizontalPanel;
-    @UiField
-    Label usernameLabel;
-    @UiField
-    Button manageProfilesButton;
-    @UiField
-    Button manageTypesButton;
-    @UiField
-    Button logoutButton;
+    private AnchorListItem manageProfilesButton;
+    private AnchorListItem manageTypesButton;
+    private AnchorListItem logoutButton;
 
     private static ProfileBarViewUiBinder ourUiBinder = GWT.create(ProfileBarViewUiBinder.class);
 
     public MenuBarView() {
         initWidget(ourUiBinder.createAndBindUi(this));
-        if (!ExpensesGWTController.isAdmin()) {
-            manageProfilesButton.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
-            manageTypesButton.getElement().getStyle().setVisibility(Style.Visibility.HIDDEN);
-        }
+        manageTypesButton = new AnchorListItem();
+        manageProfilesButton = new AnchorListItem();
+        logoutButton = new AnchorListItem();
+
+        manageTypesButton.setText("Manage Types");
+        manageProfilesButton.setText("Manage Profiles");
+        logoutButton.setText("Logout");
+
+        manageTypesButton.setIcon(IconType.BARS);
+        manageProfilesButton.setIcon(IconType.USERS);
+        logoutButton.setIcon(IconType.CLOSE);
+
+        logoutButton.setPull(Pull.RIGHT);
     }
 
     @Override
-    public Label getUsernameLabel() {
-        return usernameLabel;
-    }
-
-    @Override
-    public Button getManageProfilesButton() {
+    public AnchorListItem getManageProfilesButton() {
         return manageProfilesButton;
     }
 
     @Override
-    public Button getManageTypesButton() {
+    public AnchorListItem getManageTypesButton() {
         return manageTypesButton;
     }
 
     @Override
-    public Button getLogoutButton() {
+    public AnchorListItem getLogoutButton() {
         return logoutButton;
     }
 }
