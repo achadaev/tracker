@@ -1,6 +1,7 @@
 package com.example.tracker.shared.model;
 
 public class ReviewInfo {
+    double monthChange;
     double amount;
     double month;
     double week;
@@ -8,10 +9,19 @@ public class ReviewInfo {
     public ReviewInfo() {
     }
 
-    public ReviewInfo(double amount, double month, double week) {
+    public ReviewInfo(double monthChange, double amount, double month, double week) {
+        this.monthChange = monthChange;
         this.amount = amount;
         this.month = month;
         this.week = week;
+    }
+
+    public double getMonthChange() {
+        return monthChange;
+    }
+
+    public void setMonthChange(double monthChange) {
+        this.monthChange = monthChange;
     }
 
     public double getAmount() {

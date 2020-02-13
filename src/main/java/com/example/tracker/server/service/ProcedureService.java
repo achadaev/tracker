@@ -70,15 +70,55 @@ public class ProcedureService {
         if (isAdmin()) {
             ReviewInfo result = new ReviewInfo();
             for (User user : getAllUsers()) {
-                ReviewInfo temp = iProcedureDAO.getReview(user.getId());
-                result.setWeek(result.getWeek() + temp.getWeek());
-                result.setMonth(result.getMonth() + temp.getMonth());
+                ReviewInfo temp = getReview(user.getId());
+                if (user.getId() == getCurrentUser().getId()) {
+                    result.setMonthChange(temp.getMonthChange());
+                }
                 result.setAmount(result.getAmount() + temp.getAmount());
+                result.setMonth(result.getMonth() + temp.getMonth());
+                result.setWeek(result.getWeek() + temp.getWeek());
             }
             return result;
         } else {
-            return iProcedureDAO.getReview(getCurrentUser().getId());
+            return getReview(getCurrentUser().getId());
         }
+    }
+
+    public ReviewInfo getReview(int userId) {
+        ReviewInfo reviewInfo = new ReviewInfo();
+        DateTime firstDayOfMonth = new DateTime(new Date()).dayOfMonth().withMinimumValue();
+        DateTime firstDayOfWeek = new DateTime(new Date()).dayOfWeek().withMinimumValue();
+        List<Procedure> tempList;
+
+        // Month change calculating
+        tempList = iProcedureDAO.getIncomesByDate(userId, firstDayOfMonth.toDate(), new Date());
+        reviewInfo.setMonthChange(getTotalPrice(tempList));
+
+        tempList = iProcedureDAO.getExpensesByDate(userId, firstDayOfMonth.toDate(), new Date());
+        reviewInfo.setMonthChange(reviewInfo.getMonthChange() - getTotalPrice(tempList));
+
+        // Amount calculating
+        tempList = iProcedureDAO.getUsersExpenses(userId);
+        reviewInfo.setAmount(getTotalPrice(tempList));
+
+        // Month calculating
+        tempList = iProcedureDAO.getExpensesByDate(userId, firstDayOfMonth.toDate(), new Date());
+        reviewInfo.setMonth(getTotalPrice(tempList));
+
+        // Week calculating
+        tempList = iProcedureDAO.getExpensesByDate(userId, firstDayOfWeek.toDate(), new Date());
+        reviewInfo.setWeek(getTotalPrice(tempList));
+
+        return reviewInfo;
+    }
+
+    private double getTotalPrice(List<Procedure> procedureList) {
+        double total = 0.0;
+        for (Procedure procedure : procedureList) {
+            total += procedure.getPrice();
+        }
+
+        return total;
     }
 
     public List<Procedure> getProceduresByTypeId(int id) throws AccessDeniedException {
@@ -333,14 +373,14 @@ public class ProcedureService {
             procedureList = getUsersExpenses();
         }
         if (!procedureList.isEmpty()) {
-            Collections.sort(procedureList, (Comparator.comparing(Procedure::getDate)));
-            DateTime first = new DateTime(procedureList.get(0).getDate()).dayOfMonth().withMinimumValue();
-            DateTime last = new DateTime(procedureList.get(procedureList.size() - 1).getDate());
+            procedureList.sort(Comparator.comparing(Procedure::getDate));
+            DateTime firstDay = new DateTime(procedureList.get(0).getDate()).dayOfMonth().withMinimumValue();
+            DateTime lastDay = new DateTime(procedureList.get(procedureList.size() - 1).getDate());
             List<SimpleDate> datesBetween = new ArrayList<>();
 
-            while (first.compareTo(last) <= 0) {
-                datesBetween.add(new SimpleDate(first.toDate()));
-                first = first.plusMonths(1).dayOfMonth().withMinimumValue();
+            while (firstDay.compareTo(lastDay) <= 0) {
+                datesBetween.add(new SimpleDate(firstDay.toDate()));
+                firstDay = firstDay.plusMonths(1).dayOfMonth().withMinimumValue();
             }
 
             return datesBetween;
@@ -417,7 +457,7 @@ public class ProcedureService {
         if (isAdmin()) {
             procedureList = iProcedureDAO.getAllExpenses();
         } else {
-            procedureList = iProcedureDAO.getUsersExpenses(getCurrentUser().getId());
+            procedureList = getUsersExpenses();
         }
         for (Procedure procedure : procedureList) {
             for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
@@ -437,7 +477,7 @@ public class ProcedureService {
         if (isAdmin()) {
             procedureList = iProcedureDAO.getAllIncomes();
         } else {
-            procedureList = iProcedureDAO.getUsersIncomes(getCurrentUser().getId());
+            procedureList = getUsersIncomes();
         }
         for (Procedure procedure : procedureList) {
             for (ProcedureType type : iProcedureTypeDAO.getIncomeTypes()) {

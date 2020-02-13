@@ -1,7 +1,6 @@
 package com.example.tracker.server.dao;
 
 import com.example.tracker.shared.model.Procedure;
-import com.example.tracker.shared.model.ReviewInfo;
 
 import java.util.Date;
 import java.util.List;
@@ -15,8 +14,6 @@ public interface IProcedureDAO {
     List<Procedure> getUsersExpenses(int userId);
 
     List<Procedure> getUsersIncomes(int userId);
-
-    ReviewInfo getReview(int userId);
 
     Procedure getProcedureById(int userId, int id);
 

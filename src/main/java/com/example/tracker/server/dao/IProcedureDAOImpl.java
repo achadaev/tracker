@@ -2,7 +2,6 @@ package com.example.tracker.server.dao;
 
 import com.example.tracker.server.dao.mapper.ProcedureMapper;
 import com.example.tracker.shared.model.Procedure;
-import com.example.tracker.shared.model.ReviewInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -64,35 +62,6 @@ public class IProcedureDAOImpl implements IProcedureDAO {
                 "WHERE kind > 0 AND user_proc.user_id = ? AND proc.is_archived = 0";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
                 .setInt(1, userId), new ProcedureMapper());
-    }
-
-    private double getTotal(List<Procedure> procedureList) {
-        double total = 0.0;
-        for (Procedure procedure : procedureList) {
-            total += procedure.getPrice();
-        }
-
-        return total;
-    }
-
-    @Override
-    public ReviewInfo getReview(int userId) {
-        ReviewInfo reviewInfo = new ReviewInfo();
-
-        List<Procedure> tempList = getUsersExpenses(userId);
-        reviewInfo.setAmount(getTotal(tempList));
-
-        Calendar monthBefore = Calendar.getInstance();
-        monthBefore.add(Calendar.MONTH, -1);
-        tempList = getExpensesByDate(userId, monthBefore.getTime(), new Date());
-        reviewInfo.setMonth(getTotal(tempList));
-
-        Calendar weekBefore = Calendar.getInstance();
-        weekBefore.add(Calendar.WEEK_OF_YEAR, -1);
-        tempList = getExpensesByDate(userId, weekBefore.getTime(), new Date());
-        reviewInfo.setWeek(getTotal(tempList));
-
-        return reviewInfo;
     }
 
     @Override

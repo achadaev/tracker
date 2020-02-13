@@ -4,7 +4,6 @@ import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowFilteredExpensesEvent;
 import com.example.tracker.client.event.incomes.ShowFilteredIncomesEvent;
 import com.example.tracker.client.presenter.HomePresenter;
-import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.MonthlyExpense;
 import com.example.tracker.shared.model.SimpleDate;
@@ -45,6 +44,8 @@ public class HomeView extends Composite implements HomePresenter.Display {
     HorizontalPanel expenseChartPanel;
     @UiField
     HorizontalPanel incomeChartPanel;
+    @UiField
+    Heading monthChange;
     @UiField
     Heading amountLabel;
     @UiField
@@ -177,6 +178,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @Override
     public Heading getGreetingHeading() {
         return greetingHeading;
+    }
+
+    @Override
+    public Heading getMonthChange() {
+        return monthChange;
     }
 
     @Override

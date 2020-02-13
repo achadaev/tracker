@@ -24,6 +24,7 @@ public class HomePresenter implements Presenter {
 
     public interface Display {
         Heading getGreetingHeading();
+        Heading getMonthChange();
         Heading getAmountLabel();
         Heading getMonthLabel();
         Heading getWeekLabel();
@@ -104,9 +105,15 @@ public class HomePresenter implements Presenter {
             @Override
             public void onSuccess(Method method, ReviewInfo response) {
                 reviewInfo = response;
-                display.getAmountLabel().setText(display.getAmountLabel().getText() + reviewInfo.getAmount());
-                display.getMonthLabel().setText(display.getMonthLabel().getText() + reviewInfo.getMonth());
-                display.getWeekLabel().setText(display.getWeekLabel().getText() + reviewInfo.getWeek());
+                display.getMonthChange().setText(Double.toString(reviewInfo.getMonthChange()));
+                if (reviewInfo.getMonthChange() < 0) {
+                    display.getMonthChange().setColor("red");
+                } else {
+                    display.getMonthChange().setColor("green");
+                }
+                display.getAmountLabel().setText(display.getAmountLabel().getText() + " " + reviewInfo.getAmount());
+                display.getMonthLabel().setText(display.getMonthLabel().getText() + " " + reviewInfo.getMonth());
+                display.getWeekLabel().setText(display.getWeekLabel().getText() + " " + reviewInfo.getWeek());
             }
         });
 

@@ -7,9 +7,14 @@
                 <b:Jumbotron height="25em" width="75em">
                     <b:Heading size="H1" ui:field="greetingHeading"/>
                     <b:html.Hr/>
-                    <b:Heading size="H5" ui:field="amountLabel" text="Total expenses: "/>
-                    <b:Heading size="H5" ui:field="monthLabel" text="This month expenses: "/>
-                    <b:Heading size="H5" ui:field="weekLabel" text="This week expenses: "/>
+                    <g:VerticalPanel>
+                        <b:Heading size="H4" text="This month your balance has changed by "/>
+                        <b:Heading size="H3" ui:field="monthChange" text=""/>
+                    </g:VerticalPanel>
+                    <b:html.Hr/>
+                    <b:Heading size="H5" ui:field="amountLabel" text="Total expenses:"/>
+                    <b:Heading size="H5" ui:field="monthLabel" text="This month expenses:"/>
+                    <b:Heading size="H5" ui:field="weekLabel" text="This week expenses:"/>
                     <b:Anchor ui:field="moreAnchor" text="Show more..."/>
                 </b:Jumbotron>
             </b:Row>

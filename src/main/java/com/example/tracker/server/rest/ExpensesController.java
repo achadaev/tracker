@@ -5,6 +5,7 @@ import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ProcedureService;
 import com.example.tracker.shared.model.*;
+import org.apache.commons.collections.map.SingletonMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
