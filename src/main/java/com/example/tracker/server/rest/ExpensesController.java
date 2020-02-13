@@ -72,10 +72,19 @@ public class ExpensesController {
         return null;
     }
 
+    @GetMapping("/expenses/expense-type-review")
+    Map<String, Double> getExpensesReviewByTypes() {
+        return procedureService.getExpensesReviewByTypes();
+    }
+
+    @GetMapping("/expenses/income-type-review")
+    Map<String, Double> getIncomesReviewByTypes() {
+        return procedureService.getIncomesReviewByTypes();
+    }
+
     @GetMapping("/expenses/id={id}")
     Procedure getExpenseById(@PathVariable int id) {
         return procedureService.getProcedureById(id);
-        //return result.getKind() < 0 ? result : null;
     }
 
     @GetMapping("/expenses/typeId={id}")

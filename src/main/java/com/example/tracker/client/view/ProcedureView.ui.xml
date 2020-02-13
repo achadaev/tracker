@@ -3,29 +3,37 @@
              xmlns:dp='urn:import:com.google.gwt.user.datepicker.client'
              xmlns:b='urn:import:org.gwtbootstrap3.client.ui'
              xmlns:s="urn:import:org.gwtbootstrap3.extras.select.client.ui">
-<g:HTMLPanel>
-        <g:HorizontalPanel width="200px">
-            <b:Button icon="PLUS" ui:field="addButton" text="Add"/>
-            <b:Button icon="PENCIL" ui:field="editButton" text="Edit"/>
-            <b:Button icon="TRASH" ui:field="deleteButton" text="Delete"/>
-        </g:HorizontalPanel>
-
-        <g:HorizontalPanel width="700px">
-            <s:Select ui:field="typeSelection"/>
-            <g:ListBox ui:field="typesListBox" height="25px"/>
-            <g:ListBox ui:field="usersListBox" height="25px"/>
-            <g:Label text="Filter by date" horizontalAlignment="LEFT"/>
-            <g:CheckBox ui:field="dateCheckBox"/>
-            <dp:DatePicker ui:field="startDate"/>
-            <dp:DatePicker ui:field="endDate"/>
-            <b:Button icon="FILTER" ui:field="filter" text="Filter"/>
-        </g:HorizontalPanel>
-
-        <g:HTMLPanel ui:field="tablePanel"/>
-            <g:HorizontalPanel>
-                <g:Label text="Total: "/>
-                <g:Label ui:field="total"/>
-            </g:HorizontalPanel>
-        </g:HTMLPanel>
+    <g:HTMLPanel>
+        <b:Column size="MD_12">
+            <b:Row>
+                <g:HorizontalPanel width="200px">
+                    <b:Button icon="PLUS" ui:field="addButton" type="PRIMARY" text="Add"/>
+                    <b:Button icon="PENCIL" ui:field="editButton" type="PRIMARY" text="Edit"/>
+                    <b:Button icon="TRASH" ui:field="deleteButton" type="PRIMARY" text="Delete"/>
+                </g:HorizontalPanel>
+            </b:Row>
+            <b:Row>
+                <g:HorizontalPanel width="700px">
+                    <s:Select ui:field="typeSelection"/>
+                    <g:ListBox ui:field="typesListBox" height="25px"/>
+                    <g:ListBox ui:field="usersListBox" height="25px"/>
+                    <g:Label text="Filter by date" horizontalAlignment="LEFT"/>
+                    <g:CheckBox ui:field="dateCheckBox"/>
+                    <dp:DatePicker ui:field="startDate"/>
+                    <dp:DatePicker ui:field="endDate"/>
+                    <b:Button icon="FILTER" ui:field="filter" type="PRIMARY" text="Filter"/>
+                </g:HorizontalPanel>
+            </b:Row>
+            <b:Row>
+                <g:HTMLPanel ui:field="tablePanel"/>
+            </b:Row>
+            <b:Row>
+                <g:HorizontalPanel>
+                    <g:Label text="Total: "/>
+                    <g:Label ui:field="total"/>
+                </g:HorizontalPanel>
+            </b:Row>
+        </b:Column>
+    </g:HTMLPanel>
 
 </ui:UiBinder>

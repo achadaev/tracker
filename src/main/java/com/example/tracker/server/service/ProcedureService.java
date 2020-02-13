@@ -22,7 +22,7 @@ public class ProcedureService {
     private IUserDAO iUserDao;
 
     @Autowired
-    private IProcedureDAO iProcedureDao;
+    private IProcedureDAO iProcedureDAO;
 
     @Autowired
     private IProcedureTypeDAO iProcedureTypeDAO;
@@ -39,17 +39,17 @@ public class ProcedureService {
     }
 
     public List<Procedure> getUsersExpenses() {
-        return iProcedureDao.getUsersExpenses(getCurrentUser().getId());
+        return iProcedureDAO.getUsersExpenses(getCurrentUser().getId());
     }
 
     public List<Procedure> getUsersIncomes() {
-        return iProcedureDao.getUsersIncomes(getCurrentUser().getId());
+        return iProcedureDAO.getUsersIncomes(getCurrentUser().getId());
     }
 
     public Procedure getProcedureById(int id) {
         if (isAdmin()) {
-            List<Procedure> procedureList = iProcedureDao.getAllExpenses();
-            procedureList.addAll(iProcedureDao.getAllIncomes());
+            List<Procedure> procedureList = iProcedureDAO.getAllExpenses();
+            procedureList.addAll(iProcedureDAO.getAllIncomes());
             for (Procedure procedure : procedureList) {
                 if (procedure.getId() == id) {
                     return procedure;
@@ -57,7 +57,7 @@ public class ProcedureService {
             }
             throw new NoSuchElementException(NO_SUCH_PROCEDURE_MESSAGE);
         } else {
-            Procedure procedure = iProcedureDao.getProcedureById(getCurrentUser().getId(), id);
+            Procedure procedure = iProcedureDAO.getProcedureById(getCurrentUser().getId(), id);
             if (procedure.getIsArchived() == 0) {
                 return procedure;
             } else {
@@ -70,27 +70,27 @@ public class ProcedureService {
         if (isAdmin()) {
             ReviewInfo result = new ReviewInfo();
             for (User user : getAllUsers()) {
-                ReviewInfo temp = iProcedureDao.getReview(user.getId());
+                ReviewInfo temp = iProcedureDAO.getReview(user.getId());
                 result.setWeek(result.getWeek() + temp.getWeek());
                 result.setMonth(result.getMonth() + temp.getMonth());
                 result.setAmount(result.getAmount() + temp.getAmount());
             }
             return result;
         } else {
-            return iProcedureDao.getReview(getCurrentUser().getId());
+            return iProcedureDAO.getReview(getCurrentUser().getId());
         }
     }
 
     public List<Procedure> getProceduresByTypeId(int id) throws AccessDeniedException {
         if (isAdmin()) {
             if (id == -100) {
-                return iProcedureDao.getAllExpenses();
+                return iProcedureDAO.getAllExpenses();
             } else if (id == 100) {
-                return iProcedureDao.getAllIncomes();
+                return iProcedureDAO.getAllIncomes();
             } else {
                 List<Procedure> result = new ArrayList<>();
                 for (User user : getAllUsers()) {
-                    result.addAll(iProcedureDao.getProceduresByTypeId(user.getId(), id));
+                    result.addAll(iProcedureDAO.getProceduresByTypeId(user.getId(), id));
                 }
                 return result;
             }
@@ -101,7 +101,7 @@ public class ProcedureService {
                 return getUsersIncomes();
             } else {
                 List<Procedure> result = new ArrayList<>();
-                List<Procedure> procedures = iProcedureDao.getProceduresByTypeId(getCurrentUser().getId(), id);
+                List<Procedure> procedures = iProcedureDAO.getProceduresByTypeId(getCurrentUser().getId(), id);
                 for (Procedure procedure : procedures) {
                     if (procedure.getIsArchived() == 0) {
                         result.add(procedure);
@@ -118,11 +118,11 @@ public class ProcedureService {
                 return getProceduresByTypeId(id);
             } else {
                 if (id == -100) {
-                    return iProcedureDao.getUsersExpenses(userId);
+                    return iProcedureDAO.getUsersExpenses(userId);
                 } else if (id == 100) {
-                    return iProcedureDao.getUsersIncomes(userId);
+                    return iProcedureDAO.getUsersIncomes(userId);
                 } else {
-                    return iProcedureDao.getProceduresByTypeId(userId, id);
+                    return iProcedureDAO.getProceduresByTypeId(userId, id);
                 }
             }
         } else {
@@ -136,23 +136,23 @@ public class ProcedureService {
         if (isAdmin()) {
             if (typeId == -100) {
                 for (User user : getAllUsers()) {
-                    result.addAll(iProcedureDao.getExpensesByDate(user.getId(), startDate, endDate));
+                    result.addAll(iProcedureDAO.getExpensesByDate(user.getId(), startDate, endDate));
                 }
                 return result;
             } else if (typeId == 100) {
                 for (User user : getAllUsers()) {
-                    result.addAll(iProcedureDao.getIncomesByDate(user.getId(), startDate, endDate));
+                    result.addAll(iProcedureDAO.getIncomesByDate(user.getId(), startDate, endDate));
                 }
                 return result;
             } else {
                 ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
                 if (type.getKind() < 0) {
                     for (User user : getAllUsers()) {
-                        result.addAll(iProcedureDao.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                        result.addAll(iProcedureDAO.getExpensesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
                     }
                 } else {
                     for (User user : getAllUsers()) {
-                        result.addAll(iProcedureDao.getIncomesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
+                        result.addAll(iProcedureDAO.getIncomesByDateAndTypeId(user.getId(), typeId, startDate, endDate));
                     }
                 }
                 return result;
@@ -160,15 +160,15 @@ public class ProcedureService {
         } else {
             List<Procedure> procedures;
             if (typeId == -100) {
-                procedures = iProcedureDao.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
+                procedures = iProcedureDAO.getExpensesByDate(getCurrentUser().getId(), startDate, endDate);
             } else if (typeId == 100) {
-                procedures = iProcedureDao.getIncomesByDate(getCurrentUser().getId(), startDate, endDate);
+                procedures = iProcedureDAO.getIncomesByDate(getCurrentUser().getId(), startDate, endDate);
             } else {
                 ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
                 if (type.getKind() < 0) {
-                    procedures = iProcedureDao.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                    procedures = iProcedureDAO.getExpensesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
                 } else {
-                    procedures = iProcedureDao.getIncomesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
+                    procedures = iProcedureDAO.getIncomesByDateAndTypeId(getCurrentUser().getId(), typeId, startDate, endDate);
                 }
             }
             for (Procedure procedure : procedures) {
@@ -186,15 +186,15 @@ public class ProcedureService {
                 return getProceduresByDate(typeId, startDate, endDate);
             } else {
                 if (typeId == -100) {
-                    return iProcedureDao.getExpensesByDate(userId, startDate, endDate);
+                    return iProcedureDAO.getExpensesByDate(userId, startDate, endDate);
                 } else if (typeId == 100) {
-                    return iProcedureDao.getIncomesByDate(userId, startDate, endDate);
+                    return iProcedureDAO.getIncomesByDate(userId, startDate, endDate);
                 } else {
                     ProcedureType type = iProcedureTypeDAO.getTypeById(typeId);
                     if (type.getKind() < 0) {
-                        return iProcedureDao.getExpensesByDateAndTypeId(userId, typeId, startDate, endDate);
+                        return iProcedureDAO.getExpensesByDateAndTypeId(userId, typeId, startDate, endDate);
                     } else {
-                        return iProcedureDao.getIncomesByDateAndTypeId(userId, typeId, startDate, endDate);
+                        return iProcedureDAO.getIncomesByDateAndTypeId(userId, typeId, startDate, endDate);
                     }
                 }
             }
@@ -204,27 +204,27 @@ public class ProcedureService {
     }
 
     public Boolean addProcedure(Procedure procedure) {
-        return iProcedureDao.addProcedure(procedure, getCurrentUser().getId());
+        return iProcedureDAO.addProcedure(procedure, getCurrentUser().getId());
     }
 
     public Boolean updateProcedure(Procedure procedure) {
         List<Procedure> procedureList;
         if (isAdmin()) {
             if (procedure.getKind() < 0) {
-                procedureList = iProcedureDao.getAllExpenses();
+                procedureList = iProcedureDAO.getAllExpenses();
             } else {
-                procedureList = iProcedureDao.getAllIncomes();
+                procedureList = iProcedureDAO.getAllIncomes();
             }
         } else {
             if (procedure.getKind() < 0) {
-                procedureList = iProcedureDao.getUsersExpenses(getCurrentUser().getId());
+                procedureList = iProcedureDAO.getUsersExpenses(getCurrentUser().getId());
             } else {
-                procedureList = iProcedureDao.getUsersIncomes(getCurrentUser().getId());
+                procedureList = iProcedureDAO.getUsersIncomes(getCurrentUser().getId());
             }
         }
         for (Procedure temp : procedureList) {
             if (procedure.getId() == temp.getId()) {
-                return iProcedureDao.updateProcedure(procedure);
+                return iProcedureDAO.updateProcedure(procedure);
             }
         }
         return addProcedure(procedure);
@@ -232,20 +232,20 @@ public class ProcedureService {
 
     public List<Procedure> archiveProcedures(List<Integer> ids) {
         if (isAdmin()) {
-            iProcedureDao.archiveProcedures(ids, getCurrentUser().getId());
+            iProcedureDAO.archiveProcedures(ids, getCurrentUser().getId());
             //TODO same
-            return iProcedureDao.getAllExpenses();
+            return iProcedureDAO.getAllExpenses();
         } else {
-            return iProcedureDao.archiveProcedures(ids, getCurrentUser().getId());
+            return iProcedureDAO.archiveProcedures(ids, getCurrentUser().getId());
         }
     }
 
     public List<Procedure> deleteProcedures(List<Integer> ids) {
         if (isAdmin()) {
-            iProcedureDao.deleteProcedures(ids, getCurrentUser().getId());
-            return iProcedureDao.getAllExpenses();
+            iProcedureDAO.deleteProcedures(ids, getCurrentUser().getId());
+            return iProcedureDAO.getAllExpenses();
         } else {
-            return iProcedureDao.deleteProcedures(ids, getCurrentUser().getId());
+            return iProcedureDAO.deleteProcedures(ids, getCurrentUser().getId());
         }
     }
 
@@ -328,7 +328,7 @@ public class ProcedureService {
     public List<SimpleDate> getDatesBetween() {
         List<Procedure> procedureList;
         if (isAdmin()) {
-            procedureList = iProcedureDao.getAllExpenses();
+            procedureList = iProcedureDAO.getAllExpenses();
         } else {
             procedureList = getUsersExpenses();
         }
@@ -400,7 +400,7 @@ public class ProcedureService {
         }
     }
 
-    private Double getMonthlyExpenses(int typeId, List<Procedure> procedureList) {
+    private double getMonthlyExpenses(int typeId, List<Procedure> procedureList) {
         double monthly = 0.0;
         for (Procedure procedure : procedureList) {
             if (procedure.getTypeId() == typeId) {
@@ -408,6 +408,46 @@ public class ProcedureService {
             }
         }
         return monthly;
+    }
+
+    public Map<String, Double> getExpensesReviewByTypes() {
+        Map<String, Double> result = new HashMap<>();
+        List<Procedure> procedureList;
+
+        if (isAdmin()) {
+            procedureList = iProcedureDAO.getAllExpenses();
+        } else {
+            procedureList = iProcedureDAO.getUsersExpenses(getCurrentUser().getId());
+        }
+        for (Procedure procedure : procedureList) {
+            for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
+                if (procedure.getTypeId() == type.getId()) {
+                    result.merge(type.getName(), procedure.getPrice(), Double::sum);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public Map<String, Double> getIncomesReviewByTypes() {
+        Map<String, Double> result = new HashMap<>();
+        List<Procedure> procedureList;
+
+        if (isAdmin()) {
+            procedureList = iProcedureDAO.getAllIncomes();
+        } else {
+            procedureList = iProcedureDAO.getUsersIncomes(getCurrentUser().getId());
+        }
+        for (Procedure procedure : procedureList) {
+            for (ProcedureType type : iProcedureTypeDAO.getIncomeTypes()) {
+                if (procedure.getTypeId() == type.getId()) {
+                    result.merge(type.getName(), procedure.getPrice(), Double::sum);
+                }
+            }
+        }
+
+        return result;
     }
 
     public List<Procedure> getSortedAndFilteredProcedures(int typeId, Date startDate, Date endDate, int startIndex,

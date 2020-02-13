@@ -180,7 +180,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.8.2</version>
 				<executions>
 					<execution>
 						<goals>
@@ -188,27 +187,33 @@
 						</goals>
 					</execution>
 				</executions>
-				<!-- Plugin configuration. There are many available options, see
-                  gwt-maven-plugin documentation at codehaus.org -->
+				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin documentation at codehaus.org -->
 				<configuration>
 					<modules>
 						<module>com.example.tracker.expenses</module>
 					</modules>
 					<style>OBF</style>
+					<runTarget>index.html</runTarget>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<webResources>
-						<resource>
-							<targetPath>images</targetPath>
-							<directory>src/main/resources/images</directory>
-						</resource>
-					</webResources>
-				</configuration>
+				<version>${maven-war-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 
 		</plugins>

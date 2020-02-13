@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ProcedureWebService extends RestService {
     @GET
@@ -42,6 +43,16 @@ public interface ProcedureWebService extends RestService {
     @Path("/review")
     @Produces(MediaType.APPLICATION_JSON)
     void getReview(MethodCallback<ReviewInfo> callback);
+
+    @GET
+    @Path("/expense-type-review")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getExpensesReviewByTypes(MethodCallback<Map<String, Double>> callback);
+
+    @GET
+    @Path("/income-type-review")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getIncomesReviewByTypes(MethodCallback<Map<String, Double>> callback);
 
     @GET
     @Path("/typeId={id}")

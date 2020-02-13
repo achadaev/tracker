@@ -4,13 +4,11 @@ import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.ShowManageProfilesEvent;
 import com.example.tracker.client.event.ShowManageTypesEvent;
 import com.example.tracker.client.services.UserWebService;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.html.Div;
-import org.gwtbootstrap3.client.ui.html.Strong;
 
 public class MenuBarPresenter implements Presenter {
     public interface Display {

@@ -159,16 +159,14 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                 filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
             }
         });
-/*
 
         display.getTypeSelection().addValueChangeHandler(valueChangeEvent -> {
-            AlertWidget.alert("Alert", "valueChangeEvent.getValue: " + valueChangeEvent.getValue());
-            AlertWidget.alert("Alert", "getTypeSelection().getValue: " + display.getTypeSelection().getValue());
-            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem: " + display.getTypeSelection().getSelectedItem());
-            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getValue: " + display.getTypeSelection().getSelectedItem().getValue());
-            AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getContent: " + display.getTypeSelection().getSelectedItem().getContent());
+            GWT.log("valueChangeEvent.getValue: " + valueChangeEvent.getValue());
+            GWT.log("getTypeSelection().getValue: " + display.getTypeSelection().getValue());
+            GWT.log("getTypeSelection().getSelectedItem: " + display.getTypeSelection().getSelectedItem());
+            GWT.log("getTypeSelection().getSelectedItem().getValue: " + display.getTypeSelection().getSelectedItem().getValue());
+            GWT.log("getTypeSelection().getSelectedItem().getContent: " + display.getTypeSelection().getSelectedItem().getContent());
         });
-*/
 
         display.getTypesListBox().addChangeHandler(changeEvent -> {
             if (ExpensesGWTController.isAdmin()) {

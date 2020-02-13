@@ -14,6 +14,7 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Heading;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 
@@ -27,7 +28,7 @@ public class HomePresenter implements Presenter {
         Heading getMonthLabel();
         Heading getWeekLabel();
         Anchor getMoreAnchor();
-        void initPieChart(List<Procedure> procedureList, boolean isExpense);
+        void initPieChart(Map<String, Double> data, boolean isExpense);
         void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
         Widget asWidget();
     }
@@ -47,59 +48,31 @@ public class HomePresenter implements Presenter {
     }
 
     private void initExpensePieChart() {
-        if (ExpensesGWTController.isAdmin()) {
-            procedureWebService.getAllExpenses(new MethodCallback<List<Procedure>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
-                }
+        procedureWebService.getExpensesReviewByTypes(new MethodCallback<Map<String, Double>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
+            }
 
-                @Override
-                public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response, true);
-                }
-            });
-        } else {
-            procedureWebService.getUsersExpenses(new MethodCallback<List<Procedure>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, GETTING_EXPENSES_ERR).center();
-                }
-
-                @Override
-                public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response, true);
-                }
-            });
-        }
+            @Override
+            public void onSuccess(Method method, Map<String, Double> response) {
+                display.initPieChart(response, true);
+            }
+        });
     }
 
     private void initIncomePieChart() {
-        if (ExpensesGWTController.isAdmin()) {
-            procedureWebService.getAllIncomes(new MethodCallback<List<Procedure>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
-                }
+        procedureWebService.getIncomesReviewByTypes(new MethodCallback<Map<String, Double>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
+            }
 
-                @Override
-                public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response, false);
-                }
-            });
-        } else {
-            procedureWebService.getUsersIncomes(new MethodCallback<List<Procedure>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
-                }
-
-                @Override
-                public void onSuccess(Method method, List<Procedure> response) {
-                    display.initPieChart(response, false);
-                }
-            });
-        }
+            @Override
+            public void onSuccess(Method method, Map<String, Double> response) {
+                display.initPieChart(response, false);
+            }
+        });
     }
 
     private void initAreaChart(List<SimpleDate> dates) {

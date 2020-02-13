@@ -11,6 +11,7 @@ import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,6 +26,7 @@ import com.google.gwt.view.client.Range;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.*;
@@ -61,17 +63,6 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     Button filter;
     @UiField
     Label total;
-
-    @UiHandler("typeSelection")
-    void onValueChangeSimple(ValueChangeEvent<String> event) {
-        AlertWidget.alert("Alert", "valueChangeEvent.getValue: " + event.getValue());
-        AlertWidget.alert("Alert", "getTypeSelection().getValue: " + typeSelection.getValue());
-        AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem: " + typeSelection.getSelectedItem());
-        AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getValue: " + typeSelection.getSelectedItem().getValue());
-        AlertWidget.alert("Alert", "getTypeSelection().getSelectedItem().getContent: " + typeSelection.getSelectedItem().getContent());
-
-        GWT.log("single changed");
-    }
 
     private CellTable<Procedure> procedureCellTable;
     private ProcedureWebService procedureWebService;

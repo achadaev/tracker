@@ -2,18 +2,25 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
     <g:HTMLPanel>
-        <b:Jumbotron height="25em">
-            <b:Heading size="H1" ui:field="greetingHeading"/>
-            <b:html.Hr/>
-            <b:Heading size="H5" ui:field="amountLabel" text="Total expenses: "/>
-            <b:Heading size="H5" ui:field="monthLabel" text="This month expenses: "/>
-            <b:Heading size="H5" ui:field="weekLabel" text="This week expenses: "/>
-            <b:Anchor ui:field="moreAnchor" text="Show more..."/>
-        </b:Jumbotron>
-
-        <g:Label text="Expenses"/>
-        <g:HorizontalPanel ui:field="expenseChartPanel"/>
-        <g:Label text="Incomes"/>
-        <g:HorizontalPanel ui:field="incomeChartPanel"/>
+        <b:Column size="MD_11">
+            <b:Row>
+                <b:Jumbotron height="25em" width="75em">
+                    <b:Heading size="H1" ui:field="greetingHeading"/>
+                    <b:html.Hr/>
+                    <b:Heading size="H5" ui:field="amountLabel" text="Total expenses: "/>
+                    <b:Heading size="H5" ui:field="monthLabel" text="This month expenses: "/>
+                    <b:Heading size="H5" ui:field="weekLabel" text="This week expenses: "/>
+                    <b:Anchor ui:field="moreAnchor" text="Show more..."/>
+                </b:Jumbotron>
+            </b:Row>
+            <b:Row>
+                <g:Label text="Expenses"/>
+                <g:HorizontalPanel ui:field="expenseChartPanel"/>
+            </b:Row>
+            <b:Row>
+                <g:Label text="Incomes"/>
+                <g:HorizontalPanel ui:field="incomeChartPanel"/>
+            </b:Row>
+        </b:Column>
     </g:HTMLPanel>
 </ui:UiBinder>

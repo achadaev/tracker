@@ -24,6 +24,7 @@ import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Heading;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.example.tracker.client.constant.TableConstants.*;
 
@@ -63,7 +64,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
     DataTable incomeDataTable;
 
     @Override
-    public void initPieChart(List<Procedure> procedureList, boolean isExpense) {
+    public void initPieChart(Map<String, Double> data, boolean isExpense) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             if (isExpense) {
@@ -81,7 +82,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
                     }
                 });
                 expenseChartPanel.add(expensePieChart);
-                drawPieChart(procedureList, true);
+                drawPieChart(data, true);
             } else {
                 incomePieChart = new PieChart();
                 incomePieChart.addSelectHandler(new SelectHandler() {
@@ -97,21 +98,18 @@ public class HomeView extends Composite implements HomePresenter.Display {
                     }
                 });
                 incomeChartPanel.add(incomePieChart);
-                drawPieChart(procedureList, false);
+                drawPieChart(data, false);
             }
         });
     }
 
-    private void drawPieChart(List<Procedure> procedureList, boolean isExpense) {
-        List<ProcedureType> types;
+    private void drawPieChart(Map<String, Double> data, boolean isExpense) {
         if (isExpense) {
             expenseDataTable = DataTable.create();
             expenseDataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
             expenseDataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
 
-            types = ExpensesGWTController.getExpenseTypes();
-
-            initDataTable(procedureList, types, expenseDataTable);
+            initDataTable(data, expenseDataTable);
 
             expensePieChart.draw(expenseDataTable);
             expensePieChart.setWidth(PIE_CHART_HEIGHT);
@@ -121,9 +119,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
             incomeDataTable.addColumn(ColumnType.STRING, TYPE_COLUMN);
             incomeDataTable.addColumn(ColumnType.NUMBER, PRICE_COLUMN);
 
-            types = ExpensesGWTController.getIncomeTypes();
-
-            initDataTable(procedureList, types, incomeDataTable);
+            initDataTable(data, incomeDataTable);
 
             incomePieChart.draw(incomeDataTable);
             incomePieChart.setWidth(PIE_CHART_HEIGHT);
@@ -131,13 +127,13 @@ public class HomeView extends Composite implements HomePresenter.Display {
         }
     }
 
-    private void initDataTable(List<Procedure> procedureList, List<ProcedureType> types, DataTable dataTable) {
-        dataTable.addRows(types.size());
+    private void initDataTable(Map<String, Double> data, DataTable dataTable) {
+        dataTable.addRows(data.size());
         int i = 0;
         int j = 0;
-        for (ProcedureType type : types) {
-            dataTable.setValue(i, j, type.getName());
-            dataTable.setValue(i, j + 1, countByType(type.getId(), procedureList));
+        for (String name : data.keySet()) {
+            dataTable.setValue(i, j, name);
+            dataTable.setValue(i, j + 1, data.get(name));
             i++;
         }
     }
@@ -176,16 +172,6 @@ public class HomeView extends Composite implements HomePresenter.Display {
         areaChart.draw(dataTable);
         areaChart.setHeight(AREA_CHART_HEIGHT);
         areaChart.setWidth(AREA_CHART_WIDTH);
-    }
-
-    private double countByType(int typeId, List<Procedure> procedureList) {
-        double total = 0.0;
-        for (Procedure procedure : procedureList) {
-            if (procedure.getTypeId() == typeId) {
-                total += procedure.getPrice();
-            }
-        }
-        return total;
     }
 
     @Override
