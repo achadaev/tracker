@@ -34,8 +34,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         HasClickHandlers getEditButton();
         HasClickHandlers getDeleteButton();
         Select getTypeSelection();
-        ListBox getUsersListBox();
-        ListBox getTypesListBox();
+        Select getUserSelection();
         CheckBox getDateCheckBox();
         DatePicker getStartDate();
         DatePicker getEndDate();
@@ -60,6 +59,32 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         this.userWebService = userWebService;
         this.eventBus = eventBus;
         this.display = view;
+
+        typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                initTypeSelection(display.getTypeSelection(), response);
+            }
+        });
+
+        if (ExpensesGWTController.isAdmin()) {
+            userWebService.getAllUsers(new MethodCallback<List<User>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
+                }
+
+                @Override
+                public void onSuccess(Method method, List<User> response) {
+                    initUserSelection(display.getUserSelection(), response);
+                }
+            });
+        }
     }
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
@@ -70,9 +95,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
         this.eventBus = eventBus;
         this.display = view;
         this.typeId = typeId;
-    }
 
-    protected void initTypesListBox(ListBox listBox) {
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -80,55 +103,55 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
             }
 
             @Override
-            public void onSuccess(Method method, List<ProcedureType> procedureTypes) {
-                listBox.addItem("All Expenses", "-100");
-                for (ProcedureType type : procedureTypes) {
-                    listBox.addItem(type.getName(), Integer.toString(type.getId()));
-                }
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                initTypeSelection(display.getTypeSelection(), response);
             }
         });
-    }
 
-    protected void initTypeSelection(Select select) {
-        Option f = new Option();
-        f.setContent("First");
-        f.setValue("1");
-        Option s = new Option();
-        s.setContent("Second");
-        s.setValue("2");
-        Option t = new Option();
-        t.setContent("Third");
-        t.setValue("3");
-        select.add(f);
-        select.add(s);
-        select.add(t);
-    }
-
-    protected void initUsersListBox(ListBox listBox) {
-        userWebService.getAllUsers(new MethodCallback<List<User>>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
-            }
-
-            @Override
-            public void onSuccess(Method method, List<User> users) {
-                listBox.addItem("All Users", "0");
-                for (User user : users) {
-                    listBox.addItem(user.getLogin(), Integer.toString(user.getId()));
+        if (ExpensesGWTController.isAdmin()) {
+            userWebService.getAllUsers(new MethodCallback<List<User>>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
                 }
-                listBox.setItemSelected(0, true);
-            }
-        });
+
+                @Override
+                public void onSuccess(Method method, List<User> response) {
+                    initUserSelection(display.getUserSelection(), response);
+                }
+            });
+        }
+    }
+
+    protected void initTypeSelection(Select select, List<ProcedureType> procedureTypeList) {
+        Option all = new Option();
+        all.setContent("All Expenses");
+        all.setValue("-100");
+        select.add(all);
+
+        for (ProcedureType type : procedureTypeList) {
+            Option option = new Option();
+            option.setContent(type.getName());
+            option.setValue(Integer.toString(type.getId()));
+            select.add(option);
+        }
+    }
+
+    protected void initUserSelection(Select select, List<User> userList) {
+        Option all = new Option();
+        all.setContent("All Users");
+        all.setContent("0");
+        select.add(all);
+
+        for (User user : userList) {
+            Option option = new Option();
+            option.setContent(user.getLogin());
+            option.setValue(Integer.toString(user.getId()));
+            select.add(option);
+        }
     }
 
     public void bind() {
-        initTypesListBox(display.getTypesListBox());
-        initTypeSelection(display.getTypeSelection());
-        if (ExpensesGWTController.isAdmin()) {
-            initUsersListBox(display.getUsersListBox());
-        }
-
         display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddExpenseEvent()));
 
         display.getEditButton().addClickHandler(clickEvent -> {
@@ -153,34 +176,26 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
         display.getFilerButton().addClickHandler(clickEvent -> {
             if (ExpensesGWTController.isAdmin()) {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                        Integer.parseInt(display.getUserSelection().getValue()));
             } else {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
             }
         });
 
         display.getTypeSelection().addValueChangeHandler(valueChangeEvent -> {
-            GWT.log("valueChangeEvent.getValue: " + valueChangeEvent.getValue());
-            GWT.log("getTypeSelection().getValue: " + display.getTypeSelection().getValue());
-            GWT.log("getTypeSelection().getSelectedItem: " + display.getTypeSelection().getSelectedItem());
-            GWT.log("getTypeSelection().getSelectedItem().getValue: " + display.getTypeSelection().getSelectedItem().getValue());
-            GWT.log("getTypeSelection().getSelectedItem().getContent: " + display.getTypeSelection().getSelectedItem().getContent());
-        });
-
-        display.getTypesListBox().addChangeHandler(changeEvent -> {
             if (ExpensesGWTController.isAdmin()) {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                        Integer.parseInt(display.getUserSelection().getValue()));
             } else {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
             }
         });
-
+        // HERE!
         if (ExpensesGWTController.isAdmin()) {
-            display.getUsersListBox().addChangeHandler(changeEvent ->
-                    filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                    Integer.parseInt(display.getUsersListBox().getSelectedValue())));
+            display.getUserSelection().addValueChangeHandler(valueChangeEvent ->
+                    filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                            Integer.parseInt(display.getUserSelection().getValue())));
         }
 
         display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
@@ -316,6 +331,7 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
                 public void onSuccess(Method method, List<Procedure> response) {
                     procedureList = response;
 
+                    //TODO change to types request
                     display.setData(procedureList, ExpensesGWTController.getExpenseTypes());
                     updateTotal(display.getTotalLabel());
                 }
@@ -340,12 +356,19 @@ public class ExpensePresenter implements Presenter, ConfirmWidget.Confirmation {
 
     @Override
     public void go(HasWidgets container) {
+/*
+        initTypeSelection(display.getTypeSelection());
+        if (ExpensesGWTController.isAdmin()) {
+            initUserSelection(display.getUserSelection());
+        }
+*/
+
         bind();
         container.clear();
         container.add(display.asWidget());
 
         if (!ExpensesGWTController.isAdmin()) {
-            display.getUsersListBox().setVisible(false);
+            display.getUserSelection().setVisible(false);
         }
 
         if (typeId != 0) {

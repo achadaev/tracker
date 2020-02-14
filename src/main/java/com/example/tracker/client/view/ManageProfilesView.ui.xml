@@ -1,12 +1,18 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
     <g:HTMLPanel>
-        <g:HorizontalPanel width="200px">
-            <g:Button ui:field="addButton" text="Add"/>
-            <g:Button ui:field="editButton" text="Edit"/>
-            <g:Button ui:field="deleteButton" text="Delete"/>
-        </g:HorizontalPanel>
-
-        <g:HTMLPanel ui:field="tablePanel"/>
+        <b:Column size="MD_12">
+            <b:Row>
+                <g:HorizontalPanel width="200px">
+                    <b:Button icon="PLUS" ui:field="addButton" type="PRIMARY" text="Add"/>
+                    <b:Button icon="PENCIL" ui:field="editButton" type="PRIMARY" text="Edit"/>
+                    <b:Button icon="TRASH" ui:field="deleteButton" type="PRIMARY" text="Delete"/>
+                </g:HorizontalPanel>
+            </b:Row>
+            <b:Row>
+                <g:HTMLPanel ui:field="tablePanel"/>
+            </b:Row>
+        </b:Column>
     </g:HTMLPanel>
 </ui:UiBinder>

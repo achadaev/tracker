@@ -11,9 +11,10 @@ import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.List;
 
@@ -34,7 +35,22 @@ public class IncomePresenter extends ExpensePresenter {
     }
 
     @Override
-    protected void initTypesListBox(ListBox listBox) {
+    protected void initTypeSelection(Select select, List<ProcedureType> procedureTypeList) {
+        Option all = new Option();
+        all.setContent("All Incomes");
+        all.setValue("100");
+        select.add(all);
+
+        for (ProcedureType type : procedureTypeList) {
+            Option option = new Option();
+            option.setContent(type.getName());
+            option.setValue(Integer.toString(type.getId()));
+            select.add(option);
+        }
+    }
+/*
+    @Override
+    protected void initTypeSelection(Select select) {
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -42,20 +58,38 @@ public class IncomePresenter extends ExpensePresenter {
             }
 
             @Override
-            public void onSuccess(Method method, List<ProcedureType> procedureTypes) {
-                listBox.addItem("All Incomes", "100");
-                for (ProcedureType type : procedureTypes) {
-                    listBox.addItem(type.getName(), Integer.toString(type.getId()));
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                Option all = new Option();
+                all.setContent("All Incomes");
+                all.setContent("100");
+                select.add(all);
+
+                for (ProcedureType type : response) {
+                    Option option = new Option();
+                    option.setContent(type.getName());
+                    option.setValue(Integer.toString(type.getId()));
+                    select.add(option);
                 }
             }
         });
     }
+*/
 
     @Override
     public void bind() {
-        initTypesListBox(display.getTypesListBox());
+        display.getTypeSelection().addValueChangeHandler(valueChangeEvent -> {
+            if (ExpensesGWTController.isAdmin()) {
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                        Integer.parseInt(display.getUserSelection().getValue()));
+            } else {
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
+            }
+        });
+
         if (ExpensesGWTController.isAdmin()) {
-            initUsersListBox(display.getUsersListBox());
+            display.getUserSelection().addValueChangeHandler(valueChangeEvent ->
+                    filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                            Integer.parseInt(display.getUserSelection().getValue())));
         }
 
         display.getAddButton().addClickHandler(clickEvent -> eventBus.fireEvent(new AddIncomeEvent()));
@@ -79,29 +113,15 @@ public class IncomePresenter extends ExpensePresenter {
                 AlertWidget.alert(ERR, AT_LEAST_ONE_ROW_ERR).center();
             }
         });
+
         display.getFilerButton().addClickHandler(clickEvent -> {
             if (ExpensesGWTController.isAdmin()) {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()),
+                        Integer.parseInt(display.getUserSelection().getValue()));
             } else {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
+                filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
             }
         });
-
-        display.getTypesListBox().addChangeHandler(changeEvent -> {
-            if (ExpensesGWTController.isAdmin()) {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                        Integer.parseInt(display.getUsersListBox().getSelectedValue()));
-            } else {
-                filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()));
-            }
-        });
-
-        if (ExpensesGWTController.isAdmin()) {
-            display.getUsersListBox().addChangeHandler(changeEvent ->
-                    filterProcedures(Integer.parseInt(display.getTypesListBox().getSelectedValue()),
-                            Integer.parseInt(display.getUsersListBox().getSelectedValue())));
-        }
 
         display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
             if (display.getDateCheckBox().getValue()) {

@@ -7,7 +7,7 @@
                 <g:FlexTable ui:field="table"/>
             </b:Row>
             <b:Row>
-                <g:Button ui:field="editProfile" text="Edit Profile"/>
+                <b:Button icon="PENCIL" ui:field="editProfile" type="PRIMARY" text="Edit Profile"/>
             </b:Row>
         </b:Column>
     </g:HTMLPanel>

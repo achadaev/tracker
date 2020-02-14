@@ -15,9 +15,8 @@
             <b:Row>
                 <g:HorizontalPanel width="700px">
                     <s:Select ui:field="typeSelection"/>
-                    <g:ListBox ui:field="typesListBox" height="25px"/>
-                    <g:ListBox ui:field="usersListBox" height="25px"/>
-                    <g:Label text="Filter by date" horizontalAlignment="LEFT"/>
+                    <s:Select ui:field="userSelection"/>
+                    <g:Label text="Filter by date"/>
                     <g:CheckBox ui:field="dateCheckBox"/>
                     <dp:DatePicker ui:field="startDate"/>
                     <dp:DatePicker ui:field="endDate"/>

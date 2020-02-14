@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
+import org.gwtbootstrap3.client.ui.Button;
 
 import java.util.ArrayList;
 import java.util.Date;

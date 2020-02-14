@@ -8,6 +8,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.Button;
 
 import static com.example.tracker.client.constant.TableConstants.*;
 

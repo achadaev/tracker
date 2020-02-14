@@ -10,12 +10,9 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -26,7 +23,6 @@ import com.google.gwt.view.client.Range;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.*;
@@ -50,9 +46,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     @UiField
     Select typeSelection;
     @UiField
-    ListBox typesListBox;
-    @UiField
-    ListBox usersListBox;
+    Select userSelection;
     @UiField
     CheckBox dateCheckBox;
     @UiField
@@ -205,6 +199,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                     if (startDate.getValue() == null && endDate.getValue() == null) {
                         Date nullDate = new Date(0);
                         if (typeId != 0) {
+                            typeSelection.setValue(Integer.toString(typeId));
                             procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
                                     sortList.get(0).isAscending(), 0, new MethodCallback<List<Procedure>>() {
                                         @Override
@@ -217,10 +212,10 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                             updateRowData(start, response);
                                         }
                                     });
+                            typeId = 0;
                         } else {
-                            GWT.log("sortlist: " + sortList.get(0).getColumn().toString());
-                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()), nullDate, nullDate, start,
-                                    length, sortList.get(0).isAscending(), Integer.parseInt(usersListBox.getSelectedValue()),
+                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start,
+                                    length, sortList.get(0).isAscending(), Integer.parseInt(userSelection.getValue()),
                                     new MethodCallback<List<Procedure>>() {
                                         @Override
                                         public void onFailure(Method method, Throwable throwable) {
@@ -234,9 +229,9 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     });
                         }
                     } else {
-                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()),
+                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
                                 startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
-                                Integer.parseInt(usersListBox.getSelectedValue()), new MethodCallback<List<Procedure>>() {
+                                Integer.parseInt(userSelection.getValue()), new MethodCallback<List<Procedure>>() {
                                     @Override
                                     public void onFailure(Method method, Throwable throwable) {
                                         AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
@@ -252,6 +247,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                     if (startDate.getValue() == null && endDate.getValue() == null) {
                         Date nullDate = new Date(0);
                         if (typeId != 0) {
+                            typeSelection.setValue(Integer.toString(typeId));
                             procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
                                     sortList.get(0).isAscending(), new MethodCallback<List<Procedure>>() {
                                         @Override
@@ -264,8 +260,9 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                             updateRowData(start, response);
                                         }
                                     });
+                            typeId = 0;
                         } else {
-                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()),
+                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
                                     nullDate, nullDate, start, length, sortList.get(0).isAscending(),
                                     new MethodCallback<List<Procedure>>() {
                                         @Override
@@ -280,7 +277,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                                     });
                         }
                     } else {
-                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typesListBox.getSelectedValue()),
+                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
                                 startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
                                 new MethodCallback<List<Procedure>>() {
                                     @Override
@@ -337,13 +334,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     }
 
     @Override
-    public ListBox getTypesListBox() {
-        return typesListBox;
-    }
-
-    @Override
-    public ListBox getUsersListBox() {
-        return usersListBox;
+    public Select getUserSelection() {
+        return userSelection;
     }
 
     @Override
