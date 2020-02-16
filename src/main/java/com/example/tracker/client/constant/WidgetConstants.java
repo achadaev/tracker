@@ -7,6 +7,7 @@ public class WidgetConstants {
     public static final String GETTING_BETWEEN_EXPENSES_ERR = "Error getting between expenses";
     public static final String GETTING_TYPES_ERR = "Error getting types";
     public static final String GETTING_TYPE_ERR = "Error getting type";
+    public static final String GETTING_SELECTION_ERR = "Error getting selection value";
     public static final String GETTING_USERS_ERR = "Error getting users";
     public static final String GETTING_USER_ERR = "Error getting user";
     public static final String GETTING_REVIEW_ERR = "Error getting review";

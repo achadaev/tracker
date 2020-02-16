@@ -9,6 +9,7 @@ import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
+import com.example.tracker.shared.model.SelectionValue;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Label;
 import org.fusesource.restygwt.client.Method;
@@ -34,10 +35,7 @@ public class IncomePresenter extends ExpensePresenter {
         this.eventBus = eventBus;
         this.display = view;
 
-        getIncomeTypes();
-        if (ExpensesGWTController.isAdmin()) {
-            getUsers();
-        }
+        initSelections();
     }
 
     public IncomePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService, UserWebService userWebService,
@@ -49,25 +47,27 @@ public class IncomePresenter extends ExpensePresenter {
         this.display = view;
         this.typeId = typeId;
 
-        getIncomeTypes();
-        if (ExpensesGWTController.isAdmin()) {
-            getUsers();
-        }
+        initSelections();
     }
 
-    private void getIncomeTypes() {
-        typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
+    @Override
+    protected void initSelections() {
+        procedureWebService.getSelectionValue(1, new MethodCallback<SelectionValue>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Alert.alert(ERR, GETTING_TYPES_ERR);
+                Alert.alert(ERR, GETTING_SELECTION_ERR);
             }
 
             @Override
-            public void onSuccess(Method method, List<ProcedureType> response) {
-                incomeTypes = response;
-                display.getTypeSelection().clear();
+            public void onSuccess(Method method, SelectionValue response) {
+                incomeTypes = response.getTypes();
                 initTypeSelection(display.getTypeSelection(), incomeTypes);
                 display.getTypeSelection().refresh();
+                if (ExpensesGWTController.isAdmin()) {
+                    users = response.getUsers();
+                    initUserSelection(display.getUserSelection(), users);
+                    display.getUserSelection().refresh();
+                }
             }
         });
     }

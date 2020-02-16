@@ -329,4 +329,8 @@ public class ExpensesController {
         return new ArrayList<>();
     }
 
+    @GetMapping("expenses/get-selection/{kind}")
+    SelectionValue getSelectionValue(@PathVariable int kind) {
+        return procedureService.getSelectionValue(kind);
+    }
 }

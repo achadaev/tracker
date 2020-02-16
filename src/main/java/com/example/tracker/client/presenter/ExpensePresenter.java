@@ -10,6 +10,7 @@ import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
+import com.example.tracker.shared.model.SelectionValue;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
@@ -28,6 +29,7 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
 
     private List<Procedure> procedureList;
     private List<ProcedureType> expenseTypes;
+    protected List<User> users;
 
     public interface Display {
         HasClickHandlers getAddButton();
@@ -62,10 +64,7 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
         this.eventBus = eventBus;
         this.display = view;
 
-        getExpenseTypes();
-        if (ExpensesGWTController.isAdmin()) {
-            getUsers();
-        }
+        initSelections();
     }
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
@@ -77,39 +76,26 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
         this.display = view;
         this.typeId = typeId;
 
-        getExpenseTypes();
-        if (ExpensesGWTController.isAdmin()) {
-            getUsers();
-        }
+        initSelections();
     }
 
-    private void getExpenseTypes() {
-        typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
+    protected void initSelections() {
+        procedureWebService.getSelectionValue(-1, new MethodCallback<SelectionValue>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Alert.alert(ERR, GETTING_TYPES_ERR);
+                Alert.alert(ERR, GETTING_SELECTION_ERR);
             }
 
             @Override
-            public void onSuccess(Method method, List<ProcedureType> response) {
-                expenseTypes = response;
+            public void onSuccess(Method method, SelectionValue response) {
+                expenseTypes = response.getTypes();
                 initTypeSelection(display.getTypeSelection(), expenseTypes);
                 display.getTypeSelection().refresh();
-            }
-        });
-    }
-
-    protected void getUsers() {
-        userWebService.getAllUsers(new MethodCallback<List<User>>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                Alert.alert(ERR, GETTING_USERS_ERR);
-            }
-
-            @Override
-            public void onSuccess(Method method, List<User> response) {
-                initUserSelection(display.getUserSelection(), response);
-                display.getUserSelection().refresh();
+                if (ExpensesGWTController.isAdmin()) {
+                    users = response.getUsers();
+                    initUserSelection(display.getUserSelection(), users);
+                    display.getUserSelection().refresh();
+                }
             }
         });
     }

@@ -205,10 +205,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 final Range range = display.getVisibleRange();
                 start = range.getStart();
                 length = range.getLength();
-                Alert.alert(ERR, "initializing provider");
-                // show is not called
                 show(this);
-                Alert.alert(ERR, "show()");
             }
         };
 
@@ -227,25 +224,17 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
 
     private void show(AsyncDataProvider<Procedure> provider) {
         if (ExpensesGWTController.isAdmin()) {
-            Alert.alert(ERR, "isAdmin, typeId = " + typeId + "\n" +
-                    " startDate = " + startDate.getValue() + " endDate= " + endDate.getValue() + " start = " + start + " length = " + length + " columnName = " + columnName +
-                    " isAsc = " + isAscending + " typeSelection = " + Integer.parseInt(typeSelection.getValue()) +
-                    " userSelection = " + Integer.parseInt(userSelection.getValue()) + " provider = " + provider.toString());
-
             if (startDate.getValue() == null && endDate.getValue() == null) {
                 Date nullDate = new Date(0);
                 if (typeId != 0) {
-                    Alert.alert(ERR, "typeId != 0");
                     typeSelection.setValue(Integer.toString(typeId));
                     doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending, 0);
                     typeId = 0;
                 } else {
-                    Alert.alert(ERR, "== null\n" + Integer.parseInt(typeSelection.getValue()) + " " + Integer.parseInt(userSelection.getValue()));
                     doSort(provider, Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start,
                             length, columnName, isAscending, Integer.parseInt(userSelection.getValue()));
                 }
             } else {
-                Alert.alert(ERR, "!= null\n" + Integer.parseInt(typeSelection.getValue()) + " " + Integer.parseInt(userSelection.getValue()));
                 doSort(provider, Integer.parseInt(typeSelection.getValue()),
                         startDate.getValue(), endDate.getValue(), start, length, columnName, isAscending,
                         Integer.parseInt(userSelection.getValue()));

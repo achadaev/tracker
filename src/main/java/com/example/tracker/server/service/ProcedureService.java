@@ -566,4 +566,17 @@ public class ProcedureService {
         }
     }
 
+    public SelectionValue getSelectionValue(int kind) {
+        SelectionValue result = new SelectionValue();
+        if (isAdmin()) {
+            result.setUsers(iUserDao.getAllUsers());
+        }
+        if (kind < 0) {
+            result.setTypes(iProcedureTypeDAO.getExpenseTypes());
+        } else {
+            result.setTypes(iProcedureTypeDAO.getIncomeTypes());
+        }
+        return result;
+    }
+
 }

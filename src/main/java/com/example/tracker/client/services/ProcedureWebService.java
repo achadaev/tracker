@@ -1,9 +1,7 @@
 package com.example.tracker.client.services;
 
-import com.example.tracker.shared.model.Procedure;
-import com.example.tracker.shared.model.MonthlyExpense;
-import com.example.tracker.shared.model.ReviewInfo;
-import com.example.tracker.shared.model.SimpleDate;
+import com.example.tracker.shared.model.*;
+import org.eclipse.jetty.util.Scanner;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.RestService;
 
@@ -130,5 +128,10 @@ public interface ProcedureWebService extends RestService {
                                         @PathParam("isAscending") boolean isAscending,
                                         @PathParam("userId") int userId,
                                         MethodCallback<List<Procedure>> callback);
+
+    @GET
+    @Path("/get-selection/{kind}")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getSelectionValue(@PathParam("kind") int kind, MethodCallback<SelectionValue> callback);
 
 }
