@@ -1,0 +1,14 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
+    <g:HTMLPanel>
+        <b:Modal width="300px" closable="false" dataBackdrop="STATIC" ui:field="modal">
+            <b:ModalBody>
+                <b:Heading size="H4" alignment="CENTER" ui:field="content"/>
+            </b:ModalBody>
+            <b:ModalFooter>
+                <b:Button type="DANGER" ui:field="closeButton" text="Close"/>
+            </b:ModalFooter>
+        </b:Modal>
+    </g:HTMLPanel>
+</ui:UiBinder>

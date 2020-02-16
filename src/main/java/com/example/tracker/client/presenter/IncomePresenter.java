@@ -4,7 +4,7 @@ import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.incomes.AddIncomeEvent;
 import com.example.tracker.client.event.incomes.EditIncomeEvent;
 import com.example.tracker.client.services.UserWebService;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.Procedure;
@@ -23,15 +23,53 @@ import static com.example.tracker.client.constant.WidgetConstants.*;
 public class IncomePresenter extends ExpensePresenter {
 
     private List<Procedure> procedureList;
+    private List<ProcedureType> incomeTypes;
+    private int typeId = 0;
 
     public IncomePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService, UserWebService userWebService,
                            HandlerManager eventBus, Display view) {
-        super(procedureWebService, typeWebService, userWebService, eventBus, view);
+        this.procedureWebService = procedureWebService;
+        this.typeWebService = typeWebService;
+        this.userWebService = userWebService;
+        this.eventBus = eventBus;
+        this.display = view;
+
+        getIncomeTypes();
+        if (ExpensesGWTController.isAdmin()) {
+            getUsers();
+        }
     }
 
     public IncomePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService, UserWebService userWebService,
                            HandlerManager eventBus, Display view, int typeId) {
-        super(procedureWebService, typeWebService, userWebService, eventBus, view, typeId);
+        this.procedureWebService = procedureWebService;
+        this.typeWebService = typeWebService;
+        this.userWebService = userWebService;
+        this.eventBus = eventBus;
+        this.display = view;
+        this.typeId = typeId;
+
+        getIncomeTypes();
+        if (ExpensesGWTController.isAdmin()) {
+            getUsers();
+        }
+    }
+
+    private void getIncomeTypes() {
+        typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Alert.alert(ERR, GETTING_TYPES_ERR);
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                incomeTypes = response;
+                display.getTypeSelection().clear();
+                initTypeSelection(display.getTypeSelection(), incomeTypes);
+                display.getTypeSelection().refresh();
+            }
+        });
     }
 
     @Override
@@ -48,32 +86,6 @@ public class IncomePresenter extends ExpensePresenter {
             select.add(option);
         }
     }
-/*
-    @Override
-    protected void initTypeSelection(Select select) {
-        typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
-            }
-
-            @Override
-            public void onSuccess(Method method, List<ProcedureType> response) {
-                Option all = new Option();
-                all.setContent("All Incomes");
-                all.setContent("100");
-                select.add(all);
-
-                for (ProcedureType type : response) {
-                    Option option = new Option();
-                    option.setContent(type.getName());
-                    option.setValue(Integer.toString(type.getId()));
-                    select.add(option);
-                }
-            }
-        });
-    }
-*/
 
     @Override
     public void bind() {
@@ -100,7 +112,7 @@ public class IncomePresenter extends ExpensePresenter {
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditIncomeEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
+                Alert.alert(ERR, ONE_ROW_ERR);
             }
         });
 
@@ -110,7 +122,7 @@ public class IncomePresenter extends ExpensePresenter {
             if (selectedIds.size() >= 1) {
                 confirmDeleting();
             } else {
-                AlertWidget.alert(ERR, AT_LEAST_ONE_ROW_ERR).center();
+                Alert.alert(ERR, AT_LEAST_ONE_ROW_ERR);
             }
         });
 
@@ -122,50 +134,36 @@ public class IncomePresenter extends ExpensePresenter {
                 filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
             }
         });
-
-        display.getDateCheckBox().addValueChangeHandler(valueChangeEvent -> {
-            if (display.getDateCheckBox().getValue()) {
-                display.getStartDate().setVisible(true);
-                display.getEndDate().setVisible(true);
-            } else {
-                display.getStartDate().setVisible(false);
-                display.getEndDate().setVisible(false);
-            }
-        });
     }
 
     @Override
     protected void filterProcedures(int typeId) {
-        if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
                 procedureWebService.getProceduresByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR).center();
+                                Alert.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR);
                             }
 
                             @Override
                             public void onSuccess(Method method, List<Procedure> response) {
                                 procedureList = response;
-                                display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                                display.setData(procedureList, incomeTypes);
                                 updateTotal(display.getTotalLabel());
                             }
-                        });
+                });
             } else {
-                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
-            }
-        } else {
             procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, FILTERING_INCOMES_ERR).center();
+                    Alert.alert(ERR, FILTERING_INCOMES_ERR);
                 }
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
                     procedureList = response;
-                    display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                    display.setData(procedureList, incomeTypes);
                     updateTotal(display.getTotalLabel());
                 }
             });
@@ -173,36 +171,32 @@ public class IncomePresenter extends ExpensePresenter {
     }
 
     protected void filterProcedures(int typeId, int userId) {
-        if (display.getDateCheckBox().getValue()) {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
                 procedureWebService.getProceduresByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         userId, new MethodCallback<List<Procedure>>() {
                             @Override
                             public void onFailure(Method method, Throwable throwable) {
-                                AlertWidget.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR).center();
+                                Alert.alert(ERR, FILTERING_INCOMES_BY_DATE_ERR);
                             }
 
                             @Override
                             public void onSuccess(Method method, List<Procedure> response) {
                                 procedureList = response;
-                                display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                                display.setData(procedureList, incomeTypes);
                                 updateTotal(display.getTotalLabel());
                             }
                         });
             } else {
-                AlertWidget.alert(ERR, NULL_DATES_ERR).center();
-            }
-        } else {
             procedureWebService.getProceduresByTypeId(typeId, userId, new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, FILTERING_INCOMES_ERR).center();
+                    Alert.alert(ERR, FILTERING_INCOMES_ERR);
                 }
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
                     procedureList = response;
-                    display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                    display.setData(procedureList, incomeTypes);
                     updateTotal(display.getTotalLabel());
                 }
             });
@@ -215,14 +209,14 @@ public class IncomePresenter extends ExpensePresenter {
             procedureWebService.getAllIncomes(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable throwable) {
-                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
+                    Alert.alert(ERR, GETTING_INCOMES_ERR);
                 }
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
                     procedureList = response;
 
-                    display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                    display.setData(procedureList, incomeTypes);
                     updateTotal(display.getTotalLabel());
                 }
             });
@@ -230,14 +224,14 @@ public class IncomePresenter extends ExpensePresenter {
             procedureWebService.getUsersIncomes(new MethodCallback<List<Procedure>>() {
                 @Override
                 public void onFailure(Method method, Throwable exception) {
-                    AlertWidget.alert(ERR, GETTING_INCOMES_ERR).center();
+                    Alert.alert(ERR, GETTING_INCOMES_ERR);
                 }
 
                 @Override
                 public void onSuccess(Method method, List<Procedure> response) {
                     procedureList = response;
 
-                    display.setData(procedureList, ExpensesGWTController.getIncomeTypes());
+                    display.setData(procedureList, incomeTypes);
                     updateTotal(display.getTotalLabel());
                 }
             });

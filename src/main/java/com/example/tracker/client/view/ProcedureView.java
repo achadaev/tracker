@@ -1,7 +1,7 @@
 package com.example.tracker.client.view;
 
 import com.example.tracker.client.ExpensesGWTController;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.presenter.ExpensePresenter;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
@@ -15,7 +15,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.datepicker.client.DatePicker;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -24,12 +23,12 @@ import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker;
 
 import java.util.*;
 
 import static com.example.tracker.client.constant.TableConstants.*;
-import static com.example.tracker.client.constant.WidgetConstants.ERR;
-import static com.example.tracker.client.constant.WidgetConstants.SORTING_PROCEDURES_ERR;
+import static com.example.tracker.client.constant.WidgetConstants.*;
 
 public class ProcedureView extends Composite implements ExpensePresenter.Display {
     interface MainViewUiBinder extends UiBinder<HTMLPanel, ProcedureView> {
@@ -48,8 +47,6 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     @UiField
     Select userSelection;
     @UiField
-    CheckBox dateCheckBox;
-    @UiField
     DatePicker startDate;
     @UiField
     DatePicker endDate;
@@ -61,23 +58,28 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     private CellTable<Procedure> procedureCellTable;
     private ProcedureWebService procedureWebService;
     private MultiSelectionModel<Procedure> selectionModel;
+
     private int typeId = 0;
+    private int start;
+    private int length;
+    private String columnName = "ID";
+    private boolean isAscending;
 
     private static MainViewUiBinder ourUiBinder = GWT.create(MainViewUiBinder.class);
 
     public ProcedureView(ProcedureWebService procedureWebService) {
         initWidget(ourUiBinder.createAndBindUi(this));
-        startDate.setVisible(false);
-        endDate.setVisible(false);
         this.procedureWebService = procedureWebService;
+        startDate.setValue(null);
+        endDate.setValue(null);
     }
 
     public ProcedureView(ProcedureWebService procedureWebService, int typeId) {
         initWidget(ourUiBinder.createAndBindUi(this));
-        startDate.setVisible(false);
-        endDate.setVisible(false);
         this.procedureWebService = procedureWebService;
         this.typeId = typeId;
+        startDate.setValue(null);
+        endDate.setValue(null);
     }
 
     @Override
@@ -118,6 +120,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return procedure.getId();
             }
         };
+        idColumn.setSortable(true);
+        idColumn.setDataStoreName(ID_COLUMN);
         procedureCellTable.addColumn(idColumn, ID_COLUMN);
 
         if (ExpensesGWTController.isAdmin()) {
@@ -127,6 +131,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                     return procedure.getUsername();
                 }
             };
+            usernameColumn.setSortable(true);
+            usernameColumn.setDataStoreName(USERNAME_COLUMN);
             procedureCellTable.addColumn(usernameColumn, USERNAME_COLUMN);
         }
 
@@ -141,6 +147,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return UNDEFINED_VALUE;
             }
         };
+        typeColumn.setSortable(true);
+        typeColumn.setDataStoreName(TYPE_COLUMN);
         procedureCellTable.addColumn(typeColumn, TYPE_COLUMN);
 
         TextColumn<Procedure> nameColumn = new TextColumn<Procedure>() {
@@ -149,6 +157,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return procedure.getName();
             }
         };
+        nameColumn.setSortable(true);
+        nameColumn.setDataStoreName(NAME_COLUMN);
         procedureCellTable.addColumn(nameColumn, NAME_COLUMN);
 
         DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(TABLE_DATE_PATTERN);
@@ -158,6 +168,8 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
                 return dateTimeFormat.format(procedure.getDate());
             }
         };
+        dateColumn.setSortable(true);
+        dateColumn.setDataStoreName(DATE_COLUMN);
         procedureCellTable.addColumn(dateColumn, DATE_COLUMN);
 
         Column<Procedure, Number> priceColumn = new Column<Procedure, Number>(new NumberCell()) {
@@ -167,6 +179,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
             }
         };
         priceColumn.setSortable(true);
+        priceColumn.setDataStoreName(PRICE_COLUMN);
         procedureCellTable.addColumn(priceColumn, PRICE_COLUMN);
 
         if (ExpensesGWTController.isAdmin()) {
@@ -190,118 +203,101 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
             @Override
             protected void onRangeChanged(HasData<Procedure> display) {
                 final Range range = display.getVisibleRange();
-                final ColumnSortList sortList = procedureCellTable.getColumnSortList();
-
-                int start = range.getStart();
-                int length = range.getLength();
-
-                if (ExpensesGWTController.isAdmin()) {
-                    if (startDate.getValue() == null && endDate.getValue() == null) {
-                        Date nullDate = new Date(0);
-                        if (typeId != 0) {
-                            typeSelection.setValue(Integer.toString(typeId));
-                            procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
-                                    sortList.get(0).isAscending(), 0, new MethodCallback<List<Procedure>>() {
-                                        @Override
-                                        public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                        }
-
-                                        @Override
-                                        public void onSuccess(Method method, List<Procedure> response) {
-                                            updateRowData(start, response);
-                                        }
-                                    });
-                            typeId = 0;
-                        } else {
-                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start,
-                                    length, sortList.get(0).isAscending(), Integer.parseInt(userSelection.getValue()),
-                                    new MethodCallback<List<Procedure>>() {
-                                        @Override
-                                        public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                        }
-
-                                        @Override
-                                        public void onSuccess(Method method, List<Procedure> response) {
-                                            updateRowData(start, response);
-                                        }
-                                    });
-                        }
-                    } else {
-                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
-                                startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
-                                Integer.parseInt(userSelection.getValue()), new MethodCallback<List<Procedure>>() {
-                                    @Override
-                                    public void onFailure(Method method, Throwable throwable) {
-                                        AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                    }
-
-                                    @Override
-                                    public void onSuccess(Method method, List<Procedure> response) {
-                                        updateRowData(start, response);
-                                    }
-                                });
-                    }
-                } else {
-                    if (startDate.getValue() == null && endDate.getValue() == null) {
-                        Date nullDate = new Date(0);
-                        if (typeId != 0) {
-                            typeSelection.setValue(Integer.toString(typeId));
-                            procedureWebService.getSortedAndFilteredProcedures(typeId, nullDate, nullDate, start, length,
-                                    sortList.get(0).isAscending(), new MethodCallback<List<Procedure>>() {
-                                        @Override
-                                        public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                        }
-
-                                        @Override
-                                        public void onSuccess(Method method, List<Procedure> response) {
-                                            updateRowData(start, response);
-                                        }
-                                    });
-                            typeId = 0;
-                        } else {
-                            procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
-                                    nullDate, nullDate, start, length, sortList.get(0).isAscending(),
-                                    new MethodCallback<List<Procedure>>() {
-                                        @Override
-                                        public void onFailure(Method method, Throwable throwable) {
-                                            AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                        }
-
-                                        @Override
-                                        public void onSuccess(Method method, List<Procedure> response) {
-                                            updateRowData(start, response);
-                                        }
-                                    });
-                        }
-                    } else {
-                        procedureWebService.getSortedAndFilteredProcedures(Integer.parseInt(typeSelection.getValue()),
-                                startDate.getValue(), endDate.getValue(), start, length, sortList.get(0).isAscending(),
-                                new MethodCallback<List<Procedure>>() {
-                                    @Override
-                                    public void onFailure(Method method, Throwable throwable) {
-                                        AlertWidget.alert(ERR, SORTING_PROCEDURES_ERR).center();
-                                    }
-
-                                    @Override
-                                    public void onSuccess(Method method, List<Procedure> response) {
-                                        updateRowData(start, response);
-                                    }
-                                });
-                    }
-                }
+                start = range.getStart();
+                length = range.getLength();
+                Alert.alert(ERR, "initializing provider");
+                // show is not called
+                show(this);
+                Alert.alert(ERR, "show()");
             }
         };
 
         provider.addDataDisplay(procedureCellTable);
-        provider.updateRowCount(data.size(), true);
-        ColumnSortEvent.AsyncHandler columnSortHandler = new ColumnSortEvent.AsyncHandler(procedureCellTable);
-        procedureCellTable.addColumnSortHandler(columnSortHandler);
+        provider.updateRowCount(data.size(), false);
+
+        procedureCellTable.addColumnSortHandler(columnSortEvent -> {
+            isAscending = columnSortEvent.isSortAscending();
+            columnName = columnSortEvent.getColumn().getDataStoreName();
+            show(provider);
+        });
 
         tablePanel.add(procedureCellTable);
         tablePanel.add(pager);
+    }
+
+    private void show(AsyncDataProvider<Procedure> provider) {
+        if (ExpensesGWTController.isAdmin()) {
+            Alert.alert(ERR, "isAdmin, typeId = " + typeId + "\n" +
+                    " startDate = " + startDate.getValue() + " endDate= " + endDate.getValue() + " start = " + start + " length = " + length + " columnName = " + columnName +
+                    " isAsc = " + isAscending + " typeSelection = " + Integer.parseInt(typeSelection.getValue()) +
+                    " userSelection = " + Integer.parseInt(userSelection.getValue()) + " provider = " + provider.toString());
+
+            if (startDate.getValue() == null && endDate.getValue() == null) {
+                Date nullDate = new Date(0);
+                if (typeId != 0) {
+                    Alert.alert(ERR, "typeId != 0");
+                    typeSelection.setValue(Integer.toString(typeId));
+                    doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending, 0);
+                    typeId = 0;
+                } else {
+                    Alert.alert(ERR, "== null\n" + Integer.parseInt(typeSelection.getValue()) + " " + Integer.parseInt(userSelection.getValue()));
+                    doSort(provider, Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start,
+                            length, columnName, isAscending, Integer.parseInt(userSelection.getValue()));
+                }
+            } else {
+                Alert.alert(ERR, "!= null\n" + Integer.parseInt(typeSelection.getValue()) + " " + Integer.parseInt(userSelection.getValue()));
+                doSort(provider, Integer.parseInt(typeSelection.getValue()),
+                        startDate.getValue(), endDate.getValue(), start, length, columnName, isAscending,
+                        Integer.parseInt(userSelection.getValue()));
+            }
+        } else {
+            if (startDate.getValue() == null && endDate.getValue() == null) {
+                Date nullDate = new Date(0);
+                if (typeId != 0) {
+                    typeSelection.setValue(Integer.toString(typeId));
+                    doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending);
+                    typeId = 0;
+                } else {
+                    doSort(provider, Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start, length,
+                            columnName, isAscending);
+                }
+            } else {
+                doSort(provider, Integer.parseInt(typeSelection.getValue()),
+                        startDate.getValue(), endDate.getValue(), start, length, columnName, isAscending);
+            }
+        }
+    }
+
+    private void doSort(AsyncDataProvider<Procedure> provider, int typeId, Date startDate, Date endDate, int startIndex,
+                        int quantity, String column, boolean isAscending) {
+        procedureWebService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity,
+                column, isAscending, new MethodCallback<List<Procedure>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Alert.alert(ERR, SORTING_PROCEDURES_ERR);
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, List<Procedure> response) {
+                        provider.updateRowData(startIndex, response);
+                    }
+        });
+    }
+
+    private void doSort(AsyncDataProvider<Procedure> provider, int typeId, Date startDate, Date endDate, int startIndex,
+                        int quantity, String column, boolean isAscending, int userId) {
+        procedureWebService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity,
+                column, isAscending, userId, new MethodCallback<List<Procedure>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Alert.alert(ERR, SORTING_PROCEDURES_ERR);
+                    }
+
+                    @Override
+                    public void onSuccess(Method method, List<Procedure> response) {
+                        provider.updateRowData(startIndex, response);
+                    }
+        });
     }
 
     @Override
@@ -336,11 +332,6 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     @Override
     public Select getUserSelection() {
         return userSelection;
-    }
-
-    @Override
-    public CheckBox getDateCheckBox() {
-        return dateCheckBox;
     }
 
     @Override

@@ -2,7 +2,8 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.expense.ShowExpensesEvent;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.services.TypeWebService;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.*;
 import com.google.gwt.event.shared.HandlerManager;
@@ -29,19 +30,56 @@ public class HomePresenter implements Presenter {
         Heading getMonthLabel();
         Heading getWeekLabel();
         Anchor getMoreAnchor();
-        void initPieChart(Map<String, Double> data, boolean isExpense);
-        void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses);
+        void initPieChart(Map<String, Double> data, List<ProcedureType> types, boolean isExpense);
+        void initAreaChart(List<SimpleDate> dates, List<ProcedureType> types, List<MonthlyExpense> expenses);
         Widget asWidget();
     }
 
     private ProcedureWebService procedureWebService;
+    private TypeWebService typeWebService;
     private HandlerManager eventBus;
     private Display display;
 
-    public HomePresenter(ProcedureWebService procedureWebService, HandlerManager eventBus, Display view) {
+    private List<ProcedureType> expenseTypes;
+    private List<ProcedureType> incomeTypes;
+
+    public HomePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
+                         HandlerManager eventBus, Display view) {
         this.procedureWebService = procedureWebService;
+        this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = view;
+
+        getExpenseTypes();
+        getIncomeTypes();
+    }
+
+    private void getExpenseTypes() {
+        typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Alert.alert(ERR, GETTING_TYPES_ERR);
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                expenseTypes = response;
+            }
+        });
+    }
+
+    private void getIncomeTypes() {
+        typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Alert.alert(ERR, GETTING_TYPES_ERR);
+            }
+
+            @Override
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                incomeTypes = response;
+            }
+        });
     }
 
     public void bind() {
@@ -52,12 +90,12 @@ public class HomePresenter implements Presenter {
         procedureWebService.getExpensesReviewByTypes(new MethodCallback<Map<String, Double>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
+                Alert.alert(ERR, GETTING_REVIEW_ERR);
             }
 
             @Override
             public void onSuccess(Method method, Map<String, Double> response) {
-                display.initPieChart(response, true);
+                display.initPieChart(response, expenseTypes,true);
             }
         });
     }
@@ -66,12 +104,12 @@ public class HomePresenter implements Presenter {
         procedureWebService.getIncomesReviewByTypes(new MethodCallback<Map<String, Double>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
+                Alert.alert(ERR, GETTING_REVIEW_ERR);
             }
 
             @Override
             public void onSuccess(Method method, Map<String, Double> response) {
-                display.initPieChart(response, false);
+                display.initPieChart(response, incomeTypes, false);
             }
         });
     }
@@ -80,12 +118,12 @@ public class HomePresenter implements Presenter {
         procedureWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_BETWEEN_EXPENSES_ERR).center();
+                Alert.alert(ERR, GETTING_BETWEEN_EXPENSES_ERR);
             }
 
             @Override
             public void onSuccess(Method method, List<MonthlyExpense> response) {
-                display.initAreaChart(dates, response);
+                display.initAreaChart(dates, expenseTypes, response);
             }
         });
     }
@@ -99,7 +137,7 @@ public class HomePresenter implements Presenter {
         procedureWebService.getReview(new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_REVIEW_ERR).center();
+                Alert.alert(ERR, GETTING_REVIEW_ERR);
             }
 
             @Override
@@ -123,7 +161,7 @@ public class HomePresenter implements Presenter {
         procedureWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_BETWEEN_DATES_ERR).center();
+                Alert.alert(ERR, GETTING_BETWEEN_DATES_ERR);
             }
 
             @Override

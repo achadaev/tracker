@@ -2,8 +2,8 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.type.AddTypeEvent;
 import com.example.tracker.client.event.type.EditTypeEvent;
-import com.example.tracker.client.widget.AlertWidget;
-import com.example.tracker.client.widget.ConfirmWidget;
+import com.example.tracker.client.widget.Alert;
+import com.example.tracker.client.widget.Confirm;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 
-public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmation {
+public class ManageTypesPresenter implements Presenter, Confirm.Confirmation {
 
     private List<ProcedureType> typeList;
 
@@ -41,8 +41,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
     }
 
     private void confirmDeleting() {
-        ConfirmWidget confirmWidget = new ConfirmWidget(this);
-        confirmWidget.confirm(CONFIRMATION, DELETING_FIELDS_LABEL).center();
+        Confirm.confirm(this, CONFIRMATION, DELETING_FIELDS_LABEL);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditTypeEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
+                Alert.alert(ERR, ONE_ROW_ERR);
             }
         });
 
@@ -72,7 +71,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
         typeWebService.deleteTypes(selectedIds, new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, DELETING_TYPES_ERR).center();
+                Alert.alert(ERR, DELETING_TYPES_ERR);
             }
 
             @Override
@@ -87,7 +86,7 @@ public class ManageTypesPresenter implements Presenter, ConfirmWidget.Confirmati
         typeWebService.getTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
+                Alert.alert(ERR, GETTING_TYPES_ERR);
             }
 
             @Override

@@ -205,7 +205,6 @@ public class IProcedureDAOImpl implements IProcedureDAO {
         for (int i = 0; i < ids.size(); i++) {
             archiveProcedure(ids.get(i));
         }
-        //TODO return expense or income list
         return getUsersExpenses(userId);
     }
 
@@ -233,7 +232,6 @@ public class IProcedureDAOImpl implements IProcedureDAO {
         for (int i = 0; i < ids.size(); i++) {
             deleteProcedure(ids.get(i));
         }
-        //TODO same
         return getUsersExpenses(userId);
     }
 

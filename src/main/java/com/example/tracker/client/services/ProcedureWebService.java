@@ -107,24 +107,26 @@ public interface ProcedureWebService extends RestService {
     void getExpensesBetween(MethodCallback<List<MonthlyExpense>> callback);
 
     @GET
-    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
+    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}/{isAscending}")
     @Produces(MediaType.APPLICATION_JSON)
     void getSortedAndFilteredProcedures(@PathParam("typeId") int typeId,
                                         @PathParam("startDate") Date startDate,
                                         @PathParam("endDate") Date endDate,
                                         @PathParam("startIndex") int startIndex,
                                         @PathParam("quantity") int quantity,
+                                        @PathParam("column") String column,
                                         @PathParam("isAscending") boolean isAscending,
                                         MethodCallback<List<Procedure>> callback);
 
     @GET
-    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}/user={userId}")
+    @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}/{isAscending}/user={userId}")
     @Produces(MediaType.APPLICATION_JSON)
     void getSortedAndFilteredProcedures(@PathParam("typeId") int typeId,
                                         @PathParam("startDate") Date startDate,
                                         @PathParam("endDate") Date endDate,
                                         @PathParam("startIndex") int startIndex,
                                         @PathParam("quantity") int quantity,
+                                        @PathParam("column") String column,
                                         @PathParam("isAscending") boolean isAscending,
                                         @PathParam("userId") int userId,
                                         MethodCallback<List<Procedure>> callback);

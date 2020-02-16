@@ -61,11 +61,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
     private PieChart incomePieChart;
     private AreaChart areaChart;
 
-    DataTable expenseDataTable;
-    DataTable incomeDataTable;
+    private DataTable expenseDataTable;
+    private DataTable incomeDataTable;
 
     @Override
-    public void initPieChart(Map<String, Double> data, boolean isExpense) {
+    public void initPieChart(Map<String, Double> data, List<ProcedureType> types, boolean isExpense) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             if (isExpense) {
@@ -75,7 +75,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
                     public void onSelect(SelectEvent selectEvent) {
                         JsArray<Selection> selection = expensePieChart.getSelection();
                         String type = expenseDataTable.getValueString(selection.get(0).getRow(), 0);
-                        for (ProcedureType procedureType : ExpensesGWTController.getExpenseTypes()) {
+                        for (ProcedureType procedureType : types) {
                             if (type.equals(procedureType.getName())) {
                                 eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId()));
                             }
@@ -140,21 +140,20 @@ public class HomeView extends Composite implements HomePresenter.Display {
     }
 
     @Override
-    public void initAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses) {
+    public void initAreaChart(List<SimpleDate> dates, List<ProcedureType> types, List<MonthlyExpense> expenses) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
             areaChart = new AreaChart();
             expenseChartPanel.add(areaChart);
-            drawAreaChart(dates, expenses);
+            drawAreaChart(dates, types, expenses);
         });
     }
 
-    private void drawAreaChart(List<SimpleDate> dates, List<MonthlyExpense> expenses) {
-        List<ProcedureType> expenseTypes = ExpensesGWTController.getExpenseTypes();
+    private void drawAreaChart(List<SimpleDate> dates, List<ProcedureType> types, List<MonthlyExpense> expenses) {
         DataTable dataTable = DataTable.create();
         dataTable.addColumn(ColumnType.STRING, DATE_COLUMN);
 
-        for (ProcedureType type : expenseTypes) {
+        for (ProcedureType type : types) {
             dataTable.addColumn(ColumnType.NUMBER, type.getName());
         }
 

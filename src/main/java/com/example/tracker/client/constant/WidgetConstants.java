@@ -1,11 +1,6 @@
 package com.example.tracker.client.constant;
 
 public class WidgetConstants {
-    public static final String CONFIRM_BUTTON = "Confirm";
-    public static final String CANCEL_BUTTON = "Cancel";
-    public static final String CLOSE_BUTTON = "Close";
-    public static final String CHANGE_BUTTON = "Change";
-
     public static final String ERR = "Error";
     public static final String GETTING_EXPENSES_ERR = "Error getting expenses";
     public static final String GETTING_INCOMES_ERR = "Error getting incomes";
@@ -42,9 +37,6 @@ public class WidgetConstants {
     public static final String AT_LEAST_ONE_ROW_ERR = "Select at least one row";
 
     public static final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{5,}";
-    public static final String ENTER_PASSWORD_LABEL = "Enter new password";
-    public static final String REPEAT_PASSWORD_LABEL = "Repeat new password";
-    public static final String SET_PASSWORD_LABEL = "Set new password";
 
     public static final String CONFIRMATION = "Confirmation";
     public static final String DELETING_FIELDS_LABEL = "Do you actually want to delete these fields?";

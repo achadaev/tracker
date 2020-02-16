@@ -1,12 +1,35 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b='urn:import:org.gwtbootstrap3.client.ui'>
+
 <g:HTMLPanel>
-    <g:DialogBox ui:field="dialogBox">
-        <g:HTMLPanel>
-            <g:FlexTable ui:field="table"/>
-            <g:Button ui:field="saveButton" text="Save"/>
-            <g:Button ui:field="cancelButton" text="Cancel"/>
-        </g:HTMLPanel>
-    </g:DialogBox>
+    <b:Modal title="Edit Type" closable="false" dataBackdrop="STATIC" ui:field="modal" width="250px">
+        <b:ModalBody>
+
+            <b:Form>
+                <b:FieldSet>
+
+                    <b:FormGroup>
+                        <b:FormLabel for="nameForm">Name</b:FormLabel>
+                        <b:TextBox allowBlank="false" placeholder="Name" ui:field="name" b:id="nameForm"/>
+                    </b:FormGroup>
+
+                    <b:FormGroup>
+                        <b:FormLabel for="kindForm">Kind</b:FormLabel>
+                        <b:Container b:id="kindForm">
+                            <b:Radio ui:field="incomeRadio" name="kind" formValue="1" text="Income"/>
+                            <b:Radio ui:field="expenseRadio" name="kind" formValue="-1" text="Expense"/>
+                        </b:Container>
+                    </b:FormGroup>
+
+                </b:FieldSet>
+            </b:Form>
+
+        </b:ModalBody>
+        <b:ModalFooter>
+            <b:Button icon="SAVE" type="SUCCESS" ui:field="saveButton" dataDismiss="MODAL" text="Save"/>
+            <b:Button icon="CLOSE" type="DANGER" ui:field="cancelButton" dataDismiss="MODAL" text="Cancel"/>
+        </b:ModalFooter>
+    </b:Modal>
 </g:HTMLPanel>
 </ui:UiBinder>

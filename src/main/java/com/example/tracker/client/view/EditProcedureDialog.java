@@ -8,21 +8,28 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.datepicker.client.DatePicker;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.constants.ModalBackdrop;
+import org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.Button;
 
-import static com.example.tracker.client.constant.PathConstants.*;
-import static com.example.tracker.client.constant.TableConstants.*;
+import static com.example.tracker.client.constant.PathConstants.EXPENSE_LIST_PATH;
+import static com.example.tracker.client.constant.PathConstants.INCOME_LIST_PATH;
 
-public class EditProcedureDialog extends DialogBox implements EditExpensePresenter.Display {
-    interface EditExpenseDialogUiBinder extends UiBinder<HTMLPanel, EditProcedureDialog> {
+public class EditProcedureDialog extends Composite implements EditExpensePresenter.Display {
+    interface EditExpenseDialogUiBinder extends UiBinder<Widget, EditProcedureDialog> {
     }
 
     private static EditExpenseDialogUiBinder ourUiBinder = GWT.create(EditExpenseDialogUiBinder.class);
 
+    private int procedureKind;
+
     @UiField
-    DialogBox dialogBox;
+    Modal editModal;
     @UiField
-    ListBox typeId;
+    Select typeId;
     @UiField
     TextBox name;
     @UiField
@@ -30,39 +37,40 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     @UiField
     TextBox price;
     @UiField
-    FlexTable table;
-    @UiField
     Button saveButton;
     @UiField
     Button cancelButton;
 
-    int procedureKind;
-
     public EditProcedureDialog(int procedureKind) {
-        setWidget(ourUiBinder.createAndBindUi(this));
-        dialogBox.setGlassEnabled(true);
-        if (procedureKind < 0) {
-            dialogBox.setText(DialogConstants.EDIT_EXPENSE_HEADER);
-        } else {
-            dialogBox.setText(DialogConstants.EDIT_INCOME_HEADER);
-        }
+        initWidget(ourUiBinder.createAndBindUi(this));
         this.procedureKind = procedureKind;
-        initTable();
-    }
+        editModal.setDataBackdrop(ModalBackdrop.STATIC);
+        editModal.setClosable(false);
 
-    private void initTable() {
-        name.getElement().setPropertyString(DialogConstants.PLACEHOLDER, NAME_COLUMN);
-        date.getElement().setPropertyString(DialogConstants.PLACEHOLDER, DATE_COLUMN);
-        price.getElement().setPropertyString(DialogConstants.PLACEHOLDER, PRICE_COLUMN);
-
-        table.setWidget(0, 1, typeId);
-        table.setWidget(1, 1, name);
-        table.setWidget(2, 1, date);
-        table.setWidget(3, 1, price);
+        if (procedureKind < 0) {
+            editModal.setTitle(DialogConstants.EDIT_EXPENSE_HEADER);
+        } else {
+            editModal.setTitle(DialogConstants.EDIT_INCOME_HEADER);
+        }
     }
 
     @Override
-    public ListBox getTypeId() {
+    public void show() {
+        editModal.show();
+    }
+
+    @Override
+    public void hide() {
+        editModal.hide();
+        if (procedureKind < 0) {
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + EXPENSE_LIST_PATH);
+        } else {
+            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + INCOME_LIST_PATH);
+        }
+    }
+
+    @Override
+    public Select getTypeId() {
         return typeId;
     }
 
@@ -94,22 +102,5 @@ public class EditProcedureDialog extends DialogBox implements EditExpensePresent
     @Override
     public Widget asWidget() {
         return this;
-    }
-
-    @Override
-    public void showDialog() {
-        dialogBox.center();
-    }
-
-    @Override
-    public void hideDialog() {
-        dialogBox.hide();
-        if (procedureKind == 1) {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + INCOME_LIST_PATH);
-        } else if (procedureKind == -1) {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + EXPENSE_LIST_PATH);
-        } else {
-            Window.Location.replace(GWT.getHostPageBaseURL() + "#" + HOME_PATH);
-        }
     }
 }

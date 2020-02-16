@@ -3,8 +3,8 @@ package com.example.tracker.client.presenter;
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.user.AddUserEvent;
 import com.example.tracker.client.event.user.EditUserEvent;
-import com.example.tracker.client.widget.AlertWidget;
-import com.example.tracker.client.widget.ConfirmWidget;
+import com.example.tracker.client.widget.Alert;
+import com.example.tracker.client.widget.Confirm;
 import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 
-public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirmation {
+public class ManageProfilesPresenter implements Presenter, Confirm.Confirmation {
 
     private List<User> userList;
 
@@ -42,8 +42,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
     }
 
     private void confirmDeleting() {
-        ConfirmWidget confirmWidget = new ConfirmWidget(this);
-        confirmWidget.confirm(CONFIRMATION, DELETING_FIELDS_LABEL).center();
+        Confirm.confirm(this, CONFIRMATION, DELETING_FIELDS_LABEL);
     }
 
     @Override
@@ -60,7 +59,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
             if (selectedIds.size() == 1) {
                 eventBus.fireEvent(new EditUserEvent(selectedIds.get(0)));
             } else {
-                AlertWidget.alert(ERR, ONE_ROW_ERR).center();
+                Alert.alert(ERR, ONE_ROW_ERR);
             }
         });
 
@@ -68,7 +67,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
             List<Integer> selectedIds = display.getSelectedIds();
             if (selectedIds.contains(ExpensesGWTController.getUser().getId()))
             {
-                AlertWidget.alert(ERR, DELETING_OWN_ACCOUNT_ERR).center();
+                Alert.alert(ERR, DELETING_OWN_ACCOUNT_ERR);
             } else {
                 confirmDeleting();
             }
@@ -81,7 +80,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
         userWebService.archiveUsers(selectedIds, new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, DELETING_USERS_ERR).center();
+                Alert.alert(ERR, DELETING_USERS_ERR);
             }
 
             @Override
@@ -96,7 +95,7 @@ public class ManageProfilesPresenter implements Presenter, ConfirmWidget.Confirm
         userWebService.getAllUsers(new MethodCallback<List<User>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_USERS_ERR).center();
+                Alert.alert(ERR, GETTING_USERS_ERR);
             }
 
             @Override

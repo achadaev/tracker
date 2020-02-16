@@ -5,7 +5,7 @@ import com.example.tracker.client.event.expense.*;
 import com.example.tracker.client.event.incomes.*;
 import com.example.tracker.client.event.type.*;
 import com.example.tracker.client.event.user.*;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.presenter.*;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
@@ -51,7 +51,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
+                Alert.alert(ERR, GETTING_TYPES_ERR);
             }
 
             @Override
@@ -63,7 +63,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_TYPES_ERR).center();
+                Alert.alert(ERR, GETTING_TYPES_ERR);
             }
 
             @Override
@@ -75,7 +75,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         userWebService.getUser(new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert(ERR, GETTING_USER_ERR).center();
+                Alert.alert(ERR, GETTING_USER_ERR);
             }
 
             @Override
@@ -165,7 +165,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
     private void doEditUser(int id) {
         History.newItem(EDIT_USER_PATH, false);
-        Presenter presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false), id);
+        Presenter presenter = new EditUserPresenter(userWebService, eventBus, new EditUserDialog(false), id);
         presenter.go(container);
     }
 
@@ -254,7 +254,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             Presenter presenter = null;
 
             if (token.equals(HOME_PATH)) {
-                presenter = new HomePresenter(procedureWebService, eventBus, new HomeView(eventBus));
+                presenter = new HomePresenter(procedureWebService, typeWebService, eventBus, new HomeView(eventBus));
             }
             else if (token.equals(EXPENSE_LIST_PATH)) {
                 presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
@@ -273,16 +273,16 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
             }
             else if (token.equals(ADD_USER_PATH)) {
                 if (isAdmin()) {
-                    presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(true));
+                    presenter = new EditUserPresenter(userWebService, eventBus, new EditUserDialog(true));
                 } else {
-                    AlertWidget.alert(ERR, ACCESS_DENIED_ERR).center();
+                    Alert.alert(ERR, ACCESS_DENIED_ERR);
                 }
             }
             else if (token.equals(ADD_TYPE_PATH)) {
                 if (isAdmin()) {
                     presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
                 } else {
-                    AlertWidget.alert(ERR, ACCESS_DENIED_ERR).center();
+                    Alert.alert(ERR, ACCESS_DENIED_ERR);
                 }
             }
             else if (token.equals(PROFILE_PATH)) {
@@ -297,27 +297,27 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
                                 new EditProcedureDialog(1));
             }
             else if (token.equals(EDIT_USER_PATH)) {
-                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserView(false));
+                presenter = new EditUserPresenter(userWebService, eventBus, new EditUserDialog(false));
             }
             else if (token.equals(EDIT_TYPE_PATH)) {
                 if (isAdmin()) {
                     presenter = new EditTypePresenter(typeWebService, eventBus, new EditTypeDialog());
                 } else {
-                    AlertWidget.alert(ERR, ACCESS_DENIED_ERR).center();
+                    Alert.alert(ERR, ACCESS_DENIED_ERR);
                 }
             }
             else if (token.equals(MANAGE_PROFILES_PATH)) {
                 if (isAdmin()) {
                     presenter = new ManageProfilesPresenter(userWebService, eventBus, new ManageProfilesView());
                 } else {
-                    AlertWidget.alert(ERR, ACCESS_DENIED_ERR).center();
+                    Alert.alert(ERR, ACCESS_DENIED_ERR);
                 }
             }
             else if (token.equals(MANAGE_TYPES_PATH)) {
                 if (isAdmin()) {
                     presenter = new ManageTypesPresenter(typeWebService, eventBus, new ManageTypesView());
                 } else {
-                    AlertWidget.alert(ERR, ACCESS_DENIED_ERR).center();
+                    Alert.alert(ERR, ACCESS_DENIED_ERR);
                 }
             }
             if (presenter != null) {
@@ -346,8 +346,8 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         userWebService.logout(new MethodCallback<String>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, throwable.getMessage()).center();
-                AlertWidget.alert(ERR, LOGGING_OUT_ERR).center();
+                Alert.alert(ERR, throwable.getMessage());
+                Alert.alert(ERR, LOGGING_OUT_ERR);
             }
 
             @Override

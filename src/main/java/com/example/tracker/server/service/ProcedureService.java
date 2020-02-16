@@ -273,7 +273,6 @@ public class ProcedureService {
     public List<Procedure> archiveProcedures(List<Integer> ids) {
         if (isAdmin()) {
             iProcedureDAO.archiveProcedures(ids, getCurrentUser().getId());
-            //TODO same
             return iProcedureDAO.getAllExpenses();
         } else {
             return iProcedureDAO.archiveProcedures(ids, getCurrentUser().getId());
@@ -491,7 +490,8 @@ public class ProcedureService {
     }
 
     public List<Procedure> getSortedAndFilteredProcedures(int typeId, Date startDate, Date endDate, int startIndex,
-                                                          int quantity, boolean isAscending) throws AccessDeniedException {
+                                                          int quantity, String column,
+                                                          boolean isAscending) throws AccessDeniedException {
         List<Procedure> result;
         Date nullDate = new Date(0);
         if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
@@ -499,7 +499,9 @@ public class ProcedureService {
         } else {
             result = getProceduresByDate(typeId, startDate, endDate);
         }
-        result.sort(Comparator.comparingDouble(Procedure::getPrice));
+
+        doSort(result, column);
+
         if (isAscending) {
             Collections.reverse(result);
         }
@@ -508,9 +510,10 @@ public class ProcedureService {
     }
 
     public List<Procedure> getSortedAndFilteredProcedures(int typeId, Date startDate, Date endDate, int startIndex,
-                                                          int quantity, boolean isAscending, int userId) throws AccessDeniedException {
+                                                          int quantity, String column, boolean isAscending,
+                                                          int userId) throws AccessDeniedException {
         if (userId == 0) {
-            return getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity, isAscending);
+            return getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity, column, isAscending);
         } else {
             List<Procedure> result;
             Date nullDate = new Date(0);
@@ -519,12 +522,47 @@ public class ProcedureService {
             } else {
                 result = getProceduresByDate(typeId, startDate, endDate, userId);
             }
-            result.sort(Comparator.comparingDouble(Procedure::getPrice));
+
+            doSort(result, column);
+
             if (isAscending) {
                 Collections.reverse(result);
             }
             int endIndex = Math.min(startIndex + quantity, result.size());
             return result.subList(startIndex, endIndex);
+        }
+    }
+
+    private void doSort(List<Procedure> list, String column) {
+        switch (column) {
+            case "ID": {
+                list.sort(Comparator.comparingInt(Procedure::getId));
+                break;
+            }
+            case "Username": {
+                list.sort((Comparator.comparing(Procedure::getUsername)));
+                break;
+            }
+            case "Type": {
+                list.sort((o1, o2) -> {
+                    ProcedureType type1 = iProcedureTypeDAO.getTypeById(o1.getTypeId());
+                    ProcedureType type2 = iProcedureTypeDAO.getTypeById(o2.getTypeId());
+                    return type1.getName().compareTo(type2.getName());
+                });
+                break;
+            }
+            case "Name": {
+                list.sort((Comparator.comparing(Procedure::getName)));
+                break;
+            }
+            case "Date": {
+                list.sort((Comparator.comparing(Procedure::getDate)));
+                break;
+            }
+            case "Price": {
+                list.sort(Comparator.comparingDouble(Procedure::getPrice));
+                break;
+            }
         }
     }
 

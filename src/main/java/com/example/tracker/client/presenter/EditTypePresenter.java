@@ -1,7 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.type.TypeUpdatedEvent;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -9,6 +9,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.client.ui.Radio;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 
@@ -18,11 +19,11 @@ public class EditTypePresenter implements Presenter {
         HasClickHandlers getSaveButton();
         HasClickHandlers getCancelButton();
         HasValue<String> getName();
-        RadioButton getExpenseRadio();
-        RadioButton getIncomeRadio();
+        Radio getExpenseRadio();
+        Radio getIncomeRadio();
         Widget asWidget();
-        void showDialog();
-        void hideDialog();
+        void show();
+        void hide();
     }
 
     private ProcedureType type;
@@ -46,7 +47,7 @@ public class EditTypePresenter implements Presenter {
         typeWebService.getTypeById(id, new MethodCallback<ProcedureType>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_TYPE_ERR).center();
+                Alert.alert(ERR, GETTING_TYPE_ERR);
             }
 
             @Override
@@ -65,34 +66,38 @@ public class EditTypePresenter implements Presenter {
 
     private void bind() {
         display.getSaveButton().addClickHandler(clickEvent -> doSave());
-        display.getCancelButton().addClickHandler(clickEvent -> display.hideDialog());
+        display.getCancelButton().addClickHandler(clickEvent -> display.hide());
     }
 
     private void doSave() {
-        type.setName(display.getName().getValue());
-        if (display.getExpenseRadio().getValue()) {
-            type.setKind(-1);
+        if (!"".equals(display.getName().getValue())) {
+            type.setName(display.getName().getValue());
+            if (display.getExpenseRadio().getValue()) {
+                type.setKind(-1);
+            } else {
+                type.setKind(1);
+            }
+
+            typeWebService.updateType(type, new MethodCallback<ProcedureType>() {
+                @Override
+                public void onFailure(Method method, Throwable throwable) {
+                    Alert.alert(ERR, UPDATING_TYPE_ERR);
+                }
+
+                @Override
+                public void onSuccess(Method method, ProcedureType response) {
+                    eventBus.fireEvent(new TypeUpdatedEvent(response));
+                    display.hide();
+                }
+            });
         } else {
-            type.setKind(1);
+            Alert.alert(ERR, EMPTY_FIELDS_ERR);
         }
-
-        typeWebService.updateType(type, new MethodCallback<ProcedureType>() {
-            @Override
-            public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, UPDATING_TYPE_ERR).center();
-            }
-
-            @Override
-            public void onSuccess(Method method, ProcedureType response) {
-                eventBus.fireEvent(new TypeUpdatedEvent(response));
-                display.hideDialog();
-            }
-        });
     }
 
     @Override
     public void go(HasWidgets container) {
         bind();
-        display.showDialog();
+        display.show();
     }
 }

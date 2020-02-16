@@ -2,9 +2,8 @@ package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.ExpensesGWTController;
 import com.example.tracker.client.event.user.UserUpdatedEvent;
-import com.example.tracker.client.widget.AlertWidget;
-import com.example.tracker.client.widget.PassChangeWidget;
 import com.example.tracker.client.services.UserWebService;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.shared.model.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -14,6 +13,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.client.ui.*;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,19 +25,30 @@ import java.util.List;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 import static com.example.tracker.client.constant.PathConstants.LOGIN_PATH;
+import static com.example.tracker.server.constant.DBConstants.DATE_PATTERN;
 
-public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
+public class EditUserPresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
+        HasClickHandlers getCancelButton();
         TextBox getLogin();
         HasValue<String> getName();
         HasValue<String> getSurname();
         HasValue<String> getEmail();
         HasValue<String> getPassword();
         HasClickHandlers getChangePasswordButton();
-        Label getRole();
-        ListBox getRoleListBox();
-        Label getRegDate();
+        Lead getRole();
+        Select getRoleSelection();
+        Lead getRegDate();
+        HasValue<String> getNewPassword();
+        HasValue<String> getConfirmPassword();
+        void showEditModal();
+        void hideEditModal();
+        void showChangeModal();
+        void hideChangeModal();
+        Form getEditForm();
+        Form getChangeForm();
+        Button getDoChangePasswordButton();
         Widget asWidget();
     }
 
@@ -44,7 +59,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
     private List<String> roles;
     private boolean isLoginChanged = false;
 
-    private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("dd-MM-yyyy hh:mm:ss");
+    private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat(DATE_PATTERN);
 
     public EditUserPresenter(UserWebService userWebService, HandlerManager eventBus, Display display) {
         this.userWebService = userWebService;
@@ -54,6 +69,10 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         roles = new ArrayList<>();
         roles.add("admin");
         roles.add("user");
+
+        if (ExpensesGWTController.isAdmin()) {
+            initRoleSelection(display.getRoleSelection());
+        }
     }
 
     public EditUserPresenter(UserWebService userWebService, HandlerManager eventBus, Display display, int id) {
@@ -64,10 +83,14 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         roles.add("admin");
         roles.add("user");
 
+        if (ExpensesGWTController.isAdmin()) {
+            initRoleSelection(display.getRoleSelection());
+        }
+
         userWebService.getUserById(id, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, GETTING_USER_ERR).center();
+                Alert.alert(ERR, GETTING_USER_ERR);
             }
 
             @Override
@@ -78,7 +101,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
                 display.getSurname().setValue(user.getSurname());
                 display.getEmail().setValue(user.getEmail());
                 if (ExpensesGWTController.isAdmin()) {
-                    display.getRoleListBox().setItemSelected(roles.indexOf(user.getRole()), true);
+                    display.getRoleSelection().setValue(Integer.toString(roles.indexOf(user.getRole())));
                 } else {
                     display.getRole().setText(user.getRole());
                 }
@@ -87,48 +110,45 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         });
     }
 
-    private void initRolesListBox(ListBox listBox) {
-        for (int i = 0; i < roles.size(); i++) {
-            listBox.addItem(roles.get(i), Integer.toString(i));
+    private void initRoleSelection(Select select) {
+        for (String role : roles) {
+            Option option = new Option();
+            option.setContent(role);
+            option.setValue(Integer.toString(roles.indexOf(role)));
+            select.add(option);
         }
+        select.refresh();
     }
 
     private void bind() {
-        display.getSaveButton().addClickHandler(clickEvent -> doSave());
+        display.getSaveButton().addClickHandler(clickEvent -> {
+            if (display.getEditForm().validate()) {
+                doSave();
+                display.hideEditModal();
+            }
+        });
+
+        display.getCancelButton().addClickHandler(clickEvent -> display.hideEditModal());
 
         if (display.getChangePasswordButton() != null) {
-            display.getChangePasswordButton().addClickHandler(clickEvent -> {
-                PassChangeWidget passChangeWidget = new PassChangeWidget(this);
-                passChangeWidget.change(SET_PASSWORD_LABEL).center();
-            });
+            display.getChangePasswordButton().addClickHandler(clickEvent -> display.showChangeModal());
         }
 
-        if (ExpensesGWTController.isAdmin()) {
-            initRolesListBox(display.getRoleListBox());
-        }
-    }
-
-    private boolean isPasswordValid(String password) {
-        String pattern = PASSWORD_PATTERN;
-        return password.matches(pattern);
-    }
-
-    @Override
-    public void onChange(TextBox passBox, TextBox repeatPassBox) {
-        if (passBox.getValue().equals(repeatPassBox.getValue())
-            && isPasswordValid(passBox.getValue())) {
-            user.setPassword(passBox.getValue());
-            changePassword();
-        } else {
-            AlertWidget.alert(ERR, INCORRECT_PASSWORD_PATTERN_ERR).center();
-        }
+        display.getDoChangePasswordButton().addClickHandler(clickEvent -> {
+           if (display.getNewPassword().getValue().equals(display.getConfirmPassword().getValue())
+                   && display.getChangeForm().validate()) {
+               user.setPassword(display.getNewPassword().getValue());
+               changePassword();
+               display.hideChangeModal();
+           }
+        });
     }
 
     private void changePassword() {
         userWebService.updatePassword(user, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, CHANGING_PASSWORD_ERR).center();
+                Alert.alert(ERR, CHANGING_PASSWORD_ERR);
             }
 
             @Override
@@ -148,7 +168,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         user.setSurname(display.getSurname().getValue());
         user.setEmail(display.getEmail().getValue());
         if (ExpensesGWTController.isAdmin()) {
-            user.setRole(display.getRoleListBox().getSelectedItemText());
+            user.setRole(display.getRoleSelection().getSelectedItem().getContent());
         } else {
             user.setRole(display.getRole().getText());
         }
@@ -162,7 +182,7 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
         userWebService.updateUser(user, new MethodCallback<User>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, UPDATING_USER_ERR).center();
+                Alert.alert(ERR, UPDATING_USER_ERR);
             }
 
             @Override
@@ -180,7 +200,6 @@ public class EditUserPresenter implements Presenter, PassChangeWidget.Changer {
     @Override
     public void go(HasWidgets container) {
         bind();
-        container.clear();
-        container.add(display.asWidget());
+        display.showEditModal();
     }
 }

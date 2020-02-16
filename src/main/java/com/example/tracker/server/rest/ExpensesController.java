@@ -293,31 +293,36 @@ public class ExpensesController {
         return procedureService.getExpensesBetween();
     }
 
-    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}")
+    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}/{isAscending}")
     List<Procedure> getSortedAndFilteredProcedures(@PathVariable int typeId,
                                                  @PathVariable Date startDate,
                                                  @PathVariable Date endDate,
                                                  @PathVariable int startIndex,
                                                  @PathVariable int quantity,
+                                                 @PathVariable String column,
                                                  @PathVariable boolean isAscending) {
         try {
-            return procedureService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity, isAscending);
+            return procedureService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity,
+                    column, isAscending);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
         return new ArrayList<>();
     }
 
-    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{isAscending}/user={userId}")
+    @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}" +
+            "/{isAscending}/user={userId}")
     List<Procedure> getSortedAndFilteredProcedures(@PathVariable int typeId,
                                                  @PathVariable Date startDate,
                                                  @PathVariable Date endDate,
                                                  @PathVariable int startIndex,
                                                  @PathVariable int quantity,
+                                                 @PathVariable String column,
                                                  @PathVariable boolean isAscending,
                                                  @PathVariable int userId) {
         try {
-            return procedureService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity, isAscending, userId);
+            return procedureService.getSortedAndFilteredProcedures(typeId, startDate, endDate, startIndex, quantity,
+                    column, isAscending, userId);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }

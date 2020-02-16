@@ -8,9 +8,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.Radio;
+import org.gwtbootstrap3.client.ui.TextBox;
 
 import static com.example.tracker.client.constant.PathConstants.MANAGE_TYPES_PATH;
-import static com.example.tracker.client.constant.TableConstants.*;
 
 public class EditTypeDialog extends DialogBox implements EditTypePresenter.Display {
     interface EditTypeDialogUiBinder extends UiBinder<HTMLPanel, EditTypeDialog> {
@@ -19,35 +22,20 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     private static EditTypeDialogUiBinder ourUiBinder = GWT.create(EditTypeDialogUiBinder.class);
 
     @UiField
-    DialogBox dialogBox;
+    Modal modal;
     @UiField
-    FlexTable table;
+    TextBox name;
+    @UiField
+    Radio expenseRadio;
+    @UiField
+    Radio incomeRadio;
     @UiField
     Button saveButton;
     @UiField
     Button cancelButton;
 
-    TextBox name;
-    RadioButton expenseRadio;
-    RadioButton incomeRadio;
-
     public EditTypeDialog() {
         setWidget(ourUiBinder.createAndBindUi(this));
-        dialogBox.setGlassEnabled(true);
-        dialogBox.setText(DialogConstants.EDIT_TYPE_HEADER);
-        name = new TextBox();
-        expenseRadio = new RadioButton(KIND_COLUMN, EXPENSE_COLUMN);
-        incomeRadio = new RadioButton(KIND_COLUMN, INCOME_COLUMN);
-        initTable();
-    }
-
-    private void initTable() {
-        table.setText(0, 0, NAME_COLUMN);
-        table.setText(1, 0, KIND_COLUMN);
-
-        table.setWidget(0, 1, name);
-        table.setWidget(1, 1, expenseRadio);
-        table.setWidget(2, 1, incomeRadio);
     }
 
     @Override
@@ -66,23 +54,23 @@ public class EditTypeDialog extends DialogBox implements EditTypePresenter.Displ
     }
 
     @Override
-    public RadioButton getExpenseRadio() {
+    public Radio getExpenseRadio() {
         return expenseRadio;
     }
 
     @Override
-    public RadioButton getIncomeRadio() {
+    public Radio getIncomeRadio() {
         return incomeRadio;
     }
 
     @Override
-    public void showDialog() {
-        dialogBox.center();
+    public void show() {
+        modal.show();
     }
 
     @Override
-    public void hideDialog() {
-        dialogBox.hide();
+    public void hide() {
+        modal.hide();
         Window.Location.replace(GWT.getHostPageBaseURL() + "#" + MANAGE_TYPES_PATH);
     }
 }

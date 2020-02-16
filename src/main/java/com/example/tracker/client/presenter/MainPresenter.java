@@ -44,7 +44,6 @@ public class MainPresenter implements Presenter {
             display.getNavigationBar().add(menuBarPresenter.getManageProfilesButton());
         }
         display.getNavigationBar().add(menuBarPresenter.getLogoutButton());
-        //menuBarPresenter.go(display.getMenuPanel());
         bind();
     }
 

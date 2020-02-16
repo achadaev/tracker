@@ -1,7 +1,7 @@
 package com.example.tracker.client.presenter;
 
 import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
-import com.example.tracker.client.widget.AlertWidget;
+import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.shared.model.Procedure;
@@ -10,11 +10,12 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DatePicker;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker;
+import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.List;
 
@@ -25,13 +26,13 @@ public class EditExpensePresenter implements Presenter {
     public interface Display {
         HasClickHandlers getSaveButton();
         HasClickHandlers getCancelButton();
-        ListBox getTypeId();
+        Select getTypeId();
         HasValue<String> getName();
         DatePicker getDate();
         HasValue<String> getPrice();
         Widget asWidget();
-        void showDialog();
-        void hideDialog();
+        void show();
+        void hide();
     }
 
     protected Procedure procedure;
@@ -47,7 +48,8 @@ public class EditExpensePresenter implements Presenter {
         this.eventBus = eventBus;
         this.display = display;
         this.procedure = new Procedure();
-        bind();
+
+        initTypesListBox(display.getTypeId());
     }
 
     public EditExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
@@ -56,20 +58,19 @@ public class EditExpensePresenter implements Presenter {
         this.typeWebService = typeWebService;
         this.eventBus = eventBus;
         this.display = display;
-        bind();
 
         procedureWebService.getProcedureById(id, new MethodCallback<Procedure>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
-                AlertWidget.alert(ERR, GETTING_PROCEDURE_ERR).center();
+                Alert.alert(ERR, GETTING_PROCEDURE_ERR);
             }
 
             @Override
             public void onSuccess(Method method, Procedure response) {
                 procedure = response;
                 for (int i = 0; i < display.getTypeId().getItemCount(); i++) {
-                    if (procedure.getTypeId() == Integer.parseInt(display.getTypeId().getValue(i))) {
-                        display.getTypeId().setItemSelected(i, true);
+                    if (procedure.getTypeId() == Integer.parseInt(display.getTypeId().getItem(i).getValue())) {
+                        display.getTypeId().setValue(display.getTypeId().getItem(i).getValue());
                     }
                 }
                 display.getName().setValue(procedure.getName());
@@ -77,39 +78,49 @@ public class EditExpensePresenter implements Presenter {
                 display.getPrice().setValue(Double.toString(procedure.getPrice()));
             }
         });
+
+        initTypesListBox(display.getTypeId());
     }
 
-    protected void initTypesListBox(ListBox listBox) {
+    protected void initTypesListBox(Select select) {
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                AlertWidget.alert(ERR, throwable.getMessage()).center();
+                Alert.alert(ERR, throwable.getMessage());
             }
 
             @Override
-            public void onSuccess(Method method, List<ProcedureType> procedureTypes) {
-                for (ProcedureType type : procedureTypes) {
-                    listBox.addItem(type.getName(), Integer.toString(type.getId()));
-                }
+            public void onSuccess(Method method, List<ProcedureType> response) {
+                setTypes(display.getTypeId(), response);
             }
         });
     }
 
+    protected void setTypes(Select select, List<ProcedureType> types) {
+        for (ProcedureType type : types) {
+            Option option = new Option();
+            option.setContent(type.getName());
+            option.setValue(Integer.toString(type.getId()));
+            select.add(option);
+        }
+        select.refresh();
+    }
+
     public void bind() {
         this.display.getSaveButton().addClickHandler(clickEvent -> doSave());
-        this.display.getCancelButton().addClickHandler(clickEvent -> display.hideDialog());
-        initTypesListBox(this.display.getTypeId());
+        this.display.getCancelButton().addClickHandler(clickEvent -> display.hide());
     }
 
     public void go(HasWidgets container) {
-        display.showDialog();
+        bind();
+        display.show();
     }
 
     protected double toDouble(String value) {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            AlertWidget.alert(ERR, INCORRECT_PRICE_ERR).center();
+            Alert.alert(ERR, INCORRECT_PRICE_ERR);
         }
         return 0.0;
     }
@@ -119,7 +130,7 @@ public class EditExpensePresenter implements Presenter {
                 && display.getDate().getValue() != null
                 && !"".equals(display.getPrice().getValue())) {
             if (toDouble(display.getPrice().getValue()) != 0.0) {
-                procedure.setTypeId(Integer.parseInt(display.getTypeId().getSelectedValue()));
+                procedure.setTypeId(Integer.parseInt(display.getTypeId().getValue()));
                 procedure.setKind(-1);
                 procedure.setName(display.getName().getValue());
                 procedure.setDate(display.getDate().getValue());
@@ -128,18 +139,17 @@ public class EditExpensePresenter implements Presenter {
                 procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                     @Override
                     public void onFailure(Method method, Throwable exception) {
-                        AlertWidget.alert(ERR, UPDATING_EXPENSE_ERR).center();
+                        Alert.alert(ERR, UPDATING_EXPENSE_ERR);
                     }
 
                     @Override
                     public void onSuccess(Method method, Procedure response) {
                         eventBus.fireEvent(new ExpenseUpdatedEvent(response));
-                        display.hideDialog();
                     }
                 });
             }
         } else {
-            AlertWidget.alert(ERR, EMPTY_FIELDS_ERR).center();
+            Alert.alert(ERR, EMPTY_FIELDS_ERR);
         }
     }
 }
