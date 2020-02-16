@@ -1,3 +1,4 @@
+/*
 package com.example.tracker.server;
 
 import com.example.tracker.server.dao.IProcedureDAO;
@@ -15,3 +16,4 @@ public class TrackerRunner implements CommandLineRunner {
     public void run(String... args) {
     }
 }
+*/

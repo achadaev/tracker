@@ -135,12 +135,15 @@ public class EditUserPresenter implements Presenter {
         }
 
         display.getDoChangePasswordButton().addClickHandler(clickEvent -> {
-           if (display.getNewPassword().getValue().equals(display.getConfirmPassword().getValue())
-                   && display.getChangeForm().validate()) {
-               user.setPassword(display.getNewPassword().getValue());
-               changePassword();
-               display.hideChangeModal();
-           }
+            if (!display.getNewPassword().getValue().equals(display.getConfirmPassword().getValue())) {
+                Alert.alert(ERR, PASSWORDS_DOESNT_MATCHES_ERR);
+            } else if (!display.getChangeForm().validate()) {
+                Alert.alert(ERR, INCORRECT_PASSWORD_PATTERN_ERR);
+            } else {
+                user.setPassword(display.getNewPassword().getValue());
+                changePassword();
+                display.hideChangeModal();
+            }
         });
     }
 

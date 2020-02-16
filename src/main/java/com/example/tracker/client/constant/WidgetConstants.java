@@ -33,6 +33,7 @@ public class WidgetConstants {
     public static final String INCORRECT_PRICE_ERR = "Input correct price";
     public static final String INCORRECT_PASSWORD_PATTERN_ERR = "Password must contain al least 1 upper case letter, " +
             "1 lower case letter, 1 digit and length >= 5";
+    public static final String PASSWORDS_DOESNT_MATCHES_ERR = "Passwords doesn't matches";
     public static final String CHANGING_PASSWORD_ERR = "Error changing password";
     public static final String ONE_ROW_ERR = "Select one row";
     public static final String AT_LEAST_ONE_ROW_ERR = "Select at least one row";
