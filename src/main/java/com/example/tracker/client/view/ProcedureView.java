@@ -194,7 +194,17 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
 
         procedureCellTable.setPageSize(10);
         procedureCellTable.setRowData(0, data);
-        SimplePager pager = new SimplePager();
+        SimplePager pager = new SimplePager() {
+            @Override
+            public boolean hasNextPage() {
+                if (getDisplay() == null || getDisplay().getRowCount() == 0) {
+                    return false;
+                }
+                Range range = getDisplay().getVisibleRange();
+                return range.getStart() + range.getLength() < getDisplay().getRowCount();
+            }
+
+        };
         pager.setDisplay(procedureCellTable);
 
         procedureCellTable.getColumnSortList().push(new ColumnSortList.ColumnSortInfo(priceColumn, false));
