@@ -74,6 +74,21 @@ public class User {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (id == user.id && isActive == user.isActive && login.equals(user.login) && name.equals(user.name)
+            && surname.equals(user.surname) && email.equals(user.email) && password.equals(user.password)
+            && role.equals(user.role) && regDate.equals(user.regDate)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "id=" + id +

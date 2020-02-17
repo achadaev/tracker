@@ -21,6 +21,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
@@ -188,7 +189,7 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
     protected void deleteSelectedIds() {
         List<Integer> selectedIds = display.getSelectedIds();
 
-        procedureWebService.archiveProcedure(selectedIds, new MethodCallback<List<Procedure>>() {
+        procedureWebService.archiveProcedures(selectedIds, new MethodCallback<List<Procedure>>() {
             @Override
             public void onFailure(Method method, Throwable exception) {
                 Alert.alert(ERR, DELETING_PROCEDURES_ERR);

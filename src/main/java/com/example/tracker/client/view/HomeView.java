@@ -21,6 +21,7 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Heading;
+import org.gwtbootstrap3.extras.toggleswitch.client.ui.ToggleSwitch;
 
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,8 @@ public class HomeView extends Composite implements HomePresenter.Display {
     Heading weekLabel;
     @UiField
     Anchor moreAnchor;
+    @UiField
+    ToggleSwitch isOwn;
 
     private HandlerManager eventBus;
 
@@ -82,6 +85,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
                         }
                     }
                 });
+                expenseChartPanel.clear();
                 expenseChartPanel.add(expensePieChart);
                 drawPieChart(data, true);
             } else {
@@ -98,6 +102,7 @@ public class HomeView extends Composite implements HomePresenter.Display {
                         }
                     }
                 });
+                incomeChartPanel.clear();
                 incomeChartPanel.add(incomePieChart);
                 drawPieChart(data, false);
             }
@@ -202,6 +207,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
     @Override
     public Anchor getMoreAnchor() {
         return moreAnchor;
+    }
+
+    @Override
+    public ToggleSwitch getIsOwn() {
+        return isOwn;
     }
 
     @Override

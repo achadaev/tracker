@@ -7,6 +7,7 @@ import com.example.tracker.client.services.UserWebService;
 import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.ProcedureWebService;
 import com.example.tracker.client.services.TypeWebService;
+import com.example.tracker.client.widget.Confirm;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.example.tracker.shared.model.SelectionValue;
@@ -132,6 +133,33 @@ public class IncomePresenter extends ExpensePresenter {
                         Integer.parseInt(display.getUserSelection().getValue()));
             } else {
                 filterProcedures(Integer.parseInt(display.getTypeSelection().getValue()));
+            }
+        });
+    }
+
+    protected void confirmDeleting() {
+        Confirm.confirm(this, CONFIRMATION, DELETING_FIELDS_LABEL);
+    }
+
+    @Override
+    public void onConfirm() {
+        deleteSelectedIds();
+    }
+
+    protected void deleteSelectedIds() {
+        List<Integer> selectedIds = display.getSelectedIds();
+
+        procedureWebService.archiveProcedures(selectedIds, new MethodCallback<List<Procedure>>() {
+            @Override
+            public void onFailure(Method method, Throwable exception) {
+                Alert.alert(ERR, DELETING_PROCEDURES_ERR);
+            }
+
+            @Override
+            public void onSuccess(Method method, List<Procedure> response) {
+                procedureList = response;
+                display.setData(procedureList, incomeTypes);
+                updateTotal(display.getTotalLabel());
             }
         });
     }

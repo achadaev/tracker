@@ -38,19 +38,19 @@ public interface ProcedureWebService extends RestService {
     void getUsersIncomes(MethodCallback<List<Procedure>> callback);
 
     @GET
-    @Path("/review")
+    @Path("/review/own={isOwn}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getReview(MethodCallback<ReviewInfo> callback);
+    void getReview(@PathParam("isOwn") boolean isOwn, MethodCallback<ReviewInfo> callback);
 
     @GET
-    @Path("/expense-type-review")
+    @Path("/expense-type-review/own={isOwn}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getExpensesReviewByTypes(MethodCallback<Map<String, Double>> callback);
+    void getExpensesReviewByTypes(@PathParam("isOwn") boolean isOwn, MethodCallback<Map<String, Double>> callback);
 
     @GET
-    @Path("/income-type-review")
+    @Path("/income-type-review/own={isOwn}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getIncomesReviewByTypes(MethodCallback<Map<String, Double>> callback);
+    void getIncomesReviewByTypes(@PathParam("isOwn") boolean isOwn, MethodCallback<Map<String, Double>> callback);
 
     @GET
     @Path("/typeId={id}")
@@ -92,7 +92,7 @@ public interface ProcedureWebService extends RestService {
     @Path("/archive")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void archiveProcedure(List<Integer> ids, MethodCallback<List<Procedure>> callback);
+    void archiveProcedures(List<Integer> ids, MethodCallback<List<Procedure>> callback);
 
     @GET
     @Path("/dates-between")

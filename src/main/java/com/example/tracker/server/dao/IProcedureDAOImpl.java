@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.Produces;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,6 +61,24 @@ public class IProcedureDAOImpl implements IProcedureDAO {
         String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
                 "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
                 "WHERE kind > 0 AND user_proc.user_id = ? AND proc.is_archived = 0";
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setInt(1, userId), new ProcedureMapper());
+    }
+
+    @Override
+    public List<Procedure> getExpensesByUser(int userId) {
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
+                "WHERE kind < 0 AND user_proc.user_id = ?";
+        return jdbcTemplate.query(query, preparedStatement -> preparedStatement
+                .setInt(1, userId), new ProcedureMapper());
+    }
+
+    @Override
+    public List<Procedure> getIncomesByUser(int userId) {
+        String query = "SELECT proc.id, proc.type_id, proc.kind, 'user'.login AS username, proc.name, proc.date, proc.price, proc.is_archived " +
+                "FROM proc JOIN user_proc ON proc.id = user_proc.proc_id JOIN 'user' ON user_proc.user_id = 'user'.id " +
+                "WHERE kind > 0 AND user_proc.user_id = ?";
         return jdbcTemplate.query(query, preparedStatement -> preparedStatement
                 .setInt(1, userId), new ProcedureMapper());
     }
@@ -205,7 +224,18 @@ public class IProcedureDAOImpl implements IProcedureDAO {
         for (int i = 0; i < ids.size(); i++) {
             archiveProcedure(ids.get(i));
         }
-        return getUsersExpenses(userId);
+        if (getProcedureById(userId, ids.get(0)).getKind() > 0) {
+            return getUsersIncomes(userId);
+        } else {
+            return getUsersExpenses(userId);
+        }
+    }
+
+    @Override
+    public void archiveProcedures(List<Procedure> procedures) {
+        for (Procedure procedure : procedures) {
+            archiveProcedure(procedure.getId());
+        }
     }
 
     private Boolean deleteProcedure(int id) {

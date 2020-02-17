@@ -15,6 +15,10 @@ public interface IProcedureDAO {
 
     List<Procedure> getUsersIncomes(int userId);
 
+    List<Procedure> getExpensesByUser(int userId);
+
+    List<Procedure> getIncomesByUser(int userId);
+
     Procedure getProcedureById(int userId, int id);
 
     List<Procedure> getProceduresByTypeId(int userId, int typeId);
@@ -32,6 +36,8 @@ public interface IProcedureDAO {
     Boolean updateProcedure(Procedure procedure);
 
     List<Procedure> archiveProcedures(List<Integer> ids, int userId);
+
+    void archiveProcedures(List<Procedure> procedures);
 
     List<Procedure> deleteProcedures(List<Integer> ids, int userId);
 

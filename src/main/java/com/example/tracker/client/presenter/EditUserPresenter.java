@@ -102,6 +102,9 @@ public class EditUserPresenter implements Presenter {
                 display.getEmail().setValue(user.getEmail());
                 if (ExpensesGWTController.isAdmin()) {
                     display.getRoleSelection().setValue(Integer.toString(roles.indexOf(user.getRole())));
+                    if (ExpensesGWTController.getUser().equals(user)) {
+                        display.getRoleSelection().setEnabled(false);
+                    }
                 } else {
                     display.getRole().setText(user.getRole());
                 }
@@ -163,7 +166,7 @@ public class EditUserPresenter implements Presenter {
 
     private void doSave() {
         if (!display.getLogin().getValue().equals(user.getLogin())
-            && !ExpensesGWTController.isAdmin()) {
+            && (!ExpensesGWTController.isAdmin() || ExpensesGWTController.getUser().equals(user))) {
             isLoginChanged = true;
         }
         user.setLogin(display.getLogin().getValue());
@@ -177,9 +180,9 @@ public class EditUserPresenter implements Presenter {
         }
         if (display.getPassword() != null) {
             user.setPassword(display.getPassword().getValue());
+        }
+        if (user.getRegDate() == null) {
             user.setRegDate(new Date());
-        } else {
-            user.setRegDate(dateTimeFormat.parse(display.getRegDate().getText()));
         }
 
         userWebService.updateUser(user, new MethodCallback<User>() {

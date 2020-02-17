@@ -204,7 +204,7 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
     }
 
     private void doShowFilteredExpenses(int typeId) {
-        History.newItem(FILTER_EXPENSE_PATH, false);
+        History.newItem(EXPENSE_LIST_PATH, false);
         Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
                 new ProcedureView(procedureWebService, typeId), typeId);
         presenter.go(container);

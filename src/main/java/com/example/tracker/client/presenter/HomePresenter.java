@@ -13,6 +13,7 @@ import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Heading;
+import org.gwtbootstrap3.extras.toggleswitch.client.ui.ToggleSwitch;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class HomePresenter implements Presenter {
         Heading getMonthLabel();
         Heading getWeekLabel();
         Anchor getMoreAnchor();
+        ToggleSwitch getIsOwn();
         void initPieChart(Map<String, Double> data, List<ProcedureType> types, boolean isExpense);
         void initAreaChart(List<SimpleDate> dates, List<ProcedureType> types, List<MonthlyExpense> expenses);
         Widget asWidget();
@@ -50,6 +52,9 @@ public class HomePresenter implements Presenter {
         this.eventBus = eventBus;
         this.display = view;
 
+        if (!ExpensesGWTController.isAdmin()) {
+            display.getIsOwn().removeFromParent();
+        }
         getExpenseTypes();
         getIncomeTypes();
     }
@@ -84,10 +89,24 @@ public class HomePresenter implements Presenter {
 
     public void bind() {
         display.getMoreAnchor().addClickHandler(clickEvent -> eventBus.fireEvent(new ShowExpensesEvent()));
+
+        display.getIsOwn().addValueChangeHandler(valueChangeEvent -> {
+           initExpensePieChart();
+           initIncomePieChart();
+           getReview(valueChangeEvent.getValue());
+        });
     }
 
     private void initExpensePieChart() {
-        procedureWebService.getExpensesReviewByTypes(new MethodCallback<Map<String, Double>>() {
+        if (display.getIsOwn() != null) {
+            getExpensesReviewByTypes(display.getIsOwn().getValue());
+        } else {
+            getExpensesReviewByTypes(true);
+        }
+    }
+
+    private void getExpensesReviewByTypes(boolean isOwn) {
+        procedureWebService.getExpensesReviewByTypes(isOwn, new MethodCallback<Map<String, Double>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Alert.alert(ERR, GETTING_REVIEW_ERR);
@@ -101,7 +120,15 @@ public class HomePresenter implements Presenter {
     }
 
     private void initIncomePieChart() {
-        procedureWebService.getIncomesReviewByTypes(new MethodCallback<Map<String, Double>>() {
+        if (display.getIsOwn() != null) {
+            getIncomesReviewByTypes(display.getIsOwn().getValue());
+        } else {
+            getIncomesReviewByTypes(true);
+        }
+    }
+
+    private void getIncomesReviewByTypes(boolean isOwn) {
+        procedureWebService.getIncomesReviewByTypes(isOwn, new MethodCallback<Map<String, Double>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Alert.alert(ERR, GETTING_REVIEW_ERR);
@@ -109,12 +136,12 @@ public class HomePresenter implements Presenter {
 
             @Override
             public void onSuccess(Method method, Map<String, Double> response) {
-                display.initPieChart(response, incomeTypes, false);
+                display.initPieChart(response, incomeTypes,false);
             }
         });
     }
 
-    private void initAreaChart(List<SimpleDate> dates) {
+    private void createAreaChart(List<SimpleDate> dates) {
         procedureWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -128,13 +155,16 @@ public class HomePresenter implements Presenter {
         });
     }
 
-    @Override
-    public void go(HasWidgets container) {
-        bind();
-        container.clear();
-        container.add(display.asWidget());
-        display.getGreetingHeading().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
-        procedureWebService.getReview(new MethodCallback<ReviewInfo>() {
+    private void initReview() {
+        if (display.getIsOwn() != null) {
+            getReview(display.getIsOwn().getValue());
+        } else {
+            getReview(true);
+        }
+    }
+
+    private void getReview(boolean isOwn) {
+        procedureWebService.getReview(isOwn, new MethodCallback<ReviewInfo>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Alert.alert(ERR, GETTING_REVIEW_ERR);
@@ -149,15 +179,14 @@ public class HomePresenter implements Presenter {
                 } else {
                     display.getMonthChange().setColor("green");
                 }
-                display.getAmountLabel().setText(display.getAmountLabel().getText() + " " + reviewInfo.getAmount());
-                display.getMonthLabel().setText(display.getMonthLabel().getText() + " " + reviewInfo.getMonth());
-                display.getWeekLabel().setText(display.getWeekLabel().getText() + " " + reviewInfo.getWeek());
+                display.getAmountLabel().setText(TOTAL_EXPENSES_LABEL + reviewInfo.getAmount());
+                display.getMonthLabel().setText(THIS_MONTH_EXPENSES_LABEL + reviewInfo.getMonth());
+                display.getWeekLabel().setText(THIS_WEEK_EXPENSES_LABEL + reviewInfo.getWeek());
             }
         });
+    }
 
-        initExpensePieChart();
-        initIncomePieChart();
-
+    private void initAreaChart() {
         procedureWebService.getDatesBetween(new MethodCallback<List<SimpleDate>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -166,8 +195,22 @@ public class HomePresenter implements Presenter {
 
             @Override
             public void onSuccess(Method method, List<SimpleDate> response) {
-                initAreaChart(response);
+                createAreaChart(response);
             }
         });
+    }
+
+    @Override
+    public void go(HasWidgets container) {
+        bind();
+        container.clear();
+        container.add(display.asWidget());
+        display.getGreetingHeading().setText("Hello, " + ExpensesGWTController.getUser().getLogin());
+
+        initExpensePieChart();
+        initIncomePieChart();
+        initAreaChart();
+        initReview();
+
     }
 }

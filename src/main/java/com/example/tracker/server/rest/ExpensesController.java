@@ -5,17 +5,14 @@ import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ProcedureService;
 import com.example.tracker.shared.model.*;
-import org.apache.commons.collections.map.SingletonMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
@@ -45,17 +42,17 @@ public class ExpensesController {
 
     @GetMapping("/expenses/all-expenses")
     List<Procedure> getAllExpenses() {
-        return iProcedureDao.getAllExpenses();
+        return procedureService.getAllExpenses();
     }
 
     @GetMapping("/expenses/all-incomes")
     List<Procedure> getAllIncomes() {
-        return iProcedureDao.getAllIncomes();
+        return procedureService.getAllIncomes();
     }
 
     @GetMapping("/expenses/user-expenses")
     List<Procedure> getUsersExpenses() {
-        return procedureService.getUsersExpenses();
+        return procedureService.getCurrentUsersExpenses();
     }
 
     @GetMapping("/expenses/user-incomes")
@@ -63,24 +60,24 @@ public class ExpensesController {
         return procedureService.getUsersIncomes();
     }
 
-    @GetMapping("/expenses/review")
-    ReviewInfo getReview() {
+    @GetMapping("/expenses/review/own={isOwn}")
+    ReviewInfo getReview(@PathVariable boolean isOwn) {
         try {
-            return procedureService.getReview();
+            return procedureService.getReview(isOwn);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @GetMapping("/expenses/expense-type-review")
-    Map<String, Double> getExpensesReviewByTypes() {
-        return procedureService.getExpensesReviewByTypes();
+    @GetMapping("/expenses/expense-type-review/own={isOwn}")
+    Map<String, Double> getExpensesReviewByTypes(@PathVariable boolean isOwn) {
+        return procedureService.getExpensesReviewByTypes(isOwn);
     }
 
-    @GetMapping("/expenses/income-type-review")
-    Map<String, Double> getIncomesReviewByTypes() {
-        return procedureService.getIncomesReviewByTypes();
+    @GetMapping("/expenses/income-type-review/own={isOwn}")
+    Map<String, Double> getIncomesReviewByTypes(@PathVariable boolean isOwn) {
+        return procedureService.getIncomesReviewByTypes(isOwn);
     }
 
     @GetMapping("/expenses/id={id}")
@@ -160,22 +157,22 @@ public class ExpensesController {
 
     @GetMapping("/expenses/types")
     List<ProcedureType> getTypes() {
-        return iProcedureTypeDAO.getTypes();
+        return procedureService.getTypes();
     }
 
     @GetMapping("/expenses/expense-types")
     List<ProcedureType> getExpenseTypes() {
-        return iProcedureTypeDAO.getExpenseTypes();
+        return procedureService.getExpenseTypes();
     }
 
     @GetMapping("/expenses/income-types")
     List<ProcedureType> getIncomeTypes() {
-        return iProcedureTypeDAO.getIncomeTypes();
+        return procedureService.getIncomeTypes();
     }
 
     @GetMapping("/expenses/typesId={id}")
     ProcedureType getTypeById(@PathVariable int id) {
-        return iProcedureTypeDAO.getTypeById(id);
+        return procedureService.getTypeById(id);
     }
 
     @PostMapping(value = "/expenses/add-type", produces = MediaType.APPLICATION_JSON)
@@ -200,7 +197,12 @@ public class ExpensesController {
 
     @DeleteMapping("/expenses/delete-types")
     List<ProcedureType> deleteTypes(@RequestBody List<Integer> ids) {
-        return iProcedureTypeDAO.deleteTypes(ids);
+        try {
+            return procedureService.deleteTypes(ids);
+        } catch (AccessDeniedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @GetMapping("/expenses/profile")

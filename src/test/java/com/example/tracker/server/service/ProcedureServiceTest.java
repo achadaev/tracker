@@ -47,7 +47,7 @@ public class ProcedureServiceTest {
 
     @Test
     public void getUsersExpensesShouldNotReturnNull() {
-        Assert.assertNotNull(procedureService.getUsersExpenses());
+        Assert.assertNotNull(procedureService.getCurrentUsersExpenses());
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -58,7 +58,7 @@ public class ProcedureServiceTest {
 
     @Test
     public void getReviewShouldNotReturnNull() throws AccessDeniedException {
-        Assert.assertNotNull(procedureService.getReview());
+        Assert.assertNotNull(procedureService.getReview(true));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ProcedureServiceTest {
         Date start = new Date();
         Date end = start;
 
-        Assert.assertNotNull(procedureService.getProceduresByDate(10 ,start, end));
+        Assert.assertNotNull(procedureService.getProceduresByDate(10 , start, end));
     }
 
     @Test

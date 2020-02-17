@@ -43,4 +43,7 @@ public class WidgetConstants {
     public static final String CONFIRMATION = "Confirmation";
     public static final String DELETING_FIELDS_LABEL = "Do you actually want to delete these fields?";
 
+    public static final String TOTAL_EXPENSES_LABEL = "Total expenses: ";
+    public static final String THIS_MONTH_EXPENSES_LABEL = "This month expenses: ";
+    public static final String THIS_WEEK_EXPENSES_LABEL = "This week expenses: ";
 }
