@@ -60,6 +60,7 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
     private MultiSelectionModel<Procedure> selectionModel;
 
     private int typeId = 0;
+    private boolean isOwn;
     private int start;
     private int length;
     private String columnName = "ID";
@@ -74,10 +75,11 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
         endDate.setValue(null);
     }
 
-    public ProcedureView(ProcedureWebService procedureWebService, int typeId) {
+    public ProcedureView(ProcedureWebService procedureWebService, int typeId, boolean isOwn) {
         initWidget(ourUiBinder.createAndBindUi(this));
         this.procedureWebService = procedureWebService;
         this.typeId = typeId;
+        this.isOwn = isOwn;
         startDate.setValue(null);
         endDate.setValue(null);
     }
@@ -237,9 +239,17 @@ public class ProcedureView extends Composite implements ExpensePresenter.Display
             if (startDate.getValue() == null && endDate.getValue() == null) {
                 Date nullDate = new Date(0);
                 if (typeId != 0) {
-                    typeSelection.setValue(Integer.toString(typeId));
-                    doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending, 0);
+                    if (isOwn) {
+                        int id = ExpensesGWTController.getUser().getId();
+                        typeSelection.setValue(Integer.toString(typeId));
+                        userSelection.setValue(Integer.toString(id));
+                        doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending, id);
+                    } else {
+                        typeSelection.setValue(Integer.toString(typeId));
+                        doSort(provider, typeId, nullDate, nullDate, start, length, columnName, isAscending, 0);
+                    }
                     typeId = 0;
+                    isOwn = false;
                 } else {
                     doSort(provider, Integer.parseInt(typeSelection.getValue()), nullDate, nullDate, start,
                             length, columnName, isAscending, Integer.parseInt(userSelection.getValue()));

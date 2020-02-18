@@ -26,7 +26,7 @@ public class EditIncomePresenter extends EditExpensePresenter {
     }
 
     @Override
-    protected void initTypesListBox(Select select) {
+    protected void initTypesSelection(Select select) {
         typeWebService.getIncomeTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
@@ -44,25 +44,28 @@ public class EditIncomePresenter extends EditExpensePresenter {
     protected void doSave() {
         if (!"".equals(display.getName().getValue())
                 && display.getDate().getValue() != null
-                && toDouble(display.getPrice().getValue()) != 0.0) {
+                && !"".equals(display.getPrice().getValue())) {
+            if (toDouble(display.getPrice().getValue()) != 0.0) {
+                procedure.setTypeId(Integer.parseInt(display.getTypeId().getValue()));
+                procedure.setKind(1);
+                procedure.setName(display.getName().getValue());
+                procedure.setDate(display.getDate().getValue());
+                procedure.setPrice((Double.parseDouble(display.getPrice().getValue())
+                        / Double.parseDouble(display.getCurrency().getValue())));
 
-            procedure.setTypeId(Integer.parseInt(display.getTypeId().getValue()));
-            procedure.setKind(1);
-            procedure.setName(display.getName().getValue());
-            procedure.setDate(display.getDate().getValue());
-            procedure.setPrice(Double.parseDouble(display.getPrice().getValue()));
+                procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
+                    @Override
+                    public void onFailure(Method method, Throwable exception) {
+                        Alert.alert(ERR, UPDATING_INCOME_ERR);
+                    }
 
-            procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
-                @Override
-                public void onFailure(Method method, Throwable exception) {
-                    Alert.alert(ERR, UPDATING_INCOME_ERR);
-                }
-
-                @Override
-                public void onSuccess(Method method, Procedure response) {
-                    eventBus.fireEvent(new IncomeUpdatedEvent(response));
-                }
-            });
+                    @Override
+                    public void onSuccess(Method method, Procedure response) {
+                        eventBus.fireEvent(new IncomeUpdatedEvent(response));
+                    }
+                });
+                display.hide();
+            }
         } else {
             Alert.alert(ERR, EMPTY_FIELDS_ERR);
         }

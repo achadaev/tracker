@@ -96,11 +96,11 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
 
         eventBus.addHandler(ShowExpensesEvent.TYPE, event -> doShowExpenses());
 
-        eventBus.addHandler(ShowFilteredExpensesEvent.TYPE, event -> doShowFilteredExpenses(event.getTypeId()));
+        eventBus.addHandler(ShowFilteredExpensesEvent.TYPE, event -> doShowFilteredExpenses(event.getTypeId(), event.isOwn()));
 
         eventBus.addHandler(ShowIncomesEvent.TYPE, event -> doShowIncomes());
 
-        eventBus.addHandler(ShowFilteredIncomesEvent.TYPE, event -> doShowFilteredIncomes(event.getTypeId()));
+        eventBus.addHandler(ShowFilteredIncomesEvent.TYPE, event -> doShowFilteredIncomes(event.getTypeId(), event.isOwn()));
 
         eventBus.addHandler(ShowProfileEvent.TYPE, event -> doShowProfile());
 
@@ -203,17 +203,17 @@ public class ExpensesGWTController implements Presenter, ValueChangeHandler<Stri
         History.newItem(EXPENSE_LIST_PATH);
     }
 
-    private void doShowFilteredExpenses(int typeId) {
+    private void doShowFilteredExpenses(int typeId, boolean isOwn) {
         History.newItem(EXPENSE_LIST_PATH, false);
         Presenter presenter = new ExpensePresenter(procedureWebService, typeWebService, userWebService, eventBus,
-                new ProcedureView(procedureWebService, typeId), typeId);
+                new ProcedureView(procedureWebService, typeId, isOwn), typeId, isOwn);
         presenter.go(container);
     }
 
-    private void doShowFilteredIncomes(int typeId) {
-        History.newItem(FILTER_INCOMES_PATH, false);
+    private void doShowFilteredIncomes(int typeId, boolean isOwn) {
+        History.newItem(INCOME_LIST_PATH, false);
         Presenter presenter = new IncomePresenter(procedureWebService, typeWebService, userWebService, eventBus,
-                new ProcedureView(procedureWebService, typeId), typeId);
+                new ProcedureView(procedureWebService, typeId, isOwn), typeId, isOwn);
         presenter.go(container);
     }
 

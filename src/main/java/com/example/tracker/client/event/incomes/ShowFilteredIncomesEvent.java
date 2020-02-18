@@ -5,13 +5,19 @@ import com.google.gwt.event.shared.GwtEvent;
 public class ShowFilteredIncomesEvent extends GwtEvent<ShowFilteredIncomesEventHandler> {
     public static Type<ShowFilteredIncomesEventHandler> TYPE = new Type<>();
     private int typeId;
+    private boolean isOwn;
 
-    public ShowFilteredIncomesEvent(int typeId) {
+    public ShowFilteredIncomesEvent(int typeId, boolean isOwn) {
         this.typeId = typeId;
+        this.isOwn = isOwn;
     }
 
     public int getTypeId() {
         return typeId;
+    }
+
+    public boolean isOwn() {
+        return isOwn;
     }
 
     @Override

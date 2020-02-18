@@ -27,7 +27,7 @@
 
         </b:ModalBody>
         <b:ModalFooter>
-            <b:Button icon="SAVE" type="SUCCESS" ui:field="saveButton" dataDismiss="MODAL" text="Save"/>
+            <b:Button icon="SAVE" type="SUCCESS" ui:field="saveButton" text="Save"/>
             <b:Button icon="CLOSE" type="DANGER" ui:field="cancelButton" dataDismiss="MODAL" text="Cancel"/>
         </b:ModalFooter>
     </b:Modal>

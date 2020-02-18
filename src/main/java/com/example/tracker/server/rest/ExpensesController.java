@@ -5,12 +5,15 @@ import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.server.service.ProcedureService;
 import com.example.tracker.shared.model.*;
+import com.example.tracker.shared.model.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.ServiceUnavailableException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
@@ -110,7 +113,7 @@ public class ExpensesController {
                                                  @PathVariable Date startDate,
                                                  @PathVariable Date endDate) {
         try {
-            return procedureService.getProceduresByDate(typeId, startDate, endDate);
+            return procedureService.getProceduresByDate(typeId, startDate, endDate, false);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
@@ -135,7 +138,7 @@ public class ExpensesController {
                                                  @PathVariable Date startDate,
                                                  @PathVariable Date endDate) {
         try {
-            return procedureService.getProceduresByDate(typeId, startDate, endDate);
+            return procedureService.getProceduresByDate(typeId, startDate, endDate, false);
         } catch (AccessDeniedException e) {
             e.printStackTrace();
         }
@@ -276,7 +279,7 @@ public class ExpensesController {
     }
 
     @PutMapping(value = "/expenses/update", produces = MediaType.APPLICATION_JSON)
-    Map<String, Boolean> updateExpense(@RequestBody Procedure procedure) {
+    Map<String, Boolean> updateProcedure(@RequestBody Procedure procedure) {
         return Collections.singletonMap("response", procedureService.updateProcedure(procedure));
     }
 
@@ -290,9 +293,9 @@ public class ExpensesController {
         return procedureService.getDatesBetween();
     }
 
-    @GetMapping("/expenses/between")
-    List<MonthlyExpense> getExpensesBetween() {
-        return procedureService.getExpensesBetween();
+    @GetMapping("/expenses/between/own={isOwn}")
+    List<MonthlyExpense> getExpensesBetween(@PathVariable boolean isOwn) {
+        return procedureService.getExpensesBetween(isOwn);
     }
 
     @GetMapping("/expenses/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}/{isAscending}")
@@ -334,5 +337,15 @@ public class ExpensesController {
     @GetMapping("expenses/get-selection/{kind}")
     SelectionValue getSelectionValue(@PathVariable int kind) {
         return procedureService.getSelectionValue(kind);
+    }
+
+    @GetMapping("expenses/currency")
+    Currency getCurrency() {
+        try {
+            return procedureService.getCurrency();
+        } catch (IOException | ServiceUnavailableException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

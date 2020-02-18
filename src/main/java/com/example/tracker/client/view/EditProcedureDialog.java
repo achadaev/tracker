@@ -35,6 +35,8 @@ public class EditProcedureDialog extends Composite implements EditExpensePresent
     @UiField
     DatePicker date;
     @UiField
+    Select currency;
+    @UiField
     TextBox price;
     @UiField
     Button saveButton;
@@ -82,6 +84,11 @@ public class EditProcedureDialog extends Composite implements EditExpensePresent
     @Override
     public DatePicker getDate() {
         return date;
+    }
+
+    @Override
+    public Select getCurrency() {
+        return currency;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.tracker.server.constant;
 
 public class DBConstants {
     public static final String DATE_PATTERN = "yyyy-MM-dd";
+    public static final String PRICE_PATTERN = "#0.00";
 
     public static final String ID_COLUMN = "id";
     public static final String TYPE_ID_COLUMN = "type_id";

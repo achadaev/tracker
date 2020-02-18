@@ -53,6 +53,7 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
     protected HandlerManager eventBus;
     protected Display display;
     private int typeId = 0;
+    private boolean isOwn;
 
     public ExpensePresenter() {
     }
@@ -69,13 +70,14 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
     }
 
     public ExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
-                            UserWebService userWebService, HandlerManager eventBus, Display view, int typeId) {
+                            UserWebService userWebService, HandlerManager eventBus, Display view, int typeId, boolean isOwn) {
         this.procedureWebService = procedureWebService;
         this.typeWebService = typeWebService;
         this.userWebService = userWebService;
         this.eventBus = eventBus;
         this.display = view;
         this.typeId = typeId;
+        this.isOwn = isOwn;
 
         initSelections();
     }
@@ -213,6 +215,23 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
     }
 
     protected void filterProcedures(int typeId) {
+        if (isOwn) {
+            procedureWebService.getProceduresByTypeId(typeId, ExpensesGWTController.getUser().getId(),
+                    new MethodCallback<List<Procedure>>() {
+                        @Override
+                        public void onFailure(Method method, Throwable throwable) {
+                            Alert.alert(ERR, FILTERING_EXPENSES_BY_DATE_ERR);
+                        }
+
+                        @Override
+                        public void onSuccess(Method method, List<Procedure> response) {
+                            procedureList = response;
+                            display.setData(procedureList, expenseTypes);
+                            updateTotal(display.getTotalLabel());
+                            isOwn = false;
+                        }
+                    });
+        } else {
             if (display.getStartDate().getValue() != null && display.getEndDate().getValue() != null) {
                 procedureWebService.getProceduresByDate(typeId, display.getStartDate().getValue(), display.getEndDate().getValue(),
                         new MethodCallback<List<Procedure>>() {
@@ -229,19 +248,20 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
                             }
                         });
             } else {
-            procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
-                @Override
-                public void onFailure(Method method, Throwable throwable) {
-                    Alert.alert(ERR, FILTERING_EXPENSES_ERR);
-                }
+                procedureWebService.getProceduresByTypeId(typeId, new MethodCallback<List<Procedure>>() {
+                    @Override
+                    public void onFailure(Method method, Throwable throwable) {
+                        Alert.alert(ERR, FILTERING_EXPENSES_ERR);
+                    }
 
-                @Override
-                public void onSuccess(Method method, List<Procedure> response) {
-                    procedureList = response;
-                    display.setData(procedureList, expenseTypes);
-                    updateTotal(display.getTotalLabel());
-                }
-            });
+                    @Override
+                    public void onSuccess(Method method, List<Procedure> response) {
+                        procedureList = response;
+                        display.setData(procedureList, expenseTypes);
+                        updateTotal(display.getTotalLabel());
+                    }
+                });
+            }
         }
     }
 

@@ -90,6 +90,7 @@ public class EditTypePresenter implements Presenter {
                     display.hide();
                 }
             });
+            display.hide();
         } else {
             Alert.alert(ERR, EMPTY_FIELDS_ERR);
         }

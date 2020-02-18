@@ -72,7 +72,7 @@ public class ProcedureServiceTest {
         Date start = new Date();
         Date end = start;
 
-        Assert.assertNotNull(procedureService.getProceduresByDate(10 , start, end));
+        Assert.assertNotNull(procedureService.getProceduresByDate(10 , start, end, false));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class ProcedureServiceTest {
     @Test
     public void getExpensesBetweenShouldNotReturnNull() {
         doReturn(Lists.emptyList()).when(procedureService).getDatesBetween();
-        Assert.assertNotNull(procedureService.getExpensesBetween());
+        Assert.assertNotNull(procedureService.getExpensesBetween(false));
     }
 
 }

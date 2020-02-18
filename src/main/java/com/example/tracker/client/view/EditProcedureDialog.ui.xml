@@ -10,10 +10,11 @@
                 <s:Select ui:field="typeId"/>
                 <b:TextBox placeholder="Name" ui:field="name"/>
                 <dp:DatePicker placeholder="Date" autoClose="true" highlightToday="true" showTodayButton="true" ui:field="date"/>
+                <s:Select ui:field="currency"/>
                 <b:TextBox placeholder="Price" ui:field="price"/>
             </b:ModalBody>
                 <b:ModalFooter>
-                    <b:Button icon="SAVE" type="SUCCESS" ui:field="saveButton" dataDismiss="MODAL" text="Save"/>
+                    <b:Button icon="SAVE" type="SUCCESS" ui:field="saveButton" text="Save"/>
                     <b:Button icon="CLOSE" type="DANGER" ui:field="cancelButton" dataDismiss="MODAL" text="Cancel"/>
                 </b:ModalFooter>
         </b:Modal>

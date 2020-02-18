@@ -4,6 +4,7 @@ import com.example.tracker.client.event.expense.ExpenseUpdatedEvent;
 import com.example.tracker.client.widget.Alert;
 import com.example.tracker.client.services.TypeWebService;
 import com.example.tracker.client.services.ProcedureWebService;
+import com.example.tracker.shared.model.Currency;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -18,6 +19,7 @@ import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.example.tracker.client.constant.WidgetConstants.*;
 
@@ -29,6 +31,7 @@ public class EditExpensePresenter implements Presenter {
         Select getTypeId();
         HasValue<String> getName();
         DatePicker getDate();
+        Select getCurrency();
         HasValue<String> getPrice();
         Widget asWidget();
         void show();
@@ -49,7 +52,8 @@ public class EditExpensePresenter implements Presenter {
         this.display = display;
         this.procedure = new Procedure();
 
-        initTypesListBox(display.getTypeId());
+        initTypesSelection(display.getTypeId());
+        initCurrencySelection(display.getCurrency());
     }
 
     public EditExpensePresenter(ProcedureWebService procedureWebService, TypeWebService typeWebService,
@@ -79,14 +83,15 @@ public class EditExpensePresenter implements Presenter {
             }
         });
 
-        initTypesListBox(display.getTypeId());
+        initTypesSelection(display.getTypeId());
+        initCurrencySelection(display.getCurrency());
     }
 
-    protected void initTypesListBox(Select select) {
+    protected void initTypesSelection(Select select) {
         typeWebService.getExpenseTypes(new MethodCallback<List<ProcedureType>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
-                Alert.alert(ERR, throwable.getMessage());
+                Alert.alert(ERR, GETTING_TYPES_ERR);
             }
 
             @Override
@@ -96,11 +101,35 @@ public class EditExpensePresenter implements Presenter {
         });
     }
 
+    protected void initCurrencySelection(Select select) {
+        procedureWebService.getCurrency(new MethodCallback<Currency>() {
+            @Override
+            public void onFailure(Method method, Throwable throwable) {
+                Alert.alert(ERR, GETTING_CURRENCY_ERR);
+            }
+
+            @Override
+            public void onSuccess(Method method, Currency response) {
+                setCurrency(select, response);
+            }
+        });
+    }
+
     protected void setTypes(Select select, List<ProcedureType> types) {
         for (ProcedureType type : types) {
             Option option = new Option();
             option.setContent(type.getName());
             option.setValue(Integer.toString(type.getId()));
+            select.add(option);
+        }
+        select.refresh();
+    }
+
+    protected void setCurrency(Select select, Currency currency) {
+        for (Map.Entry<String, Double> entry : currency.getRates().entrySet()) {
+            Option option = new Option();
+            option.setContent(entry.getKey());
+            option.setValue(Double.toString(entry.getValue()));
             select.add(option);
         }
         select.refresh();
@@ -134,7 +163,8 @@ public class EditExpensePresenter implements Presenter {
                 procedure.setKind(-1);
                 procedure.setName(display.getName().getValue());
                 procedure.setDate(display.getDate().getValue());
-                procedure.setPrice(Double.parseDouble(display.getPrice().getValue()));
+                procedure.setPrice(Double.parseDouble(display.getPrice().getValue())
+                            / Double.parseDouble(display.getCurrency().getValue()));
 
                 procedureWebService.updateProcedure(procedure, new MethodCallback<Procedure>() {
                     @Override
@@ -147,6 +177,7 @@ public class EditExpensePresenter implements Presenter {
                         eventBus.fireEvent(new ExpenseUpdatedEvent(response));
                     }
                 });
+                display.hide();
             }
         } else {
             Alert.alert(ERR, EMPTY_FIELDS_ERR);

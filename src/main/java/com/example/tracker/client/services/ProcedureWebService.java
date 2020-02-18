@@ -100,9 +100,9 @@ public interface ProcedureWebService extends RestService {
     void getDatesBetween(MethodCallback<List<SimpleDate>> callback);
 
     @GET
-    @Path("/between")
+    @Path("/between/own={isOwn}")
     @Produces(MediaType.APPLICATION_JSON)
-    void getExpensesBetween(MethodCallback<List<MonthlyExpense>> callback);
+    void getExpensesBetween(@PathParam("isOwn") boolean isOwn, MethodCallback<List<MonthlyExpense>> callback);
 
     @GET
     @Path("/sort/typeId={typeId}/{startDate}/{endDate}/{startIndex}/{quantity}/{column}/{isAscending}")
@@ -133,5 +133,10 @@ public interface ProcedureWebService extends RestService {
     @Path("/get-selection/{kind}")
     @Produces(MediaType.APPLICATION_JSON)
     void getSelectionValue(@PathParam("kind") int kind, MethodCallback<SelectionValue> callback);
+
+    @GET
+    @Path("/currency")
+    @Produces(MediaType.APPLICATION_JSON)
+    void getCurrency(MethodCallback<Currency> callback);
 
 }

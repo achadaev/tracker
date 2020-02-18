@@ -4,6 +4,9 @@ import com.example.tracker.server.dao.IProcedureDAO;
 import com.example.tracker.server.dao.IProcedureTypeDAO;
 import com.example.tracker.server.dao.IUserDAO;
 import com.example.tracker.shared.model.*;
+import com.example.tracker.shared.model.Currency;
+import com.google.gson.Gson;
+import org.apache.tapestry.wml.Do;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Component;
 
+import javax.naming.ServiceUnavailableException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.file.AccessDeniedException;
+import java.text.DecimalFormat;
 import java.util.*;
 
+import static com.example.tracker.server.constant.DBConstants.PRICE_PATTERN;
 import static com.example.tracker.server.constant.ExceptionMessages.*;
 
 @Component
@@ -103,10 +115,21 @@ public class ProcedureService {
                 result.setMonth(result.getMonth() + temp.getMonth());
                 result.setWeek(result.getWeek() + temp.getWeek());
             }
+
+            result.setMonthChange(getCorrectNumber(result.getMonthChange()));
+            result.setAmount(getCorrectNumber(result.getAmount()));
+            result.setMonth(getCorrectNumber(result.getMonth()));
+            result.setWeek(getCorrectNumber(result.getWeek()));
+
             return result;
         } else {
             return getReview(getCurrentUser().getId());
         }
+    }
+
+    private double getCorrectNumber(double number) {
+        String correctNumber = new DecimalFormat(PRICE_PATTERN).format(number).replace(',', '.');
+        return Double.parseDouble(correctNumber);
     }
 
     private List<Procedure> removeArchivedProcedures(List<Procedure> procedures) {
@@ -132,7 +155,7 @@ public class ProcedureService {
 
         tempList = iProcedureDAO.getExpensesByDate(userId, firstDayOfMonth.toDate(), new Date());
         tempList = removeArchivedProcedures(tempList);
-        reviewInfo.setMonthChange(reviewInfo.getMonthChange() - getTotalPrice(tempList));
+        reviewInfo.setMonthChange(getCorrectNumber(reviewInfo.getMonthChange() - getTotalPrice(tempList)));
 
         // Amount calculating
         tempList = iProcedureDAO.getUsersExpenses(userId);
@@ -156,8 +179,7 @@ public class ProcedureService {
         for (Procedure procedure : procedureList) {
             total += procedure.getPrice();
         }
-
-        return total;
+        return getCorrectNumber(total);
     }
 
     public List<Procedure> getProceduresByTypeId(int id) throws AccessDeniedException {
@@ -209,10 +231,10 @@ public class ProcedureService {
         }
     }
 
-    public List<Procedure> getProceduresByDate(int typeId, Date startDate, Date endDate) throws AccessDeniedException {
+    public List<Procedure> getProceduresByDate(int typeId, Date startDate, Date endDate, boolean isOwn) throws AccessDeniedException {
         List<Procedure> result = new ArrayList<>();
 
-        if (isAdmin()) {
+        if (isAdmin() && !isOwn) {
             if (typeId == -100) {
                 for (User user : getAllUsers()) {
                     result.addAll(iProcedureDAO.getExpensesByDate(user.getId(), startDate, endDate));
@@ -262,7 +284,7 @@ public class ProcedureService {
     public List<Procedure> getProceduresByDate(int typeId, Date startDate, Date endDate, int userId) throws AccessDeniedException {
         if (isAdmin()) {
             if (userId == 0) {
-                return getProceduresByDate(typeId, startDate, endDate);
+                return getProceduresByDate(typeId, startDate, endDate, false);
             } else {
                 if (typeId == -100) {
                     return iProcedureDAO.getExpensesByDate(userId, startDate, endDate);
@@ -301,6 +323,9 @@ public class ProcedureService {
                 procedureList = iProcedureDAO.getUsersIncomes(getCurrentUser().getId());
             }
         }
+
+        procedure.setPrice(getCorrectNumber(procedure.getPrice()));
+
         for (Procedure temp : procedureList) {
             if (procedure.getId() == temp.getId()) {
                 return iProcedureDAO.updateProcedure(procedure);
@@ -472,7 +497,7 @@ public class ProcedureService {
         return new ArrayList<>();
     }
 
-    public List<MonthlyExpense> getExpensesBetween() {
+    public List<MonthlyExpense> getExpensesBetween(boolean isOwn) {
         if (isActive()) {
             Calendar calendar = Calendar.getInstance();
             List<SimpleDate> dates = getDatesBetween();
@@ -495,7 +520,7 @@ public class ProcedureService {
 
                     for (ProcedureType type : iProcedureTypeDAO.getExpenseTypes()) {
                         try {
-                            List<Procedure> procedureList = getProceduresByDate(type.getId(), firstDay, lastDay);
+                            List<Procedure> procedureList = getProceduresByDate(type.getId(), firstDay, lastDay, isOwn);
                             procedureList = removeArchivedProcedures(procedureList);
                             monthlyExpenses.add(getMonthlyExpenses(type.getId(), procedureList));
                         } catch (AccessDeniedException e) {
@@ -593,7 +618,7 @@ public class ProcedureService {
             if (startDate.equals(nullDate) && endDate.equals(nullDate)) {
                 result = getProceduresByTypeId(typeId);
             } else {
-                result = getProceduresByDate(typeId, startDate, endDate);
+                result = getProceduresByDate(typeId, startDate, endDate, false);
             }
 
             doSort(result, column);
@@ -678,4 +703,42 @@ public class ProcedureService {
         return result;
     }
 
+    public Currency getCurrency() throws IOException, ServiceUnavailableException {
+        Currency currency;
+        URL url = new URL("https://api.exchangeratesapi.io/latest?base=RUB");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(10000);
+        connection.setConnectTimeout(5000);
+
+        int status = connection.getResponseCode();
+
+        if (status == 200) {
+            Gson gson = new Gson();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = reader.readLine()) != null) {
+                content.append(inputLine);
+            }
+            reader.close();
+
+            currency = gson.fromJson(content.toString(), Currency.class);
+
+            Map<String, Double> coreRates = new HashMap<>();
+            for (Map.Entry<String, Double> entry : currency.getRates().entrySet()) {
+                if (entry.getKey().equals("RUB") || entry.getKey().equals("USD") || entry.getKey().equals("EUR")) {
+                    coreRates.put(entry.getKey(), entry.getValue());
+                }
+            }
+            currency.setRates(coreRates);
+
+            connection.disconnect();
+            return currency;
+        } else {
+            connection.disconnect();
+            throw new ServiceUnavailableException();
+        }
+    }
 }

@@ -80,7 +80,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
                         String type = expenseDataTable.getValueString(selection.get(0).getRow(), 0);
                         for (ProcedureType procedureType : types) {
                             if (type.equals(procedureType.getName())) {
-                                eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId()));
+                                if (isOwn != null) {
+                                    eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId(), isOwn.getValue()));
+                                } else {
+                                    eventBus.fireEvent(new ShowFilteredExpensesEvent(procedureType.getId(), false));
+                                }
                             }
                         }
                     }
@@ -97,7 +101,11 @@ public class HomeView extends Composite implements HomePresenter.Display {
                         String type = incomeDataTable.getValueString(selection.get(0).getRow(), 0);
                         for (ProcedureType procedureType : ExpensesGWTController.getIncomeTypes()) {
                             if (type.equals(procedureType.getName())) {
-                                eventBus.fireEvent(new ShowFilteredIncomesEvent(procedureType.getId()));
+                                if (isOwn != null) {
+                                    eventBus.fireEvent(new ShowFilteredIncomesEvent(procedureType.getId(), isOwn.getValue()));
+                                } else {
+                                    eventBus.fireEvent(new ShowFilteredIncomesEvent(procedureType.getId(), false));
+                                }
                             }
                         }
                     }
@@ -148,6 +156,9 @@ public class HomeView extends Composite implements HomePresenter.Display {
     public void initAreaChart(List<SimpleDate> dates, List<ProcedureType> types, List<MonthlyExpense> expenses) {
         ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
         chartLoader.loadApi(() -> {
+            if (areaChart != null) {
+                areaChart.removeFromParent();
+            }
             areaChart = new AreaChart();
             expenseChartPanel.add(areaChart);
             drawAreaChart(dates, types, expenses);

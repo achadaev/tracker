@@ -93,6 +93,7 @@ public class HomePresenter implements Presenter {
         display.getIsOwn().addValueChangeHandler(valueChangeEvent -> {
            initExpensePieChart();
            initIncomePieChart();
+           initAreaChart();
            getReview(valueChangeEvent.getValue());
         });
     }
@@ -141,8 +142,8 @@ public class HomePresenter implements Presenter {
         });
     }
 
-    private void createAreaChart(List<SimpleDate> dates) {
-        procedureWebService.getExpensesBetween(new MethodCallback<List<MonthlyExpense>>() {
+    private void createAreaChart(List<SimpleDate> dates, boolean isOwn) {
+        procedureWebService.getExpensesBetween(isOwn, new MethodCallback<List<MonthlyExpense>>() {
             @Override
             public void onFailure(Method method, Throwable throwable) {
                 Alert.alert(ERR, GETTING_BETWEEN_EXPENSES_ERR);
@@ -195,7 +196,11 @@ public class HomePresenter implements Presenter {
 
             @Override
             public void onSuccess(Method method, List<SimpleDate> response) {
-                createAreaChart(response);
+                if (display.getIsOwn() != null) {
+                    createAreaChart(response, display.getIsOwn().getValue());
+                } else {
+                    createAreaChart(response, true);
+                }
             }
         });
     }

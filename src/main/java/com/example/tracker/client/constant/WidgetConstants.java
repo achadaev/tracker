@@ -37,6 +37,7 @@ public class WidgetConstants {
     public static final String CHANGING_PASSWORD_ERR = "Error changing password";
     public static final String ONE_ROW_ERR = "Select one row";
     public static final String AT_LEAST_ONE_ROW_ERR = "Select at least one row";
+    public static final String GETTING_CURRENCY_ERR = "Error getting currency";
 
     public static final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{5,}";
 
