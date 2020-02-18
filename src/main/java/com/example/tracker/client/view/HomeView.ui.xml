@@ -3,7 +3,7 @@
              xmlns:b='urn:import:org.gwtbootstrap3.client.ui'
              xmlns:ts='urn:import:org.gwtbootstrap3.extras.toggleswitch.client.ui'>
     <g:HTMLPanel>
-        <b:Column size="MD_11">
+        <b:Column size="MD_11" styleName="home">
             <b:Row>
                 <b:Jumbotron height="25em" width="75em">
                     <b:Heading size="H1" ui:field="greetingHeading"/>
