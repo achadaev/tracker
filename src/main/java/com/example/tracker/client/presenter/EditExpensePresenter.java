@@ -8,12 +8,15 @@ import com.example.tracker.shared.model.Currency;
 import com.example.tracker.shared.model.Procedure;
 import com.example.tracker.shared.model.ProcedureType;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.MethodCallback;
+import org.gwtbootstrap3.client.ui.Heading;
+import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
@@ -32,7 +35,8 @@ public class EditExpensePresenter implements Presenter {
         HasValue<String> getName();
         DatePicker getDate();
         Select getCurrency();
-        HasValue<String> getPrice();
+        TextBox getPrice();
+        Heading getCountedPrice();
         Widget asWidget();
         void show();
         void hide();
@@ -117,8 +121,11 @@ public class EditExpensePresenter implements Presenter {
                     select.add(option);
                     select.refresh();
                     select.setEnabled(false);
+                    display.getCountedPrice().setText(ONE_CURRENCY_AVAILABLE_ERR);
+                    display.getCountedPrice().setColor("red");
                 } else {
                     setCurrency(select, response);
+                    bindCounter();
                 }
             }
         });
@@ -142,6 +149,29 @@ public class EditExpensePresenter implements Presenter {
             select.add(option);
         }
         select.refresh();
+    }
+
+    protected boolean isNumberOrEditKey(int code) {
+        return code >= 48 && code <= 57 ||
+                code >= 96 && code <= 105 ||
+                code == 8 || code == 46;
+    }
+
+    protected void calculate() {
+        double price = "".equals(display.getPrice().getValue()) ? 0.0 : Double.parseDouble(display.getPrice().getValue());
+        String countedPrice = "= " + price / Double.parseDouble(display.getCurrency().getValue());
+        display.getCountedPrice().setText(countedPrice.substring(0, countedPrice.indexOf('.') + 3) + " RUB");
+    }
+
+    protected void bindCounter() {
+        display.getPrice().addKeyUpHandler(keyUpEvent -> {
+           if (isNumberOrEditKey(keyUpEvent.getNativeKeyCode())) {
+               calculate();
+           }
+        });
+        display.getCurrency().addValueChangeHandler(valueChangeEvent -> {
+            calculate();
+        });
     }
 
     public void bind() {

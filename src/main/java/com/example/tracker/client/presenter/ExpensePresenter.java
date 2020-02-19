@@ -211,7 +211,8 @@ public class ExpensePresenter implements Presenter, Confirm.Confirmation {
         for (Procedure procedure : procedureList) {
             total += procedure.getPrice();
         }
-        label.setText(Double.toString(total));
+        String totalLabel = Double.toString(total);
+        label.setText(totalLabel.substring(0, totalLabel.indexOf('.') + 3));
     }
 
     protected void filterProcedures(int typeId) {

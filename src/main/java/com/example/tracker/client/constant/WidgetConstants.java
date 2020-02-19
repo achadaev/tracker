@@ -38,6 +38,8 @@ public class WidgetConstants {
     public static final String ONE_ROW_ERR = "Select one row";
     public static final String AT_LEAST_ONE_ROW_ERR = "Select at least one row";
     public static final String GETTING_CURRENCY_ERR = "Error getting currency";
+    public static final String ONE_CURRENCY_AVAILABLE_ERR = "Only RUB currency available now, " +
+            "because of Currency Service error";
 
     public static final String PASSWORD_PATTERN = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{5,}";
 

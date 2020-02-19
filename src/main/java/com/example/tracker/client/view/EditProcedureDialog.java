@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import org.gwtbootstrap3.client.ui.Heading;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.constants.ModalBackdrop;
 import org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker;
@@ -38,6 +39,8 @@ public class EditProcedureDialog extends Composite implements EditExpensePresent
     Select currency;
     @UiField
     TextBox price;
+    @UiField
+    Heading countedPrice;
     @UiField
     Button saveButton;
     @UiField
@@ -92,8 +95,13 @@ public class EditProcedureDialog extends Composite implements EditExpensePresent
     }
 
     @Override
-    public HasValue<String> getPrice() {
+    public TextBox getPrice() {
         return price;
+    }
+
+    @Override
+    public Heading getCountedPrice() {
+        return countedPrice;
     }
 
     @Override
