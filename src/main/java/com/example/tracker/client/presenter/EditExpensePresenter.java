@@ -110,7 +110,16 @@ public class EditExpensePresenter implements Presenter {
 
             @Override
             public void onSuccess(Method method, Currency response) {
-                setCurrency(select, response);
+                if (response == null) {
+                    Option option = new Option();
+                    option.setContent("RUB");
+                    option.setValue("1");
+                    select.add(option);
+                    select.refresh();
+                    select.setEnabled(false);
+                } else {
+                    setCurrency(select, response);
+                }
             }
         });
     }
